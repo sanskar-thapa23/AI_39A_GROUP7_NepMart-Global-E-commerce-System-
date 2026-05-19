@@ -1,16 +1,16 @@
 
 from flask import Blueprint
-from app.controller.auth import AuthController
+from app.routes.login import LoginRoutes
+from app.routes.register import RegisterRoutes
+
 class AuthRoutes:
     def __init__(self):
-        self.bp = Blueprint("auth", __name__)
-        self.controller = AuthController()
+        self.login_routes = LoginRoutes()
+        self.register_routes = RegisterRoutes()
 
     def register(self):
-        self.bp.route("/login", methods=["GET", "POST"])(
-            self.controller.login
-        )
-        self.bp.route("/register", methods=["GET", "POST"])(
-            self.controller.register
-        )
-        return self.bp
+        # Return combined blueprints
+        blueprints = []
+        blueprints.append(self.login_routes.register())
+        blueprints.append(self.register_routes.register())
+        return blueprints

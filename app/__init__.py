@@ -3,7 +3,6 @@ from app.routes.auth import AuthRoutes
 def create_app():
     app=Flask(__name__)
     auth_routes=AuthRoutes()
-    app.register_blueprint(auth_routes.register())
-
-
+    for bp in auth_routes.register():
+        app.register_blueprint(bp)
     return app

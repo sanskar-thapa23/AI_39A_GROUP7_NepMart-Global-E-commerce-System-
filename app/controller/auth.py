@@ -1,15 +1,14 @@
 
-from flask import render_template, request
+from app.controller.login import LoginController
+from app.controller.register import RegisterController
+
 class AuthController:
+    def __init__(self):
+        self.login_controller = LoginController()
+        self.register_controller = RegisterController()
+
     def login(self):
-        if request.method == "POST":
-            print(request.form)
+        return self.login_controller.login()
 
-        return render_template("login.html")
-    
     def register(self):
-
-        if request.method == "POST":
-            pass
-
-        return render_template("register.html")
+        return self.register_controller.register()
