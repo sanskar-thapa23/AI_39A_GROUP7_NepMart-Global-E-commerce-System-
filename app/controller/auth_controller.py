@@ -1,4 +1,4 @@
-
+from app.controller.auth_controller import AuthController
 from app.controller.login import LoginController
 from app.controller.register import RegisterController
 

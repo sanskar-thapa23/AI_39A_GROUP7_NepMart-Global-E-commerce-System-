@@ -9,8 +9,7 @@ class AuthRoutes:
         self.register_routes = RegisterRoutes()
 
     def register(self):
-        # Return combined blueprints
-        blueprints = []
-        blueprints.append(self.login_routes.register())
-        blueprints.append(self.register_routes.register())
-        return blueprints
+        return [
+            self.login_routes.register(),
+            self.register_routes.register()
+        ]
