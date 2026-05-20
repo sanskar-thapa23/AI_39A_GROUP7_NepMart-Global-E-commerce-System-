@@ -1,11 +1,8 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-
-# Instantiate the SQLAlchemy object globally at the very top
-db = SQLAlchemy()
-
+from app.routes.auth_routes import AuthRoutes
 def create_app():
     app = Flask(__name__)
+<<<<<<< HEAD
     
     # 1. Core Secret Configurations
     app.config['SECRET_KEY'] = 'dev-secret-key-nepmart'
@@ -29,11 +26,9 @@ def create_app():
     from app.routes.home import MainRoutes  # Moved down here inside the function context
     
     # Register Auth Blueprint
+=======
+>>>>>>> 9b87d3591c8f836f307b88328b9ab6fea493e78d
     auth_routes = AuthRoutes()
-    app.register_blueprint(auth_routes.get_blueprint())
-
-    # Register Home/Main Blueprint
-    main_routes = MainRoutes()
-    app.register_blueprint(main_routes.register())
-
+    for bp in auth_routes.register():
+        app.register_blueprint(bp)
     return app

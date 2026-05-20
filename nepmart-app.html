@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nepmart — Global B2B Marketplace</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
+<style>
+/* ===================================================
+   RESET & TOKENS
+=================================================== */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --brand:#1D9E75;--brand-dark:#0F6E56;--brand-light:#E1F5EE;--brand-mid:#9FE1CB;
+  --text:#1a1a18;--text2:#5F5E5A;--text3:#9a9892;
+  --bg:#FAFAF8;--surface:#fff;--border:#e5e3dc;
+  --amber:#EF9F27;--amber-l:#FEF0D7;
+  --coral:#D85A30;--coral-l:#FAECE7;
+  --blue-l:#E6F1FB;--blue:#3B7DC8;
+  --red:#C93B3B;--red-l:#FBEAEA;
+  --radius:10px;--radius-lg:16px;--radius-xl:20px;
+  --shadow:0 4px 24px rgba(0,0,0,0.07);
+  --shadow-lg:0 8px 48px rgba(0,0,0,0.10);
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.6}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:'DM Sans',sans-serif}
+input,select,textarea{font-family:'DM Sans',sans-serif}
+ 
+/* ===================================================
+   SHARED BUTTONS
+=================================================== */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:var(--radius);font-size:0.875rem;font-weight:500;padding:0.55rem 1.25rem;transition:all 0.2s;cursor:pointer}
+.btn-primary{background:var(--brand);color:#fff}.btn-primary:hover{background:var(--brand-dark)}
+.btn-outline{background:transparent;color:var(--text);border:1.5px solid var(--border)}.btn-outline:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-light)}
+.btn-ghost{background:transparent;color:var(--text2)}.btn-ghost:hover{background:#f0efea;color:var(--text)}
+.btn-danger{background:var(--red-l);color:var(--red);border:none}.btn-danger:hover{background:#f5c6c6}
+.btn-lg{padding:0.75rem 2rem;font-size:1rem;border-radius:var(--radius-lg)}
+.btn-sm{padding:0.375rem 0.875rem;font-size:0.8125rem}
+ 
+/* ===================================================
+   PAGE VISIBILITY
+=================================================== */
+.page{display:none}.page.active{display:block}
+ 
+/* ===================================================
+   ★ LANDING PAGE
+=================================================== */
+/* NAV */
+#page-landing nav{position:sticky;top:0;z-index:50;background:rgba(250,250,248,0.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 2rem}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;height:60px;gap:2rem}
+.logo{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:600;color:var(--brand-dark);letter-spacing:-0.5px;flex-shrink:0}
+.logo span{color:var(--brand)}
+.nav-links{display:flex;gap:2rem;list-style:none;flex:1;justify-content:center}
+.nav-links a{font-size:0.875rem;color:var(--text2);transition:color 0.2s}.nav-links a:hover{color:var(--text)}
+.nav-actions{display:flex;align-items:center;gap:0.625rem;flex-shrink:0}
+.btn-login{background:transparent;color:var(--text);border:1.5px solid var(--border);padding:0.45rem 1.1rem;border-radius:8px;font-size:0.875rem;display:inline-flex;align-items:center;gap:6px;transition:all 0.2s}
+.btn-login:hover{border-color:var(--brand);color:var(--brand-dark);background:var(--brand-light)}
+.btn-nav-cta{background:var(--brand);color:#fff;border:none;padding:0.5rem 1.25rem;border-radius:8px;font-size:0.875rem;font-weight:500;transition:background 0.2s}
+.btn-nav-cta:hover{background:var(--brand-dark)}
+ 
+/* HERO */
+.hero{max-width:1100px;margin:0 auto;padding:5rem 2rem 3rem;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--brand-light);color:var(--brand-dark);font-size:0.75rem;font-weight:500;padding:5px 12px;border-radius:20px;margin-bottom:1.5rem;border:1px solid var(--brand-mid)}
+.hero h1{font-family:'Fraunces',serif;font-size:3.25rem;font-weight:300;line-height:1.1;letter-spacing:-1px;margin-bottom:1.25rem}
+.hero h1 em{font-style:italic;color:var(--brand)}
+.hero-desc{font-size:1.0625rem;color:var(--text2);line-height:1.7;margin-bottom:2rem;max-width:480px}
+.hero-actions{display:flex;gap:1rem;flex-wrap:wrap}
+.hero-actions .btn-primary{padding:0.75rem 1.75rem;font-size:0.9375rem;border-radius:var(--radius-lg)}
+.hero-actions .btn-outline{padding:0.75rem 1.75rem;font-size:0.9375rem;border-radius:var(--radius-lg)}
+ 
+/* Hero card */
+.hero-visual{position:relative}
+.hero-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:var(--shadow-lg)}
+.hc-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.hc-title{font-size:0.8rem;color:var(--text3)}
+.hc-badge{font-size:0.7rem;background:#EAF3DE;color:#3B6D11;padding:3px 8px;border-radius:4px}
+.product-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.product-row:last-child{border-bottom:none}
+.prod-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.prod-info{flex:1}.prod-name{font-size:0.8125rem;font-weight:500}.prod-origin{font-size:0.7rem;color:var(--text3)}
+.prod-price{font-size:0.8125rem;font-weight:500;color:var(--brand-dark)}
+.float-pill{position:absolute;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:0.75rem;box-shadow:var(--shadow);display:flex;align-items:center;gap:6px}
+.fp1{top:-16px;left:-24px}.fp2{bottom:-16px;right:-20px}
+.fp-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+ 
+/* STATS */
+.stats-band{background:var(--brand-dark);padding:3rem 2rem}
+.stats-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;text-align:center}
+.stat-num{font-family:'Fraunces',serif;font-size:2.25rem;font-weight:300;color:#fff;letter-spacing:-0.5px}
+.stat-label{font-size:0.8125rem;color:var(--brand-mid);margin-top:4px}
+ 
+/* FEATURES */
+.features,.cats,.cta-section{max-width:1100px;margin:0 auto;padding:5rem 2rem}
+.section-label{font-size:0.72rem;font-weight:600;color:var(--brand);letter-spacing:2px;text-transform:uppercase;margin-bottom:1rem}
+.section-title{font-family:'Fraunces',serif;font-size:2.25rem;font-weight:300;line-height:1.2;letter-spacing:-0.5px;margin-bottom:3rem;max-width:500px}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.feat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.75rem;transition:border-color 0.2s,box-shadow 0.2s}
+.feat-card:hover{border-color:var(--brand-mid);box-shadow:0 4px 20px rgba(29,158,117,0.08)}
+.feat-icon{width:44px;height:44px;background:var(--brand-light);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;font-size:1.25rem}
+.feat-card h3{font-size:1rem;font-weight:500;margin-bottom:0.5rem}
+.feat-card p{font-size:0.875rem;color:var(--text2);line-height:1.65}
+ 
+/* HOW */
+.how{background:var(--surface);padding:5rem 2rem;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.how-inner{max-width:1100px;margin:0 auto}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);position:relative;margin-top:3rem}
+.steps::before{content:'';position:absolute;top:24px;left:12.5%;right:12.5%;height:1px;background:linear-gradient(to right,var(--border),var(--brand-light),var(--border))}
+.step{text-align:center;position:relative;z-index:1;padding:0 1rem}
+.step-num{width:48px;height:48px;border-radius:50%;background:var(--brand-light);border:2px solid var(--brand-mid);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:1.125rem;color:var(--brand-dark);margin:0 auto 1rem}
+.step h4{font-size:0.875rem;font-weight:500;margin-bottom:0.375rem}
+.step p{font-size:0.8rem;color:var(--text2);line-height:1.6}
+ 
+/* CATS */
+.cats-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:1rem;margin-top:3rem}
+.cat-tile{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem 0.75rem;text-align:center;cursor:pointer;transition:all 0.2s;display:block}
+.cat-tile:hover{border-color:var(--brand);background:var(--brand-light)}
+.cat-em{font-size:1.75rem;display:block;margin-bottom:0.5rem}
+.cat-tile span:last-child{font-size:0.75rem;color:var(--text2)}
+.cat-tile:hover span:last-child{color:var(--brand-dark)}
+ 
+/* TESTIMONIALS */
+.testi{background:var(--brand-dark);padding:5rem 2rem}
+.testi-inner{max-width:1100px;margin:0 auto}
+.testi-label{font-size:0.72rem;font-weight:600;color:var(--brand-mid);letter-spacing:2px;text-transform:uppercase;margin-bottom:1rem}
+.testi-title{font-family:'Fraunces',serif;font-size:2rem;font-weight:300;color:#fff;margin-bottom:3rem;max-width:400px;line-height:1.25}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.testi-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:1.5rem}
+.testi-quote{font-size:0.875rem;color:rgba(255,255,255,0.8);line-height:1.7;margin-bottom:1.25rem;font-style:italic}
+.testi-author{display:flex;align-items:center;gap:10px}
+.testi-avatar{width:36px;height:36px;border-radius:50%;background:var(--brand-mid);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:0.72rem;color:var(--brand-dark);flex-shrink:0}
+.testi-name{font-size:0.8125rem;font-weight:500;color:#fff}
+.testi-role{font-size:0.7rem;color:var(--brand-mid)}
+ 
+/* CTA BOX */
+.cta-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:4rem 2rem;text-align:center;position:relative;overflow:hidden}
+.cta-box::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(29,158,117,0.08) 0%,transparent 70%);pointer-events:none}
+.cta-box h2{font-family:'Fraunces',serif;font-size:2.5rem;font-weight:300;letter-spacing:-0.5px;margin-bottom:1rem;position:relative}
+.cta-box h2 em{font-style:italic;color:var(--brand)}
+.cta-box p{color:var(--text2);font-size:1rem;margin-bottom:2rem;position:relative}
+.cta-actions{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;position:relative}
+ 
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:3rem 2rem 2rem}
+.footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem}
+.footer-brand .logo{display:block;margin-bottom:0.75rem}
+.footer-brand p{font-size:0.8125rem;color:var(--text2);line-height:1.65;max-width:220px}
+.footer-col h5{font-size:0.72rem;font-weight:600;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:1rem}
+.footer-col a{display:block;font-size:0.8125rem;color:var(--text2);margin-bottom:0.5rem;transition:color 0.2s}
+.footer-col a:hover{color:var(--brand)}
+.footer-bottom{max-width:1100px;margin:2rem auto 0;padding-top:1.5rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.footer-bottom p{font-size:0.75rem;color:var(--text3)}
+ 
+/* ===================================================
+   ★ MODALS (Login + Sign Up)
+=================================================== */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,15,12,0.5);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--radius-xl);padding:2.5rem;width:100%;max-width:440px;margin:1rem;border:1px solid var(--border);position:relative;max-height:90vh;overflow-y:auto}
+.modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.1rem;color:var(--text3);cursor:pointer;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.modal-close:hover{background:#f0efea;color:var(--text)}
+.modal-logo{font-family:'Fraunces',serif;font-size:1.375rem;font-weight:600;color:var(--brand-dark);margin-bottom:0.375rem}
+.modal-logo span{color:var(--brand)}
+.modal h2{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:300;margin-bottom:0.375rem}
+.modal-sub{font-size:0.875rem;color:var(--text2);margin-bottom:1.75rem}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-size:0.8125rem;font-weight:500;margin-bottom:6px}
+.form-group input,.form-group select{width:100%;padding:0.625rem 0.875rem;border:1.5px solid var(--border);border-radius:8px;font-size:0.9rem;color:var(--text);background:var(--bg);transition:border-color 0.2s;outline:none}
+.form-group input:focus,.form-group select:focus{border-color:var(--brand)}
+.form-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
+.form-check{display:flex;align-items:center;gap:6px;font-size:0.8rem;color:var(--text2);cursor:pointer}
+.forgot{font-size:0.8rem;color:var(--brand)}
+.forgot:hover{text-decoration:underline}
+.modal .btn-primary{width:100%;padding:0.75rem;font-size:0.9375rem;border-radius:8px}
+.modal-divider{display:flex;align-items:center;gap:12px;margin:1.25rem 0}
+.modal-divider::before,.modal-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.modal-divider span{font-size:0.75rem;color:var(--text3)}
+.btn-social{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:0.65rem;font-size:0.875rem;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:0.625rem;transition:all 0.2s}
+.btn-social:hover{border-color:var(--brand);background:var(--brand-light)}
+.modal-footer-text{text-align:center;font-size:0.8125rem;color:var(--text2);margin-top:1.25rem}
+.modal-footer-text a{color:var(--brand);cursor:pointer}
+.modal-footer-text a:hover{text-decoration:underline}
+ 
+/* Role selector */
+.role-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-bottom:1.5rem}
+.role-card{border:2px solid var(--border);border-radius:12px;padding:1rem 0.75rem;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--bg)}
+.role-card:hover{border-color:var(--brand-mid);background:var(--brand-light)}
+.role-card.selected{border-color:var(--brand);background:var(--brand-light)}
+.role-card .role-em{font-size:1.75rem;display:block;margin-bottom:0.5rem}
+.role-card .role-name{font-size:0.8125rem;font-weight:500;color:var(--text)}
+.role-card .role-desc{font-size:0.7rem;color:var(--text3);margin-top:2px}
+.role-card.selected .role-name{color:var(--brand-dark)}
+ 
+/* Form steps */
+.step-indicator{display:flex;align-items:center;gap:8px;margin-bottom:1.75rem}
+.step-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all 0.3s}
+.step-dot.active{background:var(--brand);width:24px;border-radius:4px}
+.step-dot.done{background:var(--brand-mid)}
+.form-step{display:none}.form-step.active{display:block}
+.name-row{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem}
+.password-hint{font-size:0.72rem;color:var(--text3);margin-top:4px}
+.strength-bar{height:3px;border-radius:2px;background:var(--border);margin-top:6px;overflow:hidden}
+.strength-fill{height:100%;border-radius:2px;transition:width 0.3s,background 0.3s}
+ 
+/* ===================================================
+   ★ SHARED DASHBOARD SHELL
+=================================================== */
+.dash-shell{display:none;min-height:100vh;background:#F5F4F0}
+.dash-shell.active{display:flex;flex-direction:column}
+.dash-topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.5rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40}
+.topbar-left{display:flex;align-items:center;gap:1rem}
+.topbar-logo{font-family:'Fraunces',serif;font-size:1.25rem;font-weight:600;color:var(--brand-dark)}
+.topbar-logo span{color:var(--brand)}
+.topbar-role-badge{font-size:0.7rem;font-weight:600;padding:3px 10px;border-radius:20px;letter-spacing:0.5px;text-transform:uppercase}
+.badge-vendor{background:var(--amber-l);color:#7A4E00}
+.badge-user{background:var(--blue-l);color:#1B4E8A}
+.badge-admin{background:var(--red-l);color:var(--red)}
+.topbar-right{display:flex;align-items:center;gap:0.75rem}
+.topbar-avatar{width:34px;height:34px;border-radius:50%;background:var(--brand-light);border:2px solid var(--brand-mid);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:600;color:var(--brand-dark);cursor:pointer}
+.notif-btn{width:34px;height:34px;border-radius:8px;background:transparent;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:all 0.2s}
+.notif-btn:hover{background:var(--brand-light);border-color:var(--brand-mid)}
+.notif-dot{width:7px;height:7px;background:#EF9F27;border-radius:50%;position:absolute;top:5px;right:5px;border:2px solid #fff}
+ 
+.dash-body{display:flex;flex:1}
+.sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);padding:1.25rem 0;flex-shrink:0;display:flex;flex-direction:column}
+.sidebar-section{padding:0 0.875rem;margin-bottom:0.375rem}
+.sidebar-section-label{font-size:0.68rem;font-weight:600;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;padding:0.5rem 0.625rem;margin-top:0.5rem}
+.sidebar-link{display:flex;align-items:center;gap:10px;padding:0.55rem 0.875rem;border-radius:8px;font-size:0.8625rem;color:var(--text2);transition:all 0.2s;cursor:pointer;border:none;background:transparent;width:100%;text-align:left}
+.sidebar-link:hover{background:#f0efea;color:var(--text)}
+.sidebar-link.active{background:var(--brand-light);color:var(--brand-dark);font-weight:500}
+.sidebar-link svg{flex-shrink:0;opacity:0.7}
+.sidebar-link.active svg{opacity:1}
+.sidebar-spacer{flex:1}
+.sidebar-logout{padding:0 0.875rem;margin-bottom:0.5rem}
+ 
+.dash-main{flex:1;padding:2rem;overflow-y:auto;max-width:100%}
+.dash-header{margin-bottom:2rem}
+.dash-header h1{font-family:'Fraunces',serif;font-size:1.75rem;font-weight:300;letter-spacing:-0.25px}
+.dash-header p{color:var(--text2);font-size:0.9rem;margin-top:4px}
+ 
+/* Stat cards */
+.stat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem 1.5rem}
+.sc-label{font-size:0.78rem;color:var(--text3);margin-bottom:0.375rem}
+.sc-value{font-family:'Fraunces',serif;font-size:1.75rem;font-weight:300;letter-spacing:-0.5px;color:var(--text)}
+.sc-change{font-size:0.75rem;margin-top:4px;display:flex;align-items:center;gap:4px}
+.sc-up{color:#2C8A56}.sc-down{color:var(--red)}
+ 
+/* Tables */
+.dash-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.5rem}
+.dash-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
+.dash-card-title{font-size:0.9375rem;font-weight:500}
+table{width:100%;border-collapse:collapse}
+th{font-size:0.72rem;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase;padding:0 0.75rem 0.75rem;text-align:left;border-bottom:1px solid var(--border)}
+td{font-size:0.8375rem;padding:0.75rem;border-bottom:1px solid #f0efea;color:var(--text2)}
+td:first-child{color:var(--text);font-weight:500}
+tr:last-child td{border-bottom:none}
+.tag{display:inline-flex;align-items:center;font-size:0.7rem;font-weight:500;padding:3px 8px;border-radius:20px}
+.tag-green{background:#E2F5EB;color:#1A6B3A}
+.tag-amber{background:var(--amber-l);color:#7A4E00}
+.tag-blue{background:var(--blue-l);color:#1B4E8A}
+.tag-red{background:var(--red-l);color:var(--red)}
+.tag-gray{background:#EBEBEA;color:var(--text3)}
+ 
+/* Grid 2-col */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+ 
+/* Quick action tiles */
+.qa-tile{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;display:flex;flex-direction:column;gap:0.5rem;cursor:pointer;transition:all 0.2s}
+.qa-tile:hover{border-color:var(--brand-mid);box-shadow:0 2px 12px rgba(29,158,117,0.08)}
+.qa-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.125rem;margin-bottom:0.25rem}
+.qa-title{font-size:0.875rem;font-weight:500}
+.qa-desc{font-size:0.78rem;color:var(--text3)}
+ 
+/* Activity feed */
+.feed-item{display:flex;gap:12px;padding:0.75rem 0;border-bottom:1px solid #f0efea;align-items:flex-start}
+.feed-item:last-child{border-bottom:none}
+.feed-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.feed-content{flex:1}
+.feed-title{font-size:0.8375rem;color:var(--text)}
+.feed-time{font-size:0.75rem;color:var(--text3)}
+ 
+/* Chart placeholder */
+.chart-placeholder{height:160px;background:linear-gradient(to bottom,var(--brand-light),transparent);border-radius:8px;display:flex;align-items:flex-end;gap:4px;padding:0 8px 8px;overflow:hidden}
+.chart-bar{flex:1;background:var(--brand);border-radius:4px 4px 0 0;opacity:0.7;min-height:4px}
+ 
+/* Progress */
+.progress-row{display:flex;align-items:center;gap:12px;margin-bottom:0.75rem}
+.progress-label{font-size:0.8125rem;width:100px;flex-shrink:0;color:var(--text2)}
+.progress-bar{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;background:var(--brand)}
+.progress-val{font-size:0.78rem;color:var(--text3);width:36px;text-align:right;flex-shrink:0}
+ 
+/* User list */
+.user-row{display:flex;align-items:center;gap:12px;padding:0.625rem 0;border-bottom:1px solid #f0efea}
+.user-row:last-child{border-bottom:none}
+.user-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:600;flex-shrink:0}
+.user-info{flex:1}
+.user-name{font-size:0.8375rem;font-weight:500}
+.user-email{font-size:0.75rem;color:var(--text3)}
+ 
+/* ===================================================
+   RESPONSIVE
+=================================================== */
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;padding:3rem 1.25rem 2rem}
+  .hero h1{font-size:2.25rem}
+  .hero-visual{display:none}
+  .stats-inner{grid-template-columns:repeat(2,1fr)}
+  .features-grid,.testi-grid{grid-template-columns:1fr}
+  .steps{grid-template-columns:repeat(2,1fr)}.steps::before{display:none}
+  .cats-grid{grid-template-columns:repeat(3,1fr)}
+  .footer-inner{grid-template-columns:1fr 1fr;gap:2rem}
+  .nav-links{display:none}
+  .stat-cards{grid-template-columns:repeat(2,1fr)}
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .sidebar{display:none}
+}
+@media(max-width:600px){
+  .features-grid,.cats-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-inner,.role-grid{grid-template-columns:1fr}
+  .stat-cards{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+ 
+<!-- ============================================================
+     LANDING PAGE
+============================================================ -->
+<div id="page-landing" class="page active">
+<nav>
+  <div class="nav-inner">
+    <div class="logo">Nep<span>mart</span></div>
+    <ul class="nav-links">
+      <li><a href="#">Marketplace</a></li>
+      <li><a href="#">Trade Tools</a></li>
+      <li><a href="#">For Exporters</a></li>
+      <li><a href="#">Pricing</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn-login" onclick="openModal('login')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Log in
+      </button>
+      <button class="btn-nav-cta" onclick="openModal('signup')">Get started free</button>
+    </div>
+  </div>
+</nav>
+ 
+<section class="hero">
+  <div>
+    <div class="hero-badge">🌏 Trusted by 40,000+ traders globally</div>
+    <h1>Trade smarter,<br/>go <em>global</em> with confidence</h1>
+    <p class="hero-desc">Nepmart connects exporters, importers, and traders worldwide — with AI-powered search, verified suppliers, and secure deal management built for modern commerce.</p>
+    <div class="hero-actions">
+      <button class="btn btn-primary btn-lg" onclick="openModal('signup')">Start trading free</button>
+      <button class="btn btn-outline btn-lg">Browse marketplace →</button>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="float-pill fp1"><div class="fp-dot" style="background:var(--brand)"></div><span style="color:var(--brand-dark);font-weight:500">Live deal matched</span></div>
+    <div class="hero-card">
+      <div class="hc-header"><span class="hc-title">Today's featured listings</span><span class="hc-badge">↑ 12 new today</span></div>
+      <div class="product-row"><div class="prod-icon" style="background:var(--brand-light)">🌿</div><div class="prod-info"><div class="prod-name">Organic Himalayan Tea</div><div class="prod-origin">Nepal · MOQ: 500 kg</div></div><div class="prod-price">$4.80/kg</div></div>
+      <div class="product-row"><div class="prod-icon" style="background:var(--amber-l)">🧵</div><div class="prod-info"><div class="prod-name">Pashmina Wool Grade A</div><div class="prod-origin">Nepal · MOQ: 200 units</div></div><div class="prod-price">$18.50/unit</div></div>
+      <div class="product-row"><div class="prod-icon" style="background:var(--coral-l)">🌾</div><div class="prod-info"><div class="prod-name">Himalayan Black Rice</div><div class="prod-origin">Nepal · MOQ: 1 ton</div></div><div class="prod-price">$2.10/kg</div></div>
+      <div class="product-row"><div class="prod-icon" style="background:var(--blue-l)">💎</div><div class="prod-info"><div class="prod-name">Handcrafted Thangka Art</div><div class="prod-origin">Nepal · MOQ: 10 pieces</div></div><div class="prod-price">$120/piece</div></div>
+    </div>
+    <div class="float-pill fp2"><div class="fp-dot" style="background:var(--amber)"></div><span style="color:#633806;font-weight:500">Secure payment verified</span></div>
+  </div>
+</section>
+ 
+<div class="stats-band">
+  <div class="stats-inner">
+    <div><div class="stat-num">40K+</div><div class="stat-label">Active traders</div></div>
+    <div><div class="stat-num">120+</div><div class="stat-label">Countries reached</div></div>
+    <div><div class="stat-num">$2.8B</div><div class="stat-label">Trade facilitated</div></div>
+    <div><div class="stat-num">98%</div><div class="stat-label">Satisfaction rate</div></div>
+  </div>
+</div>
+ 
+<section class="features">
+  <div class="section-label">Platform features</div>
+  <h2 class="section-title">Everything you need to trade with confidence</h2>
+  <div class="features-grid">
+    <div class="feat-card"><div class="feat-icon">🤖</div><h3>AI-powered search</h3><p>Find the right products and suppliers instantly with intelligent matching across trade language and specifications.</p></div>
+    <div class="feat-card"><div class="feat-icon">🔒</div><h3>Secure communications</h3><p>End-to-end encrypted messaging, document sharing, and verified contact profiles — negotiate with trust.</p></div>
+    <div class="feat-card"><div class="feat-icon">📋</div><h3>Trade management</h3><p>Track deals, manage quotations, handle contracts, and monitor shipment milestones from one dashboard.</p></div>
+    <div class="feat-card"><div class="feat-icon">✅</div><h3>Verified suppliers</h3><p>Every supplier goes through our verification process. Check ratings, certifications and export history.</p></div>
+    <div class="feat-card"><div class="feat-icon">🌐</div><h3>Multi-currency & finance</h3><p>Quote and transact in 50+ currencies. Access letters of credit and escrow-backed payment options.</p></div>
+    <div class="feat-card"><div class="feat-icon">📊</div><h3>Market intelligence</h3><p>Real-time price trends, demand signals, and competitor benchmarking — backed by live global trade data.</p></div>
+  </div>
+</section>
+ 
+<section class="how">
+  <div class="how-inner">
+    <div class="section-label">How it works</div>
+    <h2 class="section-title">From listing to deal in four steps</h2>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><h4>Create your profile</h4><p>Set up your business, add products or sourcing needs, and get verified in under 24 hours.</p></div>
+      <div class="step"><div class="step-num">2</div><h4>Discover & match</h4><p>Browse AI-curated listings or post a request and get matched with qualified partners automatically.</p></div>
+      <div class="step"><div class="step-num">3</div><h4>Negotiate securely</h4><p>Use encrypted chat and document tools to exchange samples, pricing, and terms with confidence.</p></div>
+      <div class="step"><div class="step-num">4</div><h4>Close & manage</h4><p>Finalize contracts, track shipments, and manage payments within your Nepmart dashboard.</p></div>
+    </div>
+  </div>
+</section>
+ 
+<section class="cats">
+  <div class="section-label">Browse by category</div>
+  <h2 class="section-title">100,000+ products across every industry</h2>
+  <div class="cats-grid">
+    <a class="cat-tile"><span class="cat-em">🌿</span><span>Agriculture</span></a>
+    <a class="cat-tile"><span class="cat-em">🧵</span><span>Textiles</span></a>
+    <a class="cat-tile"><span class="cat-em">🏗️</span><span>Construction</span></a>
+    <a class="cat-tile"><span class="cat-em">💻</span><span>Electronics</span></a>
+    <a class="cat-tile"><span class="cat-em">⚗️</span><span>Chemicals</span></a>
+    <a class="cat-tile"><span class="cat-em">💊</span><span>Healthcare</span></a>
+    <a class="cat-tile"><span class="cat-em">🛋️</span><span>Furniture</span></a>
+    <a class="cat-tile"><span class="cat-em">🚗</span><span>Automotive</span></a>
+    <a class="cat-tile"><span class="cat-em">🍵</span><span>Food & Beverage</span></a>
+    <a class="cat-tile"><span class="cat-em">🪨</span><span>Minerals</span></a>
+    <a class="cat-tile"><span class="cat-em">🌸</span><span>Handicrafts</span></a>
+    <a class="cat-tile"><span class="cat-em">⚡</span><span>Energy</span></a>
+  </div>
+</section>
+ 
+<section class="testi">
+  <div class="testi-inner">
+    <div class="testi-label">From our traders</div>
+    <h2 class="testi-title">Stories from the global trade floor</h2>
+    <div class="testi-grid">
+      <div class="testi-card"><p class="testi-quote">"Nepmart connected us with verified buyers in Germany within days. The secure messaging and contract tools made the whole deal seamless."</p><div class="testi-author"><div class="testi-avatar">RK</div><div><div class="testi-name">Rajesh Koirala</div><div class="testi-role">Exporter · Pashmina textiles</div></div></div></div>
+      <div class="testi-card"><p class="testi-quote">"The AI search is genuinely impressive. We've cut our sourcing time by 60% since switching to Nepmart. It just works."</p><div class="testi-author"><div class="testi-avatar">SL</div><div><div class="testi-name">Sofia Liu</div><div class="testi-role">Importer · Agricultural goods</div></div></div></div>
+      <div class="testi-card"><p class="testi-quote">"From quote to shipment, everything is trackable in one place. The verification gives us real peace of mind with new partners."</p><div class="testi-author"><div class="testi-avatar">AM</div><div><div class="testi-name">Ahmed Malik</div><div class="testi-role">Trader · Industrial materials</div></div></div></div>
+    </div>
+  </div>
+</section>
+ 
+<section class="cta-section">
+  <div class="cta-box">
+    <h2>Ready to grow your<br/><em>global trade</em>?</h2>
+    <p>Join 40,000+ traders already using Nepmart to connect, negotiate, and close deals worldwide.</p>
+    <div class="cta-actions">
+      <button class="btn btn-primary btn-lg" onclick="openModal('signup')">Create free account</button>
+      <button class="btn btn-outline btn-lg">Book a demo</button>
+    </div>
+  </div>
+</section>
+ 
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand"><div class="logo">Nep<span>mart</span></div><p>A global B2B marketplace connecting traders, exporters, and importers with secure, AI-powered trade tools.</p></div>
+    <div class="footer-col"><h5>Platform</h5><a href="#">Marketplace</a><a href="#">Trade tools</a><a href="#">Supplier verification</a><a href="#">Market data</a></div>
+    <div class="footer-col"><h5>Company</h5><a href="#">About</a><a href="#">Blog</a><a href="#">Careers</a><a href="#">Press</a></div>
+    <div class="footer-col"><h5>Support</h5><a href="#">Help center</a><a href="#">Contact us</a><a href="#">Privacy policy</a><a href="#">Terms</a></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 Nepmart. All rights reserved.</p><p>Made with 🌿 for global trade</p></div>
+</footer>
+</div><!-- /page-landing -->
+ 
+<!-- ============================================================
+     LOGIN MODAL
+============================================================ -->
+<div class="modal-overlay" id="modal-login" onclick="overlayClick(event,'modal-login')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-login')">✕</button>
+    <div class="modal-logo">Nep<span>mart</span></div>
+    <h2>Welcome back</h2>
+    <p class="modal-sub">Log in to your trader account</p>
+    <button class="btn-social"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>Continue with Google</button>
+    <button class="btn-social"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>Continue with LinkedIn</button>
+    <div class="modal-divider"><span>or email</span></div>
+    <div class="form-group"><label>Email address</label><input type="email" placeholder="you@company.com"/></div>
+    <div class="form-group"><label>Password</label><input type="password" placeholder="••••••••"/></div>
+    <div class="form-row">
+      <label class="form-check"><input type="checkbox"/> Remember me</label>
+      <a href="#" class="forgot">Forgot password?</a>
+    </div>
+    <!-- Demo login buttons -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;margin-bottom:0.875rem">
+      <button class="btn btn-sm" style="background:var(--amber-l);color:#7A4E00;border:1px solid #f0d88a;border-radius:7px" onclick="loginAs('vendor')">→ Vendor Demo</button>
+      <button class="btn btn-sm" style="background:var(--blue-l);color:#1B4E8A;border:1px solid #bcd4f5;border-radius:7px" onclick="loginAs('user')">→ User Demo</button>
+      <button class="btn btn-sm" style="background:var(--red-l);color:var(--red);border:1px solid #f5c6c6;border-radius:7px" onclick="loginAs('admin')">→ Admin Demo</button>
+    </div>
+    <button class="btn btn-primary" style="width:100%;padding:0.75rem;font-size:0.9375rem" onclick="loginAs('user')">Log in to Nepmart</button>
+    <p class="modal-footer-text">Don't have an account? <a onclick="switchModal('modal-login','modal-signup')">Sign up free</a></p>
+  </div>
+</div>
+ 
+<!-- ============================================================
+     SIGN UP MODAL (3 steps)
+============================================================ -->
+<div class="modal-overlay" id="modal-signup" onclick="overlayClick(event,'modal-signup')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-signup')">✕</button>
+    <div class="modal-logo">Nep<span>mart</span></div>
+    <h2>Create your account</h2>
+    <p class="modal-sub">Join 40,000+ traders on Nepmart</p>
+ 
+    <!-- Step indicator -->
+    <div class="step-indicator">
+      <div class="step-dot active" id="sdot-1"></div>
+      <div class="step-dot" id="sdot-2"></div>
+      <div class="step-dot" id="sdot-3"></div>
+    </div>
+ 
+    <!-- Step 1: Role -->
+    <div class="form-step active" id="sstep-1">
+      <p style="font-size:0.875rem;color:var(--text2);margin-bottom:1rem;font-weight:500">I want to join as a…</p>
+      <div class="role-grid">
+        <div class="role-card" onclick="selectRole('vendor',this)">
+          <span class="role-em">🏪</span>
+          <div class="role-name">Vendor</div>
+          <div class="role-desc">Sell & export products</div>
+        </div>
+        <div class="role-card" onclick="selectRole('user',this)">
+          <span class="role-em">🛒</span>
+          <div class="role-name">Buyer</div>
+          <div class="role-desc">Source & import goods</div>
+        </div>
+        <div class="role-card" onclick="selectRole('admin',this)">
+          <span class="role-em">⚙️</span>
+          <div class="role-name">Admin</div>
+          <div class="role-desc">Platform management</div>
+        </div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;padding:0.75rem" onclick="nextStep(2)">Continue →</button>
+      <p style="font-size:0.72rem;color:var(--text3);text-align:center;margin-top:0.75rem">You can change your role later from account settings</p>
+    </div>
+ 
+    <!-- Step 2: Details -->
+    <div class="form-step" id="sstep-2">
+      <div class="name-row">
+        <div class="form-group"><label>First name</label><input type="text" placeholder="Ram"/></div>
+        <div class="form-group"><label>Last name</label><input type="text" placeholder="Sharma"/></div>
+      </div>
+      <div class="form-group"><label>Business / Company name</label><input type="text" placeholder="Himalayan Exports Pvt. Ltd."/></div>
+      <div class="form-group"><label>Email address</label><input type="email" placeholder="you@company.com"/></div>
+      <div class="form-group">
+        <label>Country</label>
+        <select>
+          <option>Nepal</option><option>India</option><option>China</option><option>United States</option><option>Germany</option><option>United Kingdom</option><option>UAE</option><option>Other</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:0.75rem">
+        <button class="btn btn-ghost" style="flex:0 0 auto" onclick="nextStep(1)">← Back</button>
+        <button class="btn btn-primary" style="flex:1;padding:0.75rem" onclick="nextStep(3)">Continue →</button>
+      </div>
+    </div>
+ 
+    <!-- Step 3: Password + done -->
+    <div class="form-step" id="sstep-3">
+      <div class="form-group">
+        <label>Create password</label>
+        <input type="password" id="pw-input" placeholder="Min. 8 characters" oninput="updateStrength(this.value)"/>
+        <div class="strength-bar"><div class="strength-fill" id="strength-fill" style="width:0%;background:var(--red)"></div></div>
+        <p class="password-hint" id="strength-label">Enter a password</p>
+      </div>
+      <div class="form-group"><label>Confirm password</label><input type="password" placeholder="Repeat password"/></div>
+      <label class="form-check" style="margin-bottom:1.25rem;font-size:0.8125rem;color:var(--text2)">
+        <input type="checkbox"/> I agree to the <a href="#" style="color:var(--brand)">Terms of Service</a> and <a href="#" style="color:var(--brand)">Privacy Policy</a>
+      </label>
+      <div style="display:flex;gap:0.75rem">
+        <button class="btn btn-ghost" style="flex:0 0 auto" onclick="nextStep(2)">← Back</button>
+        <button class="btn btn-primary" style="flex:1;padding:0.75rem" onclick="completeSignup()">Create account ✓</button>
+      </div>
+    </div>
+ 
+    <p class="modal-footer-text">Already have an account? <a onclick="switchModal('modal-signup','modal-login')">Log in</a></p>
+  </div>
+</div>
+ 
+<!-- ============================================================
+     VENDOR DASHBOARD
+============================================================ -->
+<div id="dash-vendor" class="dash-shell">
+  <div class="dash-topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">Nep<span>mart</span></div>
+      <span class="topbar-role-badge badge-vendor">🏪 Vendor</span>
+    </div>
+    <div class="topbar-right">
+      <button class="notif-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="notif-dot"></div></button>
+      <div class="topbar-avatar" id="v-avatar">RK</div>
+      <button class="btn btn-sm btn-ghost" onclick="logout()">Log out</button>
+    </div>
+  </div>
+  <div class="dash-body">
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Main</div>
+        <button class="sidebar-link active"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</button>
+        <button class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><line x1="16" y1="21" x2="16" y2="7"/><line x1="8" y1="21" x2="8" y2="7"/></svg>My Products</button>
+        <button class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Orders</button>
+        <button class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Revenue</button>
+        <button class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Messages <span style="margin-left:auto;background:var(--amber);color:#fff;font-size:0.65rem;padding:1px 6px;border-radius:10px">3</span></button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Manage</div>
+        <button class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Shipments</button>
+        <button class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Buyers</button>
+        <button class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Analytics</button>
+      </div>
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-logout">
+        <button class="sidebar-link" style="color:var(--red)" onclick="logout()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Log out</button>
+      </div>
+    </div>
+    <div class="dash-main">
+      <div class="dash-header">
+        <h1>Good morning, <span id="v-name">Rajesh</span> 👋</h1>
+        <p>Here's what's happening with your store today.</p>
+      </div>
+      <div class="stat-cards">
+        <div class="stat-card"><div class="sc-label">Total Revenue</div><div class="sc-value">$48,320</div><div class="sc-change sc-up">↑ 12.4% this month</div></div>
+        <div class="stat-card"><div class="sc-label">Active Listings</div><div class="sc-value">34</div><div class="sc-change sc-up">↑ 3 new this week</div></div>
+        <div class="stat-card"><div class="sc-label">Pending Orders</div><div class="sc-value">12</div><div class="sc-change" style="color:var(--amber)">⚡ 4 need action</div></div>
+        <div class="stat-card"><div class="sc-label">Avg. Rating</div><div class="sc-value">4.8⭐</div><div class="sc-change sc-up">↑ 0.2 vs last month</div></div>
+      </div>
+ 
+      <div class="grid-2">
+        <div class="dash-card">
+          <div class="dash-card-header"><span class="dash-card-title">Revenue (last 7 days)</span><span class="tag tag-green">+12%</span></div>
+          <div class="chart-placeholder">
+            <div class="chart-bar" style="height:40%"></div><div class="chart-bar" style="height:65%"></div><div class="chart-bar" style="height:50%"></div><div class="chart-bar" style="height:80%"></div><div class="chart-bar" style="height:70%"></div><div class="chart-bar" style="height:90%"></div><div class="chart-bar" style="height:75%;opacity:1"></div>
+          </div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-header"><span class="dash-card-title">Quick actions</span></div>
+          <div class="grid-2" style="gap:0.75rem;margin-bottom:0">
+            <div class="qa-tile"><div class="qa-icon" style="background:var(--brand-light)">➕</div><div class="qa-title">Add Product</div><div class="qa-desc">List a new item</div></div>
+            <div class="qa-tile"><div class="qa-icon" style="background:var(--amber-l)">📦</div><div class="qa-title">Ship Order</div><div class="qa-desc">Update shipment</div></div>
+            <div class="qa-tile"><div class="qa-icon" style="background:var(--blue-l)">💬</div><div class="qa-title">Messages</div><div class="qa-desc">3 unread</div></div>
+            <div class="qa-tile"><div class="qa-icon" style="background:var(--coral-l)">📊</div><div class="qa-title">Analytics</div><div class="qa-desc">View insights</div></div>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="dash-card">
+        <div class="dash-card-header"><span class="dash-card-title">Recent orders</span><button class="btn btn-sm btn-outline">View all</button></div>
+        <table>
+          <thead><tr><th>Order ID</th><th>Buyer</th><th>Product</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody>
+            <tr><td>#NM-4821</td><td>GreenSource GmbH</td><td>Himalayan Tea (500kg)</td><td>$2,400</td><td><span class="tag tag-amber">Processing</span></td><td>May 17</td></tr>
+            <tr><td>#NM-4810</td><td>AsiaTrade Co.</td><td>Pashmina Wool (200 units)</td><td>$3,700</td><td><span class="tag tag-green">Shipped</span></td><td>May 15</td></tr>
+            <tr><td>#NM-4798</td><td>Dubai Imports LLC</td><td>Thangka Art (10 pcs)</td><td>$1,200</td><td><span class="tag tag-blue">Delivered</span></td><td>May 12</td></tr>
+            <tr><td>#NM-4790</td><td>Shanghai Foods Ltd</td><td>Black Rice (2 tons)</td><td>$4,200</td><td><span class="tag tag-green">Shipped</span></td><td>May 10</td></tr>
+          </tbody>
+        </table>
+      </div>
+ 
+      <div class="dash-card">
+        <div class="dash-card-header"><span class="dash-card-title">Top performing products</span></div>
+        <div class="progress-row"><div class="progress-label">Himalayan Tea</div><div class="progress-bar"><div class="progress-fill" style="width:88%"></div></div><div class="progress-val">88%</div></div>
+        <div class="progress-row"><div class="progress-label">Pashmina Wool</div><div class="progress-bar"><div class="progress-fill" style="width:74%"></div></div><div class="progress-val">74%</div></div>
+        <div class="progress-row"><div class="progress-label">Black Rice</div><div class="progress-bar"><div class="progress-fill" style="width:61%"></div></div><div class="progress-val">61%</div></div>
+        <div class="progress-row"><div class="progress-label">Thangka Art</div><div class="progress-bar"><div class="progress-fill" style="width:45%"></div></div><div class="progress-val">45%</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ============================================================
+     USER / BUYER DASHBOARD
+============================================================ -->
+<div id="dash-user" class="dash-shell">
+  <div class="dash-topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">Nep<span>mart</span></div>
+      <span class="topbar-role-badge badge-user">🛒 Buyer</span>
+    </div>
+    <div class="topbar-right">
+      <button class="notif-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+      <div class="topbar-avatar" style="background:var(--blue-l);border-color:#bcd4f5;color:#1B4E8A" id="u-avatar">SL</div>
+      <button class="btn btn-sm btn-ghost" onclick="logout()">Log out</button>
+    </div>
+  </div>
+  <div class="dash-body">
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Discover</div>
+        <button class="sidebar-link active"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</button>
+        <button class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Search Products</button>
+        <button class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Saved Items</button>
+        <button class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Messages <span style="margin-left:auto;background:var(--blue);color:#fff;font-size:0.65rem;padding:1px 6px;border-radius:10px">2</span></button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Orders</div>
+        <button class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>My Orders</button>
+        <button class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Track Shipments</button>
+        <button class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Documents</button>
+      </div>
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-logout">
+        <button class="sidebar-link" style="color:var(--red)" onclick="logout()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Log out</button>
+      </div>
+    </div>
+    <div class="dash-main">
+      <div class="dash-header">
+        <h1>Welcome back, <span id="u-name">Sofia</span> 👋</h1>
+        <p>Find products, track orders, and manage your trade deals.</p>
+      </div>
+ 
+      <!-- AI search bar -->
+      <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:1rem 1.25rem;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;box-shadow:var(--shadow)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input style="flex:1;border:none;background:transparent;font-size:0.9375rem;font-family:'DM Sans',sans-serif;color:var(--text);outline:none" placeholder="Search products, suppliers, categories… (AI-powered)"/>
+        <button class="btn btn-sm btn-primary">Search</button>
+      </div>
+ 
+      <div class="stat-cards">
+        <div class="stat-card"><div class="sc-label">Active Orders</div><div class="sc-value">7</div><div class="sc-change" style="color:var(--amber)">⚡ 2 need review</div></div>
+        <div class="stat-card"><div class="sc-label">Total Spent</div><div class="sc-value">$31,450</div><div class="sc-change sc-up">↑ $8k this month</div></div>
+        <div class="stat-card"><div class="sc-label">Saved Items</div><div class="sc-value">24</div><div class="sc-change sc-up">↑ 5 new matches</div></div>
+        <div class="stat-card"><div class="sc-label">Suppliers</div><div class="sc-value">12</div><div class="sc-change" style="color:var(--text3)">All verified ✓</div></div>
+      </div>
+ 
+      <div class="grid-2">
+        <div class="dash-card">
+          <div class="dash-card-header"><span class="dash-card-title">Recent orders</span><button class="btn btn-sm btn-outline">View all</button></div>
+          <table>
+            <thead><tr><th>Order</th><th>Product</th><th>Status</th><th>ETA</th></tr></thead>
+            <tbody>
+              <tr><td>#NM-4821</td><td>Himalayan Tea 500kg</td><td><span class="tag tag-amber">In transit</span></td><td>May 22</td></tr>
+              <tr><td>#NM-4799</td><td>Pashmina (200 units)</td><td><span class="tag tag-green">Delivered</span></td><td>May 10</td></tr>
+              <tr><td>#NM-4752</td><td>Saffron 50kg</td><td><span class="tag tag-blue">Processing</span></td><td>May 28</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-header"><span class="dash-card-title">AI-recommended for you</span><span class="tag tag-blue">Personalized</span></div>
+          <div class="product-row"><div class="prod-icon" style="background:var(--brand-light)">🌿</div><div class="prod-info"><div class="prod-name">Organic Ginger Root</div><div class="prod-origin">Nepal · $3.20/kg</div></div><button class="btn btn-sm btn-primary">View</button></div>
+          <div class="product-row"><div class="prod-icon" style="background:var(--amber-l)">🌾</div><div class="prod-info"><div class="prod-name">Red Lentils Grade A</div><div class="prod-origin">Nepal · $1.80/kg</div></div><button class="btn btn-sm btn-primary">View</button></div>
+          <div class="product-row"><div class="prod-icon" style="background:var(--blue-l)">🧵</div><div class="prod-info"><div class="prod-name">Hand-dyed Silk Fabric</div><div class="prod-origin">Nepal · $22/m</div></div><button class="btn btn-sm btn-primary">View</button></div>
+        </div>
+      </div>
+ 
+      <div class="dash-card">
+        <div class="dash-card-header"><span class="dash-card-title">Recent activity</span></div>
+        <div class="feed-item"><div class="feed-dot" style="background:var(--brand)"></div><div class="feed-content"><div class="feed-title">Order #NM-4821 shipped — tracking available</div><div class="feed-time">2 hours ago</div></div></div>
+        <div class="feed-item"><div class="feed-dot" style="background:var(--blue)"></div><div class="feed-content"><div class="feed-title">New message from Himalayan Exports Pvt. Ltd.</div><div class="feed-time">5 hours ago</div></div></div>
+        <div class="feed-item"><div class="feed-dot" style="background:var(--amber)"></div><div class="feed-content"><div class="feed-title">Quote accepted for Saffron 50kg — confirm to proceed</div><div class="feed-time">Yesterday</div></div></div>
+        <div class="feed-item"><div class="feed-dot" style="background:var(--brand-mid)"></div><div class="feed-content"><div class="feed-title">5 new suppliers matched your sourcing request</div><div class="feed-time">2 days ago</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ============================================================
+     ADMIN DASHBOARD
+============================================================ -->
+<div id="dash-admin" class="dash-shell">
+  <div class="dash-topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">Nep<span>mart</span></div>
+      <span class="topbar-role-badge badge-admin">⚙️ Admin</span>
+    </div>
+    <div class="topbar-right">
+      <button class="notif-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="notif-dot"></div></button>
+      <div class="topbar-avatar" style="background:var(--red-l);border-color:#f5c6c6;color:var(--red)" id="a-avatar">AD</div>
+      <button class="btn btn-sm btn-ghost" onclick="logout()">Log out</button>
+    </div>
+  </div>
+  <div class="dash-body">
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Overview</div>
+        <button class="sidebar-link active"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</button>
+        <button class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Users</button>
+        <button class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><line x1="16" y1="21" x2="16" y2="7"/><line x1="8" y1="21" x2="8" y2="7"/></svg>Vendors</button>
+        <button class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Orders</button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Moderation</div>
+        <button class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Reports <span style="margin-left:auto;background:var(--red);color:#fff;font-size:0.65rem;padding:1px 6px;border-radius:10px">5</span></button>
+        <button class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Verifications</button>
+        <button class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 17.66l-1.41 1.41M21 12h-2M5 12H3M17.66 17.66l1.41 1.41M5.34 6.34L3.93 4.93"/></svg>Settings</button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Finance</div>
+        <button class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Revenue</button>
+        <button class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Analytics</button>
+      </div>
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-logout">
+        <button class="sidebar-link" style="color:var(--red)" onclick="logout()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Log out</button>
+      </div>
+    </div>
+    <div class="dash-main">
+      <div class="dash-header">
+        <h1>Admin Control Centre 🛠️</h1>
+        <p>Platform overview — Monday, May 18 2026</p>
+      </div>
+ 
+      <div class="stat-cards">
+        <div class="stat-card"><div class="sc-label">Total Users</div><div class="sc-value">41,280</div><div class="sc-change sc-up">↑ 320 this week</div></div>
+        <div class="stat-card"><div class="sc-label">Active Vendors</div><div class="sc-value">8,340</div><div class="sc-change sc-up">↑ 48 pending review</div></div>
+        <div class="stat-card"><div class="sc-label">Platform Revenue</div><div class="sc-value">$284K</div><div class="sc-change sc-up">↑ 8.2% vs last month</div></div>
+        <div class="stat-card"><div class="sc-label">Open Reports</div><div class="sc-value">5</div><div class="sc-change sc-down">⚠️ Needs attention</div></div>
+      </div>
+ 
+      <div class="grid-2">
+        <div class="dash-card">
+          <div class="dash-card-header"><span class="dash-card-title">Platform growth (7 days)</span></div>
+          <div class="chart-placeholder">
+            <div class="chart-bar" style="height:55%"></div><div class="chart-bar" style="height:60%"></div><div class="chart-bar" style="height:50%"></div><div class="chart-bar" style="height:75%"></div><div class="chart-bar" style="height:68%"></div><div class="chart-bar" style="height:85%"></div><div class="chart-bar" style="height:100%;opacity:1"></div>
+          </div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-header"><span class="dash-card-title">Users by role</span></div>
+          <div class="progress-row"><div class="progress-label">Buyers</div><div class="progress-bar"><div class="progress-fill" style="width:72%;background:var(--blue)"></div></div><div class="progress-val">72%</div></div>
+          <div class="progress-row"><div class="progress-label">Vendors</div><div class="progress-bar"><div class="progress-fill" style="width:23%;background:var(--amber)"></div></div><div class="progress-val">23%</div></div>
+          <div class="progress-row"><div class="progress-label">Admins</div><div class="progress-bar"><div class="progress-fill" style="width:5%;background:var(--red)"></div></div><div class="progress-val">5%</div></div>
+          <div style="margin-top:1rem">
+            <div class="dash-card-header" style="margin-bottom:0.75rem"><span class="dash-card-title" style="font-size:0.875rem">Top countries</span></div>
+            <div class="progress-row"><div class="progress-label">Nepal</div><div class="progress-bar"><div class="progress-fill" style="width:38%"></div></div><div class="progress-val">38%</div></div>
+            <div class="progress-row"><div class="progress-label">India</div><div class="progress-bar"><div class="progress-fill" style="width:22%"></div></div><div class="progress-val">22%</div></div>
+            <div class="progress-row"><div class="progress-label">China</div><div class="progress-bar"><div class="progress-fill" style="width:18%"></div></div><div class="progress-val">18%</div></div>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="grid-2">
+        <div class="dash-card">
+          <div class="dash-card-header"><span class="dash-card-title">Pending verifications</span><span class="tag tag-amber">48 pending</span></div>
+          <div class="user-row"><div class="user-av" style="background:var(--amber-l);color:#7A4E00">EX</div><div class="user-info"><div class="user-name">EverestExports Co.</div><div class="user-email">Vendor · Submitted 2h ago</div></div><button class="btn btn-sm btn-primary">Review</button></div>
+          <div class="user-row"><div class="user-av" style="background:var(--blue-l);color:#1B4E8A">KT</div><div class="user-info"><div class="user-name">KathmanduTrade LLC</div><div class="user-email">Vendor · Submitted 5h ago</div></div><button class="btn btn-sm btn-primary">Review</button></div>
+          <div class="user-row"><div class="user-av" style="background:var(--coral-l);color:var(--coral)">SH</div><div class="user-info"><div class="user-name">SilkHaven Imports</div><div class="user-email">Vendor · Submitted 1d ago</div></div><button class="btn btn-sm btn-outline">Review</button></div>
+        </div>
+ 
+        <div class="dash-card">
+          <div class="dash-card-header"><span class="dash-card-title">Open reports</span><span class="tag tag-red">5 open</span></div>
+          <div class="user-row"><div class="user-av" style="background:var(--red-l);color:var(--red)">⚠</div><div class="user-info"><div class="user-name">Fake product listing</div><div class="user-email">Reported by 3 buyers · High priority</div></div><button class="btn btn-sm btn-danger">Resolve</button></div>
+          <div class="user-row"><div class="user-av" style="background:var(--amber-l);color:#7A4E00">⚠</div><div class="user-info"><div class="user-name">Payment dispute</div><div class="user-email">Order #NM-4777 · Medium priority</div></div><button class="btn btn-sm btn-danger">Resolve</button></div>
+          <div class="user-row"><div class="user-av" style="background:var(--border);color:var(--text3)">⚠</div><div class="user-info"><div class="user-name">Spam messages</div><div class="user-email">Vendor account flagged · Low</div></div><button class="btn btn-sm btn-outline">Review</button></div>
+        </div>
+      </div>
+ 
+      <div class="dash-card">
+        <div class="dash-card-header"><span class="dash-card-title">Recent user registrations</span><button class="btn btn-sm btn-outline">View all</button></div>
+        <table>
+          <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Country</th><th>Joined</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Priya Sharma</td><td>priya@tradeindia.com</td><td><span class="tag tag-blue">Buyer</span></td><td>India</td><td>May 18</td><td><span class="tag tag-green">Active</span></td></tr>
+            <tr><td>Liu Wei</td><td>liu@shanghaifoods.cn</td><td><span class="tag tag-amber">Vendor</span></td><td>China</td><td>May 17</td><td><span class="tag tag-amber">Pending</span></td></tr>
+            <tr><td>Ahmed Hassan</td><td>ahmed@gulftrade.ae</td><td><span class="tag tag-blue">Buyer</span></td><td>UAE</td><td>May 17</td><td><span class="tag tag-green">Active</span></td></tr>
+            <tr><td>Sara Mueller</td><td>sara@greensource.de</td><td><span class="tag tag-amber">Vendor</span></td><td>Germany</td><td>May 16</td><td><span class="tag tag-green">Active</span></td></tr>
+            <tr><td>Ram Thapa</td><td>ram@himalexports.np</td><td><span class="tag tag-amber">Vendor</span></td><td>Nepal</td><td>May 15</td><td><span class="tag tag-red">Flagged</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+  /* ---- state ---- */
+  let currentRole = null;
+  let signupStep  = 1;
+ 
+  /* ---- modal helpers ---- */
+  function openModal(id) {
+    document.getElementById('modal-' + id).classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function switchModal(from, to) {
+    closeModal(from);
+    setTimeout(() => openModal(to.replace('modal-','')), 180);
+  }
+  function overlayClick(e, id) {
+    if (e.target === document.getElementById(id)) closeModal(id);
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay.open').forEach(m => {
+        m.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    }
+  });
+ 
+  /* ---- sign-up role selection ---- */
+  function selectRole(role, el) {
+    currentRole = role;
+    document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+ 
+  /* ---- sign-up step navigation ---- */
+  function nextStep(n) {
+    if (n === 2 && !currentRole) { alert('Please select a role to continue.'); return; }
+    document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+    document.getElementById('sstep-' + n).classList.add('active');
+    signupStep = n;
+    // update dots
+    [1,2,3].forEach(i => {
+      const dot = document.getElementById('sdot-' + i);
+      dot.classList.remove('active','done');
+      if (i < n)  dot.classList.add('done');
+      if (i === n) dot.classList.add('active');
+    });
+  }
+ 
+  /* ---- password strength ---- */
+  function updateStrength(val) {
+    const fill  = document.getElementById('strength-fill');
+    const label = document.getElementById('strength-label');
+    let score = 0;
+    if (val.length >= 8)  score++;
+    if (/[A-Z]/.test(val)) score++;
+    if (/[0-9]/.test(val)) score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+    const map = [
+      {w:'0%',  c:'var(--red)',   t:'Enter a password'},
+      {w:'25%', c:'var(--red)',   t:'Too weak'},
+      {w:'50%', c:'var(--amber)', t:'Could be stronger'},
+      {w:'75%', c:'var(--amber)', t:'Almost there'},
+      {w:'100%',c:'var(--brand)', t:'Strong password ✓'},
+    ];
+    fill.style.width      = map[score].w;
+    fill.style.background = map[score].c;
+    label.textContent     = map[score].t;
+    label.style.color     = map[score].c;
+  }
+ 
+  /* ---- complete sign-up → go to dashboard ---- */
+  function completeSignup() {
+    closeModal('modal-signup');
+    const role = currentRole || 'user';
+    showDashboard(role);
+    // reset form
+    currentRole = null;
+    nextStep(1);
+    document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
+  }
+ 
+  /* ---- demo login ---- */
+  function loginAs(role) {
+    closeModal('modal-login');
+    showDashboard(role);
+  }
+ 
+  /* ---- show dashboard ---- */
+  function showDashboard(role) {
+    // hide landing
+    document.getElementById('page-landing').classList.remove('active');
+    // hide all dashboards
+    document.querySelectorAll('.dash-shell').forEach(d => d.classList.remove('active'));
+    // show correct one
+    const map = { vendor:'dash-vendor', user:'dash-user', admin:'dash-admin' };
+    const id  = map[role] || 'dash-user';
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0,0);
+  }
+ 
+  /* ---- logout → back to landing ---- */
+  function logout() {
+    document.querySelectorAll('.dash-shell').forEach(d => d.classList.remove('active'));
+    document.getElementById('page-landing').classList.add('active');
+    currentRole = null;
+    window.scrollTo(0,0);
+  }
+</script>
+</body>
+</html>
