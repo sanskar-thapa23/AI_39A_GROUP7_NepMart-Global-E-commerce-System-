@@ -11,7 +11,7 @@ def create_app():
     app.config['SECRET_KEY'] = 'dev-secret-key-nepmart'
     
     # 2. MySQL Connection Configuration
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:h1elloworld@localhost:3306/nepmart_db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://nepmart:Qlz%409766@localhost/nepmart"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
     # 3. Bind the extension to this app instance

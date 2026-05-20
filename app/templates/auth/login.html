@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Log in — Nep-Mart Global B2B{% endblock %}
+
+{% block content %}
+<div class="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-brand-deep via-brand-dark to-brand-deep relative overflow-hidden">
+  <!-- Glowing accent background blobs for high premium feel -->
+  <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-brand/10 rounded-full blur-[100px] pointer-events-none"></div>
+  <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-brand-crimson/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+  <div class="max-w-md w-full space-y-8 relative z-10">
+    <!-- Brand badge/logo center -->
+    <div class="text-center">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand to-brand-crimson shadow-xl shadow-brand/35 mb-4 group hover:scale-105 transition-transform duration-300">
+        <span class="font-serif font-bold text-2xl text-white">N</span>
+      </div>
+      <h2 class="font-serif text-3xl font-bold text-white tracking-tight">Welcome back</h2>
+      <p class="mt-2 text-sm text-brand-muted">
+        Connect to your global B2B supplier dashboard
+      </p>
+    </div>
+
+    <!-- Login Card -->
+    <div class="glass-dark border border-white/10 rounded-3xl p-8 shadow-2xl backdrop-blur-md">
+      <form class="space-y-6" action="{{ url_for('auth.login') }}" method="POST">
+        
+        <!-- Username input group -->
+        <div class="space-y-1">
+          <label for="username" class="block text-xs font-semibold uppercase tracking-wider text-brand-muted">Username</label>
+          <div class="relative rounded-xl shadow-sm">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brand-muted/70">
+              <i data-lucide="user" class="w-5 h-5"></i>
+            </div>
+            <input id="username" name="username" type="text" required 
+              class="block w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-brand-muted/60 focus:outline-none focus:ring-2 focus:ring-brand-crimson/50 focus:border-brand-crimson transition-all text-sm" 
+              placeholder="Enter your username">
+          </div>
+        </div>
+
+        <!-- Password input group -->
+        <div class="space-y-1">
+          <div class="flex justify-between items-center">
+            <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-brand-muted">Password</label>
+            <a href="#" class="text-xs font-medium text-brand-crimson hover:text-white transition-colors">Forgot password?</a>
+          </div>
+          <div class="relative rounded-xl shadow-sm">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brand-muted/70">
+              <i data-lucide="lock" class="w-5 h-5"></i>
+            </div>
+            <input id="password" name="password" type="password" required 
+              class="block w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-brand-muted/60 focus:outline-none focus:ring-2 focus:ring-brand-crimson/50 focus:border-brand-crimson transition-all text-sm" 
+              placeholder="••••••••">
+          </div>
+        </div>
+
+        <!-- Remember Me Checkbox -->
+        <div class="flex items-center">
+          <input id="remember-me" name="remember-me" type="checkbox" 
+            class="h-4 w-4 rounded bg-white/5 border-white/10 text-brand-crimson focus:ring-brand-crimson/30 accent-brand-crimson">
+          <label for="remember-me" class="ml-2.5 block text-sm text-brand-muted">
+            Remember my device
+          </label>
+        </div>
+
+        <!-- CTA Submit Button -->
+        <div>
+          <button type="submit" class="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-sm font-semibold rounded-xl text-white bg-brand-crimson hover:bg-brand-crimsonDark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-crimson shadow-lg shadow-brand-crimson/25 transition-all duration-150 transform hover:-translate-y-0.5 active:translate-y-0">
+            <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+              <i data-lucide="log-in" class="w-5 h-5 text-white/70 group-hover:text-white transition-colors"></i>
+            </span>
+            Sign in
+          </button>
+        </div>
+      </form>
+
+      <!-- Divider line -->
+      <div class="mt-6 relative">
+        <div class="absolute inset-0 flex items-center" aria-hidden="true">
+          <div class="w-full border-t border-white/10"></div>
+        </div>
+        <div class="relative flex justify-center text-xs uppercase">
+          <span class="px-2 bg-brand-dark/40 text-brand-muted">New to Nep-Mart?</span>
+        </div>
+      </div>
+
+      <!-- Registration Redirect -->
+      <div class="mt-6 text-center">
+        <a href="{{ url_for('auth.register') }}" class="inline-flex items-center gap-1 text-sm font-semibold text-white hover:text-brand-crimson transition-colors">
+          Create a free partner account <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

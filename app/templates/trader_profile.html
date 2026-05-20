@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+
+{% block title %}{{ trader.name }} — Verified Supplier Storefront{% endblock %}
+
+{% block content %}
+<div class="bg-brand-bgLight py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto space-y-6">
+    
+    <!-- Breadcrumb -->
+    <nav class="flex text-xs font-semibold text-brand-muted uppercase tracking-wider gap-2">
+      <a href="/" class="hover:text-brand-crimson transition-colors">Home</a>
+      <span>/</span>
+      <a href="/traders" class="hover:text-brand-crimson transition-colors">Directory</a>
+      <span>/</span>
+      <span class="text-brand-dark">{{ trader.name }}</span>
+    </nav>
+
+    <!-- Storefront Hero Header -->
+    <div class="bg-gradient-to-r from-brand-dark to-brand-deep rounded-3xl p-8 md:p-12 text-white relative overflow-hidden shadow-xl border border-white/5 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+      <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-brand-crimson/15 rounded-full blur-3xl pointer-events-none"></div>
+      
+      <!-- Left info block -->
+      <div class="flex items-start md:items-center gap-6 z-10">
+        <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center font-bold text-white text-3xl shadow-xl backdrop-blur-md">
+          {{ trader.name[0] }}
+        </div>
+        <div class="space-y-2">
+          <div class="flex flex-wrap items-center gap-2">
+            <h1 class="font-serif text-2xl md:text-3xl font-bold tracking-tight">{{ trader.name }}</h1>
+            <span class="flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-500/25 border border-emerald-500/40 text-emerald-400 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Verified Gold Partner
+            </span>
+          </div>
+          <p class="text-brand-muted text-sm font-semibold uppercase tracking-wider">
+            {{ trader.type }} &bull; {{ trader.sector }}
+          </p>
+          <div class="flex flex-wrap gap-4 text-xs font-medium text-white/80">
+            <span class="flex items-center gap-1"><i data-lucide="map-pin" class="w-4 h-4 text-brand-crimson"></i> Durbar Marg, {{ trader.location }}, Nepal</span>
+            <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-4 h-4 text-brand-crimson"></i> Gold Supplier for {{ trader.years_verified }} Years</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right stats block -->
+      <div class="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center gap-4 w-full md:w-auto border-t md:border-t-0 border-white/10 pt-4 md:pt-0 z-10">
+        <div class="text-left md:text-right space-y-1">
+          <div class="flex items-center md:justify-end text-amber-400">
+            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+            <span class="text-sm font-bold text-white ml-1">{{ trader.rating }}</span>
+            <span class="text-xs text-brand-muted font-semibold ml-0.5">({{ trader.reviews_count }} Audited Reviews)</span>
+          </div>
+          <p class="text-[10px] text-emerald-400 font-bold tracking-wider uppercase">Active Response: {{ trader.response_time }}</p>
+        </div>
+        <a href="/chat?supplier_id={{ trader.id }}" class="px-5 py-3 bg-brand-crimson hover:bg-brand-crimsonDark text-white font-semibold text-xs rounded-xl transition-all shadow-md flex items-center gap-1.5">
+          Negotiate Custom Terms <i data-lucide="message-square" class="w-4 h-4"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Storefront Main Section: Tabs System -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      
+      <!-- Left Column: Tabbed Sections Container -->
+      <div class="lg:col-span-2 space-y-6">
+        
+        <!-- Tab Select Header -->
+        <div class="bg-white rounded-2xl border border-brand-border p-2 flex gap-1 shadow-sm">
+          <button onclick="switchTab('profile-tab')" id="btn-profile-tab" class="flex-grow py-3 px-4 font-semibold text-sm rounded-xl transition-all bg-brand text-white">
+            Company Profile
+          </button>
+          <button onclick="switchTab('products-tab')" id="btn-products-tab" class="flex-grow py-3 px-4 font-semibold text-sm rounded-xl transition-all text-[#0f172a] hover:bg-brand-bgLight">
+            Listed Products Catalog
+          </button>
+          <button onclick="switchTab('certs-tab')" id="btn-certs-tab" class="flex-grow py-3 px-4 font-semibold text-sm rounded-xl transition-all text-[#0f172a] hover:bg-brand-bgLight">
+            Certifications
+          </button>
+        </div>
+
+        <!-- Section 1: Company Profile (Tab Content) -->
+        <div id="profile-tab" class="bg-white rounded-2xl border border-brand-border p-6 md:p-8 space-y-6 shadow-sm">
+          <div class="space-y-4">
+            <h3 class="font-serif text-xl font-bold text-brand-dark">About the Company</h3>
+            <p class="text-sm text-[#475569] leading-relaxed">
+              {{ trader.about_desc }}
+            </p>
+          </div>
+
+          <!-- Corporate Statistics Panel -->
+          <div class="space-y-4 pt-6 border-t border-brand-border">
+            <h4 class="text-xs font-bold text-brand-dark uppercase tracking-wider">Trading Statistics</h4>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div class="border border-brand-border rounded-xl p-4 text-center">
+                <span class="text-brand-muted block uppercase text-[8px] tracking-widest font-bold mb-1">Company Size</span>
+                <span class="text-[#0f172a] font-bold text-sm">50 - 150 Staff</span>
+              </div>
+              <div class="border border-brand-border rounded-xl p-4 text-center">
+                <span class="text-brand-muted block uppercase text-[8px] tracking-widest font-bold mb-1">Annual Revenue</span>
+                <span class="text-[#0f172a] font-bold text-sm">USD 2.5M - 5M</span>
+              </div>
+              <div class="border border-brand-border rounded-xl p-4 text-center">
+                <span class="text-brand-muted block uppercase text-[8px] tracking-widest font-bold mb-1">Trade Volume</span>
+                <span class="text-[#0f172a] font-bold text-sm">850+ Containers</span>
+              </div>
+              <div class="border border-brand-border rounded-xl p-4 text-center">
+                <span class="text-brand-muted block uppercase text-[8px] tracking-widest font-bold mb-1">Custom Clearance</span>
+                <span class="text-emerald-600 font-bold text-sm">Guaranteed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Products Catalog (Tab Content) - Hidden by default -->
+        <div id="products-tab" class="hidden bg-white rounded-2xl border border-brand-border p-6 md:p-8 space-y-6 shadow-sm">
+          <h3 class="font-serif text-xl font-bold text-brand-dark mb-4">Listed Products Catalog</h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {% for item in listed_products %}
+            <div class="border border-brand-border rounded-2xl overflow-hidden hover:border-brand-crimson/30 transition-all flex flex-col group">
+              <!-- abstract thumbnail image representing B2B category -->
+              <div class="aspect-[16/10] bg-gradient-to-br from-indigo-950 to-indigo-800 flex items-center justify-center text-white relative">
+                <div class="absolute inset-0 opacity-20 flex items-center justify-center">
+                  {% if item.category == 'Agro' %}
+                    <i data-lucide="leaf" class="w-12 h-12"></i>
+                  {% elif item.category == 'Crafts' %}
+                    <i data-lucide="gem" class="w-12 h-12"></i>
+                  {% else %}
+                    <i data-lucide="settings" class="w-12 h-12"></i>
+                  {% endif %}
+                </div>
+                <span class="absolute bottom-2 left-2 px-2.5 py-0.5 rounded bg-white/10 border border-white/20 text-[9px] font-bold uppercase tracking-widest">
+                  {{ item.category_display }}
+                </span>
+              </div>
+              
+              <div class="p-4 flex-grow flex flex-col justify-between space-y-3">
+                <div class="space-y-1">
+                  <h4 class="font-serif font-bold text-base text-[#0f172a] group-hover:text-brand-crimson transition-colors leading-tight">
+                    <a href="/product/{{ item.id }}">{{ item.name }}</a>
+                  </h4>
+                  <p class="text-xs text-brand-muted">MOQ: <span class="font-bold text-[#0f172a]">{{ item.moq }}</span></p>
+                  <p class="text-xs text-brand-muted">Target price: <span class="font-bold text-brand-crimson">{{ item.price_range }}</span></p>
+                </div>
+                <a href="/product/{{ item.id }}" class="w-full text-center py-2 bg-brand-bgLight hover:bg-brand hover:text-white text-xs font-bold rounded-lg text-[#0f172a] transition-all">
+                  Negotiate Deal Terms
+                </a>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Section 3: Certifications & Verification Milestones (Tab Content) - Hidden by default -->
+        <div id="certs-tab" class="hidden bg-white rounded-2xl border border-brand-border p-6 md:p-8 space-y-6 shadow-sm">
+          <h3 class="font-serif text-xl font-bold text-brand-dark">Certifications & Quality Checks</h3>
+          
+          <div class="space-y-4">
+            <div class="flex items-start gap-4 p-4 border border-brand-border rounded-xl">
+              <div class="w-10 h-10 rounded-lg bg-brand/10 text-brand flex items-center justify-center flex-shrink-0">
+                <i data-lucide="award" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold text-brand-dark">ISO 9001:2015 Quality Management</h4>
+                <p class="text-xs text-brand-muted mt-0.5">Audited and certified by international quality standards bodies, assuring consistency in trade supply metrics.</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4 p-4 border border-brand-border rounded-xl">
+              <div class="w-10 h-10 rounded-lg bg-brand/10 text-brand flex items-center justify-center flex-shrink-0">
+                <i data-lucide="shield" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold text-brand-dark">SGS Audited Facility Certificate</h4>
+                <p class="text-xs text-brand-muted mt-0.5">Physical facilities audited by SGS in March 2026, verification certificate #NPM-SGS-9812.</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4 p-4 border border-brand-border rounded-xl">
+              <div class="w-10 h-10 rounded-lg bg-brand/10 text-brand flex items-center justify-center flex-shrink-0">
+                <i data-lucide="leaf" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold text-brand-dark">Organic Himalayan Produce Certification</h4>
+                <p class="text-xs text-brand-muted mt-0.5">Certifies that agricultural items are farmed standardly with 100% pure Himalayan mountain soils and waters.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Verification & Audit Timeline -->
+      <div class="lg:col-span-1 space-y-6">
+        
+        <!-- Verification status checklist -->
+        <div class="bg-white rounded-2xl border border-brand-border p-6 space-y-6 shadow-sm">
+          <h3 class="font-serif text-lg font-bold text-brand-dark">Verified Audit Timeline</h3>
+          
+          <div class="space-y-5 relative pl-4 border-l-2 border-brand-border">
+            
+            <div class="relative space-y-1">
+              <div class="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-100"></div>
+              <h4 class="text-xs font-bold text-[#0f172a]">LEGAL BUSINESS AUDIT</h4>
+              <p class="text-[11px] text-brand-muted">Registered in Nepal (Reg #5812-B). Audited by Ministry of Trade & Customs.</p>
+            </div>
+
+            <div class="relative space-y-1">
+              <div class="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-100"></div>
+              <h4 class="text-xs font-bold text-[#0f172a]">PHYSICAL FACTORY SITE AUDIT</h4>
+              <p class="text-[11px] text-brand-muted">Physical address audited by SGS. Standard production facility confirmed.</p>
+            </div>
+
+            <div class="relative space-y-1">
+              <div class="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-100"></div>
+              <h4 class="text-xs font-bold text-[#0f172a]">FINANCIAL SOLVENCY RECORD</h4>
+              <p class="text-[11px] text-brand-muted">Corporate banking solvency checked. Credit rating verified AA.</p>
+            </div>
+
+            <div class="relative space-y-1">
+              <div class="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-100"></div>
+              <h4 class="text-xs font-bold text-[#0f172a]">LOGISTICS RELIABILITY INDEX</h4>
+              <p class="text-[11px] text-brand-muted">Verified cross-border tracking protocols integrated with Nep-Mart manifests.</p>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function switchTab(tabId) {
+    // Hide all tabs
+    document.getElementById('profile-tab').classList.add('hidden');
+    document.getElementById('products-tab').classList.add('hidden');
+    document.getElementById('certs-tab').classList.add('hidden');
+    
+    // De-activate all buttons
+    document.getElementById('btn-profile-tab').className = "flex-grow py-3 px-4 font-semibold text-sm rounded-xl transition-all text-[#0f172a] hover:bg-brand-bgLight";
+    document.getElementById('btn-products-tab').className = "flex-grow py-3 px-4 font-semibold text-sm rounded-xl transition-all text-[#0f172a] hover:bg-brand-bgLight";
+    document.getElementById('btn-certs-tab').className = "flex-grow py-3 px-4 font-semibold text-sm rounded-xl transition-all text-[#0f172a] hover:bg-brand-bgLight";
+    
+    // Show active tab
+    document.getElementById(tabId).classList.remove('hidden');
+    
+    // Activate active button
+    document.getElementById('btn-' + tabId).className = "flex-grow py-3 px-4 font-semibold text-sm rounded-xl transition-all bg-brand text-white";
+  }
+</script>
+{% endblock %}

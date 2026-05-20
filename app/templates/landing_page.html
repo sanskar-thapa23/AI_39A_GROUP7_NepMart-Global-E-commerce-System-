@@ -1,956 +1,332 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Nepmart — Global B2B Marketplace</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
-<style>
-  /* ===== RESET & BASE ===== */
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
- 
-  :root {
-    --brand:       #1D9E75;
-    --brand-dark:  #0F6E56;
-    --brand-light: #E1F5EE;
-    --brand-mid:   #9FE1CB;
-    --text:        #1a1a18;
-    --text2:       #5F5E5A;
-    --text3:       #888780;
-    --bg:          #FAFAF8;
-    --surface:     #ffffff;
-    --border:      #e5e3dc;
-    --amber:       #EF9F27;
-    --amber-light: #FAEEDA;
-    --coral-light: #FAECE7;
-    --blue-light:  #E6F1FB;
-  }
- 
-  html { scroll-behavior: smooth; }
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    overflow-x: hidden;
-    line-height: 1.6;
-  }
- 
-  /* ===== NAVIGATION ===== */
-  nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(250, 250, 248, 0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 2rem;
-  }
-  .nav-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 60px;
-    gap: 2rem;
-  }
-  .logo {
-    font-family: 'Fraunces', serif;
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--brand-dark);
-    letter-spacing: -0.5px;
-    text-decoration: none;
-    flex-shrink: 0;
-  }
-  .logo span { color: var(--brand); }
-  .nav-links {
-    display: flex;
-    gap: 2rem;
-    list-style: none;
-    flex: 1;
-    justify-content: center;
-  }
-  .nav-links a {
-    font-size: 0.875rem;
-    color: var(--text2);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-  .nav-links a:hover { color: var(--text); }
-  .nav-actions { display: flex; align-items: center; gap: 0.625rem; flex-shrink: 0; }
- 
-  /* Login button — outline style */
-  .btn-login {
-    background: transparent;
-    color: var(--text);
-    border: 1.5px solid var(--border);
-    padding: 0.45rem 1.1rem;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    font-weight: 400;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    transition: border-color 0.2s, color 0.2s, background 0.2s;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .btn-login:hover {
-    border-color: var(--brand);
-    color: var(--brand-dark);
-    background: var(--brand-light);
-  }
- 
-  /* Primary CTA button */
-  .btn-primary {
-    background: var(--brand);
-    color: #fff;
-    border: none;
-    padding: 0.5rem 1.25rem;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    transition: background 0.2s;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-  }
-  .btn-primary:hover { background: var(--brand-dark); }
- 
-  /* Outline button (hero) */
-  .btn-outline {
-    background: transparent;
-    color: var(--text);
-    border: 1.5px solid var(--border);
-    padding: 0.75rem 1.75rem;
-    border-radius: 7px;
-    font-size: 0.9375rem;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    transition: border-color 0.2s, color 0.2s;
-  }
-  .btn-outline:hover { border-color: var(--brand); color: var(--brand); }
- 
-  /* ===== HERO ===== */
-  .hero {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 5rem 2rem 3rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: center;
-  }
-  .hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--brand-light);
-    color: var(--brand-dark);
-    font-size: 0.75rem;
-    font-weight: 500;
-    padding: 5px 12px;
-    border-radius: 20px;
-    margin-bottom: 1.5rem;
-    border: 1px solid var(--brand-mid);
-  }
-  .hero h1 {
-    font-family: 'Fraunces', serif;
-    font-size: 3.25rem;
-    font-weight: 300;
-    line-height: 1.1;
-    letter-spacing: -1px;
-    color: var(--text);
-    margin-bottom: 1.25rem;
-  }
-  .hero h1 em { font-style: italic; color: var(--brand); }
-  .hero p {
-    font-size: 1.0625rem;
-    color: var(--text2);
-    line-height: 1.7;
-    margin-bottom: 2rem;
-    max-width: 480px;
-  }
-  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
-  .hero-actions .btn-primary { padding: 0.75rem 1.75rem; font-size: 0.9375rem; }
- 
-  /* Hero visual card */
-  .hero-visual { position: relative; }
-  .hero-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.5rem;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.06);
-  }
-  .hc-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-  }
-  .hc-title { font-size: 0.8rem; color: var(--text3); }
-  .hc-badge {
-    font-size: 0.7rem;
-    background: #EAF3DE;
-    color: #3B6D11;
-    padding: 3px 8px;
-    border-radius: 4px;
-  }
-  .product-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .product-row:last-child { border-bottom: none; }
-  .prod-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    flex-shrink: 0;
-  }
-  .prod-info { flex: 1; }
-  .prod-name { font-size: 0.8125rem; font-weight: 500; color: var(--text); }
-  .prod-origin { font-size: 0.7rem; color: var(--text3); }
-  .prod-price { font-size: 0.8125rem; font-weight: 500; color: var(--brand-dark); }
- 
-  .float-pill {
-    position: absolute;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 8px 14px;
-    font-size: 0.75rem;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .fp1 { top: -16px; left: -24px; }
-  .fp2 { bottom: -16px; right: -20px; }
-  .fp-dot { width: 8px; height: 8px; border-radius: 50%; }
- 
-  /* ===== STATS BAND ===== */
-  .stats-band { background: var(--brand-dark); padding: 3rem 2rem; }
-  .stats-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2rem;
-    text-align: center;
-  }
-  .stat-num {
-    font-family: 'Fraunces', serif;
-    font-size: 2.25rem;
-    font-weight: 300;
-    color: #fff;
-    letter-spacing: -0.5px;
-  }
-  .stat-label { font-size: 0.8125rem; color: var(--brand-mid); margin-top: 4px; }
- 
-  /* ===== FEATURES ===== */
-  .features {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 5rem 2rem;
-  }
-  .section-label {
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: var(--brand);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    margin-bottom: 1rem;
-  }
-  .section-title {
-    font-family: 'Fraunces', serif;
-    font-size: 2.25rem;
-    font-weight: 300;
-    line-height: 1.2;
-    letter-spacing: -0.5px;
-    margin-bottom: 3.5rem;
-    max-width: 500px;
-  }
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-  }
-  .feat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 1.75rem;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  .feat-card:hover {
-    border-color: var(--brand-mid);
-    box-shadow: 0 4px 20px rgba(29,158,117,0.08);
-  }
-  .feat-icon {
-    width: 44px;
-    height: 44px;
-    background: var(--brand-light);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1rem;
-    font-size: 1.25rem;
-  }
-  .feat-card h3 { font-size: 1rem; font-weight: 500; margin-bottom: 0.5rem; color: var(--text); }
-  .feat-card p { font-size: 0.875rem; color: var(--text2); line-height: 1.65; }
- 
-  /* ===== HOW IT WORKS ===== */
-  .how {
-    background: var(--surface);
-    padding: 5rem 2rem;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-  .how-inner { max-width: 1100px; margin: 0 auto; }
-  .steps {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0;
-    margin-top: 3rem;
-    position: relative;
-  }
-  .steps::before {
-    content: '';
-    position: absolute;
-    top: 24px;
-    left: 12.5%;
-    right: 12.5%;
-    height: 1px;
-    background: linear-gradient(to right, var(--border), var(--brand-light), var(--border));
-    z-index: 0;
-  }
-  .step { text-align: center; position: relative; z-index: 1; padding: 0 1rem; }
-  .step-num {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: var(--brand-light);
-    border: 2px solid var(--brand-mid);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Fraunces', serif;
-    font-size: 1.125rem;
-    font-weight: 400;
-    color: var(--brand-dark);
-    margin: 0 auto 1rem;
-  }
-  .step h4 { font-size: 0.875rem; font-weight: 500; margin-bottom: 0.375rem; color: var(--text); }
-  .step p { font-size: 0.8rem; color: var(--text2); line-height: 1.6; }
- 
-  /* ===== CATEGORIES ===== */
-  .cats { max-width: 1100px; margin: 0 auto; padding: 5rem 2rem; }
-  .cats-grid {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 1rem;
-    margin-top: 3rem;
-  }
-  .cat-tile {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.25rem 0.75rem;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-decoration: none;
-    display: block;
-  }
-  .cat-tile:hover { border-color: var(--brand); background: var(--brand-light); }
-  .cat-tile .cat-em { font-size: 1.75rem; display: block; margin-bottom: 0.5rem; }
-  .cat-tile span:last-child { font-size: 0.75rem; color: var(--text2); }
-  .cat-tile:hover span:last-child { color: var(--brand-dark); }
- 
-  /* ===== TESTIMONIALS ===== */
-  .testi { background: var(--brand-dark); padding: 5rem 2rem; }
-  .testi-inner { max-width: 1100px; margin: 0 auto; }
-  .testi-label {
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: var(--brand-mid);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    margin-bottom: 1rem;
-  }
-  .testi-title {
-    font-family: 'Fraunces', serif;
-    font-size: 2rem;
-    font-weight: 300;
-    color: #fff;
-    margin-bottom: 3rem;
-    max-width: 400px;
-    line-height: 1.25;
-  }
-  .testi-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-  }
-  .testi-card {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 14px;
-    padding: 1.5rem;
-  }
-  .testi-quote {
-    font-size: 0.875rem;
-    color: rgba(255,255,255,0.8);
-    line-height: 1.7;
-    margin-bottom: 1.25rem;
-    font-style: italic;
-  }
-  .testi-author { display: flex; align-items: center; gap: 10px; }
-  .testi-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: var(--brand-mid);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 500;
-    font-size: 0.75rem;
-    color: var(--brand-dark);
-    flex-shrink: 0;
-  }
-  .testi-name { font-size: 0.8125rem; font-weight: 500; color: #fff; }
-  .testi-role { font-size: 0.7rem; color: var(--brand-mid); }
- 
-  /* ===== CTA SECTION ===== */
-  .cta-section { max-width: 1100px; margin: 0 auto; padding: 5rem 2rem; text-align: center; }
-  .cta-box {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 4rem 2rem;
-    position: relative;
-    overflow: hidden;
-  }
-  .cta-box::before {
-    content: '';
-    position: absolute;
-    top: -60px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(29,158,117,0.08) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .cta-box h2 {
-    font-family: 'Fraunces', serif;
-    font-size: 2.5rem;
-    font-weight: 300;
-    letter-spacing: -0.5px;
-    margin-bottom: 1rem;
-    position: relative;
-  }
-  .cta-box h2 em { font-style: italic; color: var(--brand); }
-  .cta-box p { color: var(--text2); font-size: 1rem; margin-bottom: 2rem; position: relative; }
-  .cta-actions { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; position: relative; }
-  .cta-actions .btn-primary { padding: 0.875rem 2.25rem; font-size: 1rem; }
-  .cta-actions .btn-outline { padding: 0.875rem 2.25rem; font-size: 1rem; }
- 
-  /* ===== FOOTER ===== */
-  footer { border-top: 1px solid var(--border); padding: 3rem 2rem 2rem; }
-  .footer-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    gap: 3rem;
-  }
-  .footer-brand .logo { display: block; margin-bottom: 0.75rem; }
-  .footer-brand p { font-size: 0.8125rem; color: var(--text2); line-height: 1.65; max-width: 220px; }
-  .footer-col h5 {
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: var(--text3);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 1rem;
-  }
-  .footer-col a {
-    display: block;
-    font-size: 0.8125rem;
-    color: var(--text2);
-    text-decoration: none;
-    margin-bottom: 0.5rem;
-    transition: color 0.2s;
-  }
-  .footer-col a:hover { color: var(--brand); }
-  .footer-bottom {
-    max-width: 1100px;
-    margin: 2rem auto 0;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .footer-bottom p { font-size: 0.75rem; color: var(--text3); }
- 
-  /* ===== LOGIN MODAL ===== */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.45);
-    z-index: 999;
-    align-items: center;
-    justify-content: center;
-  }
-  .modal-overlay.open { display: flex; }
-  .modal {
-    background: var(--surface);
-    border-radius: 16px;
-    padding: 2.5rem;
-    width: 100%;
-    max-width: 420px;
-    margin: 1rem;
-    border: 1px solid var(--border);
-    position: relative;
-  }
-  .modal-close {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: none;
-    border: none;
-    font-size: 1.25rem;
-    color: var(--text3);
-    cursor: pointer;
-    line-height: 1;
-    padding: 4px;
-    border-radius: 4px;
-    transition: color 0.2s;
-  }
-  .modal-close:hover { color: var(--text); }
-  .modal-logo {
-    font-family: 'Fraunces', serif;
-    font-size: 1.375rem;
-    font-weight: 600;
-    color: var(--brand-dark);
-    margin-bottom: 0.375rem;
-  }
-  .modal-logo span { color: var(--brand); }
-  .modal h2 {
-    font-family: 'Fraunces', serif;
-    font-size: 1.5rem;
-    font-weight: 300;
-    margin-bottom: 0.375rem;
-    color: var(--text);
-  }
-  .modal-sub { font-size: 0.875rem; color: var(--text2); margin-bottom: 1.75rem; }
-  .form-group { margin-bottom: 1rem; }
-  .form-group label { display: block; font-size: 0.8125rem; font-weight: 500; color: var(--text); margin-bottom: 6px; }
-  .form-group input {
-    width: 100%;
-    padding: 0.625rem 0.875rem;
-    border: 1.5px solid var(--border);
-    border-radius: 7px;
-    font-size: 0.9rem;
-    font-family: 'DM Sans', sans-serif;
-    color: var(--text);
-    background: var(--bg);
-    transition: border-color 0.2s;
-    outline: none;
-  }
-  .form-group input:focus { border-color: var(--brand); }
-  .form-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.25rem;
-  }
-  .form-check { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--text2); cursor: pointer; }
-  .form-check input { width: auto; }
-  .forgot { font-size: 0.8rem; color: var(--brand); text-decoration: none; }
-  .forgot:hover { text-decoration: underline; }
-  .modal .btn-primary { width: 100%; justify-content: center; padding: 0.75rem; font-size: 0.9375rem; border-radius: 7px; }
-  .modal-divider { display: flex; align-items: center; gap: 12px; margin: 1.25rem 0; }
-  .modal-divider::before, .modal-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-  .modal-divider span { font-size: 0.75rem; color: var(--text3); }
-  .btn-social {
-    width: 100%;
-    background: var(--bg);
-    border: 1.5px solid var(--border);
-    border-radius: 7px;
-    padding: 0.65rem;
-    font-size: 0.875rem;
-    font-family: 'DM Sans', sans-serif;
-    color: var(--text);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 0.625rem;
-    transition: border-color 0.2s, background 0.2s;
-  }
-  .btn-social:hover { border-color: var(--brand); background: var(--brand-light); }
-  .modal-footer-text { text-align: center; font-size: 0.8125rem; color: var(--text2); margin-top: 1.25rem; }
-  .modal-footer-text a { color: var(--brand); text-decoration: none; }
-  .modal-footer-text a:hover { text-decoration: underline; }
- 
-  /* ===== RESPONSIVE ===== */
-  @media (max-width: 900px) {
-    .hero { grid-template-columns: 1fr; padding: 3rem 1.25rem 2rem; gap: 2rem; }
-    .hero h1 { font-size: 2.25rem; }
-    .hero-visual { display: none; }
-    .stats-inner { grid-template-columns: repeat(2, 1fr); }
-    .features-grid { grid-template-columns: 1fr 1fr; }
-    .steps { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
-    .steps::before { display: none; }
-    .cats-grid { grid-template-columns: repeat(3, 1fr); }
-    .testi-grid { grid-template-columns: 1fr; }
-    .footer-inner { grid-template-columns: 1fr 1fr; gap: 2rem; }
-    .nav-links { display: none; }
-  }
-  @media (max-width: 600px) {
-    .features-grid { grid-template-columns: 1fr; }
-    .cats-grid { grid-template-columns: repeat(2, 1fr); }
-    .footer-inner { grid-template-columns: 1fr; }
-    .stats-inner { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
-  }
-</style>
-</head>
-<body>
- 
-<!-- ========== NAVIGATION ========== -->
-<nav>
-  <div class="nav-inner">
-    <a href="#" class="logo">Nep<span>mart</span></a>
-    <ul class="nav-links">
-      <li><a href="#">Marketplace</a></li>
-      <li><a href="#">Trade Tools</a></li>
-      <li><a href="#">For Exporters</a></li>
-      <li><a href="#">Pricing</a></li>
-    </ul>
-    <div class="nav-actions">
-      <!-- LOGIN BUTTON -->
-      <button class="btn-login" onclick="openModal()">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-        Log in
-      </button>
-      <button class="btn-primary" onclick="openModal()">Get started free</button>
-    </div>
-  </div>
-</nav>
- 
-<!-- ========== HERO ========== -->
-<section class="hero">
-  <div class="hero-text">
-    <div class="hero-badge">🌏 Trusted by 40,000+ traders globally</div>
-    <h1>Trade smarter,<br/>go <em>global</em> with confidence</h1>
-    <p>Nepmart connects exporters, importers, and traders worldwide — with AI-powered search, verified suppliers, and secure deal management built for modern commerce.</p>
-    <div class="hero-actions">
-      <button class="btn-primary">Start trading free</button>
-      <button class="btn-outline">Browse marketplace →</button>
-    </div>
-  </div>
- 
-  <div class="hero-visual">
-    <div class="float-pill fp1">
-      <div class="fp-dot" style="background:#1D9E75"></div>
-      <span style="color:#0F6E56;font-weight:500">Live deal matched</span>
-    </div>
-    <div class="hero-card">
-      <div class="hc-header">
-        <span class="hc-title">Today's featured listings</span>
-        <span class="hc-badge">↑ 12 new today</span>
+{% extends "base.html" %}
+
+{% block title %}Nep-Mart — Connect Global Traders with Nepalese Markets{% endblock %}
+
+{% block content %}
+<!-- ========== HERO SECTION ========== -->
+<section class="relative min-h-[90vh] flex items-center bg-gradient-to-br from-brand-deep via-brand-dark to-brand-deep overflow-hidden py-20 px-4 sm:px-6 lg:px-8">
+  <!-- Interactive Glowing Vector Shapes in Background -->
+  <div class="absolute -top-40 -left-40 w-96 h-96 bg-brand-crimson/10 rounded-full blur-[120px] pointer-events-none"></div>
+  <div class="absolute -bottom-45 -right-40 w-[500px] h-[500px] bg-brand/15 rounded-full blur-[140px] pointer-events-none"></div>
+  
+  <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+    
+    <!-- Hero Left: Text & CTA Block -->
+    <div class="space-y-8 text-left">
+      <!-- Premium Tag -->
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 shadow-lg backdrop-blur-sm">
+        <span class="w-2 h-2 rounded-full bg-brand-crimson animate-pulse"></span>
+        <span class="text-xs font-semibold text-white/90 uppercase tracking-widest">Premium B2B Global Platform</span>
       </div>
-      <div class="product-row">
-        <div class="prod-icon" style="background:var(--brand-light)">🌿</div>
-        <div class="prod-info">
-          <div class="prod-name">Organic Himalayan Tea</div>
-          <div class="prod-origin">Nepal · MOQ: 500 kg</div>
+
+      <!-- Main Headline -->
+      <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight">
+        Bridging Nepalese Craftsmanship & <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-crimson to-rose-400">Global Enterprise</span>
+      </h1>
+      
+      <p class="text-brand-muted text-base sm:text-lg max-w-xl leading-relaxed">
+        Discover verified Himalayan exporters, agricultural giants, and hand-woven artifacts. Secure transactions, live chat negotiations, and seamless end-to-end B2B freight logistics.
+      </p>
+
+      <!-- CTA Buttons Block -->
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+        <a href="/products" class="px-8 py-4 bg-brand-crimson text-white text-center font-semibold rounded-xl hover:bg-brand-crimsonDark hover:shadow-xl hover:shadow-brand-crimson/30 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg">
+          Explore Marketplace <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+        </a>
+        <a href="/traders" class="px-8 py-4 bg-white/5 border border-white/15 text-white text-center font-semibold rounded-xl hover:bg-white/10 hover:border-white/20 transition-all duration-300 flex items-center justify-center gap-2">
+          Verify Suppliers <i data-lucide="shield-check" class="w-5 h-5"></i>
+        </a>
+      </div>
+
+      <!-- Hero Micro Statistics -->
+      <div class="grid grid-cols-3 gap-6 pt-6 border-t border-white/10">
+        <div>
+          <p class="font-serif text-2xl sm:text-3xl font-bold text-white">$120M+</p>
+          <p class="text-xs font-medium text-brand-muted uppercase tracking-wider mt-1">Trade Volume</p>
         </div>
-        <div class="prod-price">$4.80/kg</div>
-      </div>
-      <div class="product-row">
-        <div class="prod-icon" style="background:var(--amber-light)">🪨</div>
-        <div class="prod-info">
-          <div class="prod-name">Pashmina Wool Grade A</div>
-          <div class="prod-origin">Nepal · MOQ: 200 units</div>
+        <div>
+          <p class="font-serif text-2xl sm:text-3xl font-bold text-white">5,000+</p>
+          <p class="text-xs font-medium text-brand-muted uppercase tracking-wider mt-1">Verified Sellers</p>
         </div>
-        <div class="prod-price">$18.50/unit</div>
-      </div>
-      <div class="product-row">
-        <div class="prod-icon" style="background:var(--coral-light)">🌾</div>
-        <div class="prod-info">
-          <div class="prod-name">Himalayan Black Rice</div>
-          <div class="prod-origin">Nepal · MOQ: 1 ton</div>
+        <div>
+          <p class="font-serif text-2xl sm:text-3xl font-bold text-white">120+</p>
+          <p class="text-xs font-medium text-brand-muted uppercase tracking-wider mt-1">Destinations</p>
         </div>
-        <div class="prod-price">$2.10/kg</div>
       </div>
-      <div class="product-row">
-        <div class="prod-icon" style="background:var(--blue-light)">💎</div>
-        <div class="prod-info">
-          <div class="prod-name">Handcrafted Thangka Art</div>
-          <div class="prod-origin">Nepal · MOQ: 10 pieces</div>
+    </div>
+
+    <!-- Hero Right: Immersive Interactive Banner Grid (Figma style) -->
+    <div class="hidden lg:block relative">
+      <!-- Glow effect under card grid -->
+      <div class="absolute inset-0 bg-gradient-to-tr from-brand-crimson/20 to-brand/20 blur-3xl opacity-30 rounded-3xl"></div>
+
+      <!-- Main Visual Showcase Panel -->
+      <div class="relative glass-dark border border-white/10 p-6 rounded-3xl shadow-2xl backdrop-blur-md space-y-6">
+        
+        <!-- Showcase header -->
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></div>
+            <span class="text-xs font-semibold uppercase tracking-wider text-brand-muted">Live Trade Activity</span>
+          </div>
+          <span class="text-xs font-bold text-brand-crimson">Kathmandu Hub</span>
         </div>
-        <div class="prod-price">$120/piece</div>
-      </div>
-    </div>
-    <div class="float-pill fp2">
-      <div class="fp-dot" style="background:#EF9F27"></div>
-      <span style="color:#633806;font-weight:500">Secure payment verified</span>
-    </div>
-  </div>
-</section>
- 
-<!-- ========== STATS ========== -->
-<div class="stats-band">
-  <div class="stats-inner">
-    <div><div class="stat-num">40K+</div><div class="stat-label">Active traders</div></div>
-    <div><div class="stat-num">120+</div><div class="stat-label">Countries reached</div></div>
-    <div><div class="stat-num">$2.8B</div><div class="stat-label">Trade facilitated</div></div>
-    <div><div class="stat-num">98%</div><div class="stat-label">Satisfaction rate</div></div>
-  </div>
-</div>
- 
-<!-- ========== FEATURES ========== -->
-<section class="features">
-  <div class="section-label">Platform features</div>
-  <h2 class="section-title">Everything you need to trade with confidence</h2>
-  <div class="features-grid">
-    <div class="feat-card">
-      <div class="feat-icon">🤖</div>
-      <h3>AI-powered search</h3>
-      <p>Find the right products and suppliers instantly. Our AI understands trade language, categories, and specifications so you get relevant matches — not noise.</p>
-    </div>
-    <div class="feat-card">
-      <div class="feat-icon">🔒</div>
-      <h3>Secure communications</h3>
-      <p>End-to-end encrypted messaging, smart document sharing, and verified contact profiles — negotiate with trust, every time.</p>
-    </div>
-    <div class="feat-card">
-      <div class="feat-icon">📋</div>
-      <h3>Trade management</h3>
-      <p>Track your deals, manage quotations, handle contracts, and monitor shipment milestones — all from one unified dashboard.</p>
-    </div>
-    <div class="feat-card">
-      <div class="feat-icon">✅</div>
-      <h3>Verified suppliers</h3>
-      <p>Every supplier goes through our verification process. Check ratings, export history, certifications, and reviews before committing.</p>
-    </div>
-    <div class="feat-card">
-      <div class="feat-icon">🌐</div>
-      <h3>Multi-currency & finance</h3>
-      <p>Quote and transact in 50+ currencies. Access trade finance options including letters of credit and escrow-backed payments.</p>
-    </div>
-    <div class="feat-card">
-      <div class="feat-icon">📊</div>
-      <h3>Market intelligence</h3>
-      <p>Real-time price trends, demand signals, and competitor benchmarking — make decisions backed by live global trade data.</p>
-    </div>
-  </div>
-</section>
- 
-<!-- ========== HOW IT WORKS ========== -->
-<section class="how">
-  <div class="how-inner">
-    <div class="section-label">How it works</div>
-    <h2 class="section-title">From listing to deal in four steps</h2>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <h4>Create your profile</h4>
-        <p>Set up your business profile, add products or sourcing needs, and get verified in under 24 hours.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <h4>Discover & match</h4>
-        <p>Browse AI-curated listings or post a request. Get matched with qualified buyers or suppliers automatically.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <h4>Negotiate securely</h4>
-        <p>Use our encrypted chat and document tools to exchange samples, pricing, and terms in confidence.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <h4>Close & manage</h4>
-        <p>Finalize contracts, track shipments, and manage payments — all within your Nepmart dashboard.</p>
-      </div>
-    </div>
-  </div>
-</section>
- 
-<!-- ========== CATEGORIES ========== -->
-<section class="cats">
-  <div class="section-label">Browse by category</div>
-  <h2 class="section-title">100,000+ products across every industry</h2>
-  <div class="cats-grid">
-    <a href="#" class="cat-tile"><span class="cat-em">🌿</span><span>Agriculture</span></a>
-    <a href="#" class="cat-tile"><span class="cat-em">🧵</span><span>Textiles</span></a>
-    <a href="#" class="cat-tile"><span class="cat-em">🏗️</span><span>Construction</span></a>
-    <a href="#" class="cat-tile"><span class="cat-em">💻</span><span>Electronics</span></a>
-    <a href="#" class="cat-tile"><span class="cat-em">⚗️</span><span>Chemicals</span></a>
-    <a href="#" class="cat-tile"><span class="cat-em">💊</span><span>Healthcare</span></a>
-    <a href="#" class="cat-tile"><span class="cat-em">🛋️</span><span>Furniture</span></a>
-    <a href="#" class="cat-tile"><span class="cat-em">🚗</span><span>Automotive</span></a>
-    <a href="#" class="cat-tile"><span class="cat-em">🍵</span><span>Food & Beverage</span></a>
-    <a href="#" class="cat-tile"><span class="cat-em">🪨</span><span>Minerals</span></a>
-    <a href="#" class="cat-tile"><span class="cat-em">🌸</span><span>Handicrafts</span></a>
-    <a href="#" class="cat-tile"><span class="cat-em">⚡</span><span>Energy</span></a>
-  </div>
-</section>
- 
-<!-- ========== TESTIMONIALS ========== -->
-<section class="testi">
-  <div class="testi-inner">
-    <div class="testi-label">From our traders</div>
-    <h2 class="testi-title">Stories from the global trade floor</h2>
-    <div class="testi-grid">
-      <div class="testi-card">
-        <p class="testi-quote">"Nepmart connected us with verified buyers in Germany within days. The secure messaging and contract tools made the whole deal seamless — something we'd struggled with for years."</p>
-        <div class="testi-author">
-          <div class="testi-avatar">RK</div>
-          <div>
-            <div class="testi-name">Rajesh Koirala</div>
-            <div class="testi-role">Exporter, Kathmandu · Pashmina textiles</div>
+
+        <!-- Featured Product Showcase Banner (Real Products) -->
+        <div class="relative rounded-2xl overflow-hidden aspect-[4/3] bg-brand-deep group border border-white/5">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent z-10"></div>
+          
+          <!-- Abstract representation of Himalayan exports -->
+          <div class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-indigo-950 via-brand-dark to-brand-deep">
+            <div class="w-full h-full flex flex-col justify-between p-6 z-20 text-white">
+              <!-- top badge -->
+              <span class="self-start px-3 py-1 bg-brand-crimson text-white text-xs font-bold uppercase rounded-lg shadow-md tracking-wider">Top Exporter</span>
+              <!-- bottom info -->
+              <div class="space-y-1">
+                <span class="text-xs text-brand-muted uppercase font-semibold">Nepal Agro Export Co.</span>
+                <h3 class="font-serif text-xl font-bold text-white">Organic Himalayan Tea Leaves</h3>
+                <div class="flex items-center gap-4 text-xs text-white/80 pt-2 border-t border-white/10">
+                  <span class="flex items-center gap-1"><i data-lucide="package" class="w-3.5 h-3.5 text-brand-crimson"></i> MOQ: 500 KG</span>
+                  <span class="flex items-center gap-1"><i data-lucide="globe" class="w-3.5 h-3.5 text-brand-crimson"></i> Global Shipping</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="testi-card">
-        <p class="testi-quote">"The AI search is genuinely impressive. I can type a vague requirement and it finds exactly what I need. We've cut our sourcing time by 60% since switching to Nepmart."</p>
-        <div class="testi-author">
-          <div class="testi-avatar">SL</div>
-          <div>
-            <div class="testi-name">Sofia Liu</div>
-            <div class="testi-role">Importer, Shanghai · Agricultural goods</div>
+
+        <!-- Supplier review strip -->
+        <div class="p-4 bg-white/5 rounded-xl border border-white/5 flex items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-brand flex items-center justify-center font-bold text-white">H</div>
+            <div>
+              <h4 class="text-sm font-semibold text-white">Himalayan Crafts Co.</h4>
+              <p class="text-xs text-brand-muted">Verified Gold Supplier (8 Yrs)</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="flex text-amber-400">
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+            </div>
+            <p class="text-[10px] text-brand-muted font-bold tracking-wider mt-0.5">99.8% RESPONSE</p>
           </div>
         </div>
+
       </div>
-      <div class="testi-card">
-        <p class="testi-quote">"From quote to shipment, everything is trackable in one place. The supplier verification gives us real peace of mind when working with new partners across borders."</p>
-        <div class="testi-author">
-          <div class="testi-avatar">AM</div>
-          <div>
-            <div class="testi-name">Ahmed Malik</div>
-            <div class="testi-role">Trader, Dubai · Industrial materials</div>
-          </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ========== KEY INDUSTRIES CATEGORIES ========== -->
+<section class="py-20 bg-white px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    
+    <!-- Section Header -->
+    <div class="text-center max-w-3xl mx-auto space-y-4 mb-16">
+      <h2 class="font-serif text-3xl sm:text-4xl font-bold text-brand-dark tracking-tight">
+        Featured Trade Categories
+      </h2>
+      <div class="w-16 h-1 bg-brand-crimson mx-auto rounded-full"></div>
+      <p class="text-brand-muted text-sm sm:text-base">
+        Browse key B2B industries leading export and import markets across the Himalayan region.
+      </p>
+    </div>
+
+    <!-- Categories Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      
+      <!-- Category 1 -->
+      <div class="bg-brand-bgLight rounded-2xl p-6 border border-brand-border hover:shadow-xl hover:border-brand/30 hover:-translate-y-1 transition-all duration-300 group">
+        <div class="w-12 h-12 rounded-xl bg-brand/10 text-brand flex items-center justify-center mb-6 group-hover:bg-brand group-hover:text-white transition-all">
+          <i data-lucide="leaf" class="w-6 h-6"></i>
         </div>
+        <h3 class="font-serif text-lg font-bold text-[#0f172a] mb-2">Himalayan Agro & Herbs</h3>
+        <p class="text-brand-muted text-sm leading-relaxed mb-4">
+          Premium organic teas, mountain spices, medicinal wild herbs, and pure honey extracts.
+        </p>
+        <a href="/products" class="inline-flex items-center gap-1.5 text-xs font-bold text-brand-crimson hover:text-brand-crimsonDark transition-colors">
+          Browse Products <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </a>
       </div>
+
+      <!-- Category 2 -->
+      <div class="bg-brand-bgLight rounded-2xl p-6 border border-brand-border hover:shadow-xl hover:border-brand/30 hover:-translate-y-1 transition-all duration-300 group">
+        <div class="w-12 h-12 rounded-xl bg-brand/10 text-brand flex items-center justify-center mb-6 group-hover:bg-brand group-hover:text-white transition-all">
+          <i data-lucide="gem" class="w-6 h-6"></i>
+        </div>
+        <h3 class="font-serif text-lg font-bold text-[#0f172a] mb-2">Handmade Artifacts</h3>
+        <p class="text-brand-muted text-sm leading-relaxed mb-4">
+          Genuine wool carpets, luxury pashminas, hand-crafted metal statuary, and singing bowls.
+        </p>
+        <a href="/products" class="inline-flex items-center gap-1.5 text-xs font-bold text-brand-crimson hover:text-brand-crimsonDark transition-colors">
+          Browse Products <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
+
+      <!-- Category 3 -->
+      <div class="bg-brand-bgLight rounded-2xl p-6 border border-brand-border hover:shadow-xl hover:border-brand/30 hover:-translate-y-1 transition-all duration-300 group">
+        <div class="w-12 h-12 rounded-xl bg-brand/10 text-brand flex items-center justify-center mb-6 group-hover:bg-brand group-hover:text-white transition-all">
+          <i data-lucide="cpu" class="w-6 h-6"></i>
+        </div>
+        <h3 class="font-serif text-lg font-bold text-[#0f172a] mb-2">Industrial & Machinery</h3>
+        <p class="text-brand-muted text-sm leading-relaxed mb-4">
+          Agricultural tools, heavy grain mill processing units, mechanical spares, and assembly machinery.
+        </p>
+        <a href="/products" class="inline-flex items-center gap-1.5 text-xs font-bold text-brand-crimson hover:text-brand-crimsonDark transition-colors">
+          Browse Products <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
+
+      <!-- Category 4 -->
+      <div class="bg-brand-bgLight rounded-2xl p-6 border border-brand-border hover:shadow-xl hover:border-brand/30 hover:-translate-y-1 transition-all duration-300 group">
+        <div class="w-12 h-12 rounded-xl bg-brand/10 text-brand flex items-center justify-center mb-6 group-hover:bg-brand group-hover:text-white transition-all">
+          <i data-lucide="container" class="w-6 h-6"></i>
+        </div>
+        <h3 class="font-serif text-lg font-bold text-[#0f172a] mb-2">Freight & Logistics</h3>
+        <p class="text-brand-muted text-sm leading-relaxed mb-4">
+          Cross-border dry freight transport, shipping clearance agents, and secure warehouse facilities.
+        </p>
+        <a href="/products" class="inline-flex items-center gap-1.5 text-xs font-bold text-brand-crimson hover:text-brand-crimsonDark transition-colors">
+          Browse Products <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ========== KEY PLATFORM PILLARS (TRUST & ASSURANCE) ========== -->
+<section class="py-20 bg-gradient-to-b from-[#0F172A] to-brand-deep text-white px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand/5 rounded-full blur-[140px] pointer-events-none"></div>
+
+  <div class="max-w-7xl mx-auto relative z-10">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      
+      <!-- Pillars Left: Content -->
+      <div class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full">
+          <i data-lucide="shield" class="w-4 h-4 text-brand-crimson"></i>
+          <span class="text-xs font-semibold tracking-wider uppercase text-white/90">Guaranteed Protection</span>
+        </div>
+        <h2 class="font-serif text-3xl sm:text-4xl font-bold leading-tight">
+          B2B Trade Assurance Engineered for <span class="text-brand-crimson">Secure Borderless Markets</span>
+        </h2>
+        <p class="text-brand-muted text-sm sm:text-base leading-relaxed">
+          We protect your capital and logistics pathways with our top-tier trade protection services. From secure escrows to quality standard checkpoints, Nep-Mart sets the gold standard.
+        </p>
+
+        <!-- Bullet List -->
+        <ul class="space-y-4">
+          <li class="flex items-start gap-3">
+            <div class="p-1 rounded bg-brand-crimson/15 text-brand-crimson mt-0.5">
+              <i data-lucide="check" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <h4 class="font-semibold text-white">Payment Escrow Protection</h4>
+              <p class="text-xs text-brand-muted mt-0.5">Funds are held in high-security escrow until global delivery and inspection clearance.</p>
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <div class="p-1 rounded bg-brand-crimson/15 text-brand-crimson mt-0.5">
+              <i data-lucide="check" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <h4 class="font-semibold text-white">Pre-Shipment Inspections</h4>
+              <p class="text-xs text-brand-muted mt-0.5">Collaborations with SGS or local certified bodies to verify bulk specification sheets.</p>
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <div class="p-1 rounded bg-brand-crimson/15 text-brand-crimson mt-0.5">
+              <i data-lucide="check" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <h4 class="font-semibold text-white">Dispute Dispute Resolvers</h4>
+              <p class="text-xs text-brand-muted mt-0.5">Professional, rapid arbitration to resolve delivery issues or custom duty lags.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Pillars Right: Responsive Grid layout -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        
+        <!-- Card 1 -->
+        <div class="glass-dark border border-white/10 rounded-2xl p-6 space-y-4 backdrop-blur-md">
+          <div class="w-10 h-10 rounded-lg bg-brand-crimson/20 text-brand-crimson flex items-center justify-center">
+            <i data-lucide="user-check" class="w-5 h-5"></i>
+          </div>
+          <h4 class="font-serif text-lg font-bold text-white">KYC Verified Suppliers</h4>
+          <p class="text-xs text-brand-muted leading-relaxed">
+            Every seller undergoes stringent legal and business registration checks, physically auditing facilities.
+          </p>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="glass-dark border border-white/10 rounded-2xl p-6 space-y-4 backdrop-blur-md">
+          <div class="w-10 h-10 rounded-lg bg-brand-crimson/20 text-brand-crimson flex items-center justify-center">
+            <i data-lucide="message-square" class="w-5 h-5"></i>
+          </div>
+          <h4 class="font-serif text-lg font-bold text-white">Direct RFQ Board</h4>
+          <p class="text-xs text-brand-muted leading-relaxed">
+            Submit custom Request for Quotations and receive competitive bids within 24 hours.
+          </p>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="glass-dark border border-white/10 rounded-2xl p-6 space-y-4 backdrop-blur-md">
+          <div class="w-10 h-10 rounded-lg bg-brand-crimson/20 text-brand-crimson flex items-center justify-center">
+            <i data-lucide="credit-card" class="w-5 h-5"></i>
+          </div>
+          <h4 class="font-serif text-lg font-bold text-white">Secure Multi-currency</h4>
+          <p class="text-xs text-brand-muted leading-relaxed">
+            Support for swift bank wire, card payments, and letter of credits for international trading.
+          </p>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="glass-dark border border-white/10 rounded-2xl p-6 space-y-4 backdrop-blur-md">
+          <div class="w-10 h-10 rounded-lg bg-brand-crimson/20 text-brand-crimson flex items-center justify-center">
+            <i data-lucide="truck" class="w-5 h-5"></i>
+          </div>
+          <h4 class="font-serif text-lg font-bold text-white">End-to-End Freight</h4>
+          <p class="text-xs text-brand-muted leading-relaxed">
+            Integrated border cargo manifests, tracking from Nepalese borders straight to your warehouses.
+          </p>
+        </div>
+
+      </div>
+
     </div>
   </div>
 </section>
- 
-<!-- ========== CTA ========== -->
-<section class="cta-section">
-  <div class="cta-box">
-    <h2>Ready to grow your<br/><em>global trade</em>?</h2>
-    <p>Join 40,000+ traders already using Nepmart to connect, negotiate, and close deals worldwide.</p>
-    <div class="cta-actions">
-      <button class="btn-primary">Create free account</button>
-      <button class="btn-outline">Book a demo</button>
-    </div>
-  </div>
-</section>
- 
-<!-- ========== FOOTER ========== -->
-<footer>
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <a href="#" class="logo">Nep<span>mart</span></a>
-      <p>A global B2B marketplace connecting traders, exporters, and importers with secure, AI-powered trade tools.</p>
-    </div>
-    <div class="footer-col">
-      <h5>Platform</h5>
-      <a href="#">Marketplace</a>
-      <a href="#">Trade tools</a>
-      <a href="#">Supplier verification</a>
-      <a href="#">Market data</a>
-    </div>
-    <div class="footer-col">
-      <h5>Company</h5>
-      <a href="#">About</a>
-      <a href="#">Blog</a>
-      <a href="#">Careers</a>
-      <a href="#">Press</a>
-    </div>
-    <div class="footer-col">
-      <h5>Support</h5>
-      <a href="#">Help center</a>
-      <a href="#">Contact us</a>
-      <a href="#">Privacy policy</a>
-      <a href="#">Terms of service</a>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <p>© 2026 Nepmart. All rights reserved.</p>
-    <p>Made with 🌿 for global trade</p>
-  </div>
-</footer>
- 
-<!-- ========== LOGIN MODAL ========== -->
-<div class="modal-overlay" id="loginModal" onclick="handleOverlayClick(event)">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal()" aria-label="Close">✕</button>
-    <div class="modal-logo">Nep<span>mart</span></div>
-    <h2>Welcome back</h2>
-    <p class="modal-sub">Log in to your trader account</p>
-    <div class="form-group">
-      <label for="email">Email address</label>
-      <input type="email" id="email" placeholder="you@company.com" autocomplete="email"/>
-    </div>
-    <div class="form-group">
-      <label for="password">Password</label>
-      <input type="password" id="password" placeholder="••••••••" autocomplete="current-password"/>
-    </div>
-    <div class="form-row">
-      <label class="form-check">
-        <input type="checkbox"/> Remember me
-      </label>
-      <a href="#" class="forgot">Forgot password?</a>
-    </div>
- 
-    <button class="btn-primary">Log in to Nepmart</button>
- 
-    <p class="modal-footer-text">
-      Don't have an account? <a href="#">Sign up free</a>
+
+
+<!-- ========== CALL TO ACTION ========== -->
+<section class="py-20 bg-brand-bgLight px-4 sm:px-6 lg:px-8 text-center relative overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-tr from-brand-crimson/5 to-brand/5 pointer-events-none"></div>
+  
+  <div class="max-w-4xl mx-auto space-y-8 relative z-10">
+    <h2 class="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-brand-dark leading-tight">
+      Ready to Scale Your International Trade Pipelines?
+    </h2>
+    <p class="text-brand-muted text-sm sm:text-base max-w-2xl mx-auto">
+      Whether you are an exporter in Pokhara, a manufacturer in Biratnagar, or a buyer in Tokyo, Nep-Mart provides the elite infrastructure you need.
     </p>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+      <a href="/auth/register?role=manager" class="w-full sm:w-auto px-8 py-4 bg-brand text-white font-semibold rounded-xl hover:bg-brand-dark transition-all duration-300 shadow-md">
+        Register as Supplier
+      </a>
+      <a href="/auth/register?role=customer" class="w-full sm:w-auto px-8 py-4 bg-brand-crimson text-white font-semibold rounded-xl hover:bg-brand-crimsonDark transition-all duration-300 shadow-md">
+        Source Products Now
+      </a>
+    </div>
   </div>
-</div>
- 
-<script>
-  function openModal() {
-    document.getElementById('loginModal').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeModal() {
-    document.getElementById('loginModal').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-  function handleOverlayClick(e) {
-    if (e.target === document.getElementById('loginModal')) closeModal();
-  }
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeModal();
-  });
-</script>
- 
-</body>
-</html>
+</section>
+{% endblock %}

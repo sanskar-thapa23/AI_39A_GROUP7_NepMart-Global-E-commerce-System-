@@ -23,9 +23,9 @@ class AuthController:
             # Flash success and route according to user role
             flash(f'Welcome back, {user.username}! Logged in as {user.role.capitalize()}.', 'success')
             
-            if user.role == 'admin':
-                return redirect(url_for('admin.dashboard'))
-            return redirect(url_for('home.index'))
+            if user.role in ['admin', 'manager']:
+                return redirect(url_for('main.dashboard'))
+            return redirect(url_for('main.home'))
 
         return render_template('auth/login.html')
 
@@ -60,7 +60,7 @@ class AuthController:
 
             if error:
                 flash(error, 'danger')
-                return render_template('landing_page.html')
+                return render_template('auth/register.html')  # FIXED: was 'landing_page.html'
 
             # Instantiate user object, including the assigned database role string
             user = User(username=username, email=email, role=role)
@@ -70,6 +70,6 @@ class AuthController:
             db.session.commit()
 
             flash(f'Account created successfully as a {role}! Please log in.', 'success')
-            return render_template("login.html")
+            return redirect(url_for('auth.login'))  # FIXED: was render_template("login.html")
 
-        return render_template('register.html')
+        return render_template('auth/register.html')
