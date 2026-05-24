@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}Verified Traders & Supplier Directory — Nep-Mart{% endblock %}
+
+{% block content %}
+<div class="bg-brand-bgLight py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto space-y-6">
+    
+    <!-- Directory Header & Search Banner -->
+    <div class="bg-gradient-to-r from-brand-dark to-brand-deep rounded-3xl p-8 md:p-12 text-white relative overflow-hidden shadow-xl border border-white/5">
+      <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-brand-crimson/15 rounded-full blur-3xl pointer-events-none"></div>
+      
+      <div class="relative z-10 max-w-2xl space-y-4">
+        <span class="text-xs font-bold text-brand-crimson uppercase tracking-widest bg-brand-crimson/10 border border-brand-crimson/30 px-3 py-1 rounded-full">B2B Directory</span>
+        <h1 class="font-serif text-3xl md:text-4xl font-bold leading-tight">Verified Partners & Exporters</h1>
+        <p class="text-brand-muted text-sm md:text-base">Connect directly with audited manufacturers, legal trading entities, and custom brokerage channels across the Himalayan regions.</p>
+        
+        <!-- Search bar -->
+        <form class="flex flex-col sm:flex-row gap-2 pt-2" method="GET" action="/traders">
+          <div class="relative flex-grow">
+            <i data-lucide="search" class="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-muted"></i>
+            <input type="text" name="search" value="{{ search_query or '' }}" 
+              class="w-full pl-11 pr-4 py-3.5 bg-white border border-brand-border rounded-xl text-[#0f172a] placeholder-brand-muted focus:outline-none focus:ring-2 focus:ring-brand-crimson transition-all text-sm shadow-sm"
+              placeholder="Search by company name, industry sector, or keyword...">
+          </div>
+          <button type="submit" class="px-6 py-3.5 bg-brand-crimson text-white font-semibold rounded-xl hover:bg-brand-crimsonDark hover:shadow-lg transition-all flex items-center justify-center gap-2">
+            Search Directory <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Main Content Area: Responsive Filter Sidebar + Traders List -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+      
+      <!-- Left sidebar: Filter Controls (Collapsible on mobile) -->
+      <div class="lg:col-span-1 bg-white rounded-2xl border border-brand-border p-6 space-y-6 shadow-sm">
+        <div class="flex items-center justify-between pb-4 border-b border-brand-border">
+          <h2 class="font-serif text-lg font-bold text-brand-dark flex items-center gap-2">
+            <i data-lucide="sliders-horizontal" class="w-5 h-5 text-brand-crimson"></i> Filters
+          </h2>
+          <a href="/traders" class="text-xs font-semibold text-brand-muted hover:text-brand-crimson transition-colors">Clear All</a>
+        </div>
+
+        <!-- Filter 1: Supplier Type -->
+        <div class="space-y-3">
+          <h3 class="text-xs font-bold text-brand-dark uppercase tracking-wider">Business Type</h3>
+          <div class="space-y-2">
+            {% set business_types = [
+              ('Exporter', 'Verified Exporter'),
+              ('Manufacturer', 'Direct Manufacturer'),
+              ('Broker', 'Customs Broker / Logistics')
+            ] %}
+            {% for type_id, type_name in business_types %}
+            <label class="flex items-center text-sm text-[#334155] cursor-pointer group">
+              <input type="checkbox" name="business_type" value="{{ type_id }}" {% if selected_business_type == type_id %} checked {% endif %}
+                class="rounded border-brand-border text-brand-crimson focus:ring-brand-crimson/30 mr-2.5 accent-brand-crimson w-4 h-4">
+              <span class="group-hover:text-brand-crimson transition-colors">{{ type_name }}</span>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Filter 2: Supplier Rating -->
+        <div class="space-y-3 pt-4 border-t border-brand-border">
+          <h3 class="text-xs font-bold text-brand-dark uppercase tracking-wider">Rating Threshold</h3>
+          <div class="space-y-2">
+            <label class="flex items-center text-sm text-[#334155] cursor-pointer group">
+              <input type="checkbox" name="rating" value="4.5" checked
+                class="rounded border-brand-border text-brand-crimson focus:ring-brand-crimson/30 mr-2.5 accent-brand-crimson w-4 h-4">
+              <span class="group-hover:text-brand-crimson transition-colors flex items-center gap-1">
+                4.5+ Stars <i data-lucide="star" class="w-3.5 h-3.5 text-amber-500 fill-amber-500"></i>
+              </span>
+            </label>
+            <label class="flex items-center text-sm text-[#334155] cursor-pointer group">
+              <input type="checkbox" name="rating" value="4.0"
+                class="rounded border-brand-border text-brand-crimson focus:ring-brand-crimson/30 mr-2.5 accent-brand-crimson w-4 h-4">
+              <span class="group-hover:text-brand-crimson transition-colors flex items-center gap-1">
+                4.0+ Stars <i data-lucide="star" class="w-3.5 h-3.5 text-amber-500 fill-amber-500"></i>
+              </span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Traders List -->
+      <div class="lg:col-span-3 space-y-6">
+        
+        <!-- Results Counter & Sort bar -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white px-6 py-4 rounded-2xl border border-brand-border shadow-sm">
+          <p class="text-sm text-[#475569] font-medium">
+            Showing <span class="font-bold text-[#0f172a]">{{ traders|length }}</span> verified corporate suppliers
+          </p>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-brand-muted font-bold uppercase tracking-wider">Sort by:</span>
+            <select class="text-sm font-semibold border-brand-border rounded-lg py-1 px-3 bg-brand-bgLight text-[#0f172a] focus:outline-none focus:ring-2 focus:ring-brand-crimson">
+              <option>Verification Longevity</option>
+              <option>Response Time: Fastest</option>
+              <option>Alphabetical A-Z</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Traders Listing -->
+        <div class="space-y-6">
+          {% for trader in traders %}
+          <div class="bg-white rounded-2xl border border-brand-border overflow-hidden hover:shadow-xl hover:border-brand-crimson/30 transition-all duration-300 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 group">
+            
+            <!-- Left Info Block -->
+            <div class="flex items-start md:items-center gap-5">
+              <!-- Trader Icon/Graphic -->
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-dark to-brand flex items-center justify-center font-bold text-white text-xl shadow-md shadow-brand/10">
+                {{ trader.name[0] }}
+              </div>
+              
+              <!-- Company Meta Details -->
+              <div class="space-y-1">
+                <div class="flex flex-wrap items-center gap-2">
+                  <h3 class="font-serif text-lg font-bold text-[#0f172a] group-hover:text-brand-crimson transition-colors leading-tight">
+                    <a href="/trader/{{ trader.id }}">{{ trader.name }}</a>
+                  </h3>
+                  <span class="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 text-[10px] font-bold uppercase tracking-wider">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Audited Partner
+                  </span>
+                </div>
+                
+                <p class="text-xs text-brand-muted font-semibold uppercase tracking-wider">
+                  {{ trader.type }} &bull; {{ trader.sector }}
+                </p>
+                
+                <p class="text-sm text-[#475569] leading-relaxed max-w-xl">
+                  {{ trader.short_desc }}
+                </p>
+                
+                <div class="flex flex-wrap gap-4 text-xs font-semibold text-brand-muted pt-2">
+                  <span class="flex items-center gap-1.5"><i data-lucide="map-pin" class="w-4 h-4 text-brand-crimson"></i> {{ trader.location }}, Nepal</span>
+                  <span class="flex items-center gap-1.5"><i data-lucide="award" class="w-4 h-4 text-brand-crimson"></i> Verified {{ trader.years_verified }} Yrs</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right CTA Block -->
+            <div class="w-full md:w-auto flex md:flex-col items-center md:items-end justify-between md:justify-center gap-4 pt-4 md:pt-0 border-t md:border-t-0 border-brand-border flex-shrink-0">
+              <div class="text-left md:text-right space-y-1">
+                <div class="flex items-center md:justify-end text-amber-500">
+                  <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                  <span class="text-sm font-bold text-[#0f172a] ml-1">{{ trader.rating }}</span>
+                  <span class="text-xs text-brand-muted font-semibold ml-0.5">({{ trader.reviews_count }})</span>
+                </div>
+                <p class="text-[10px] text-[#22c55e] font-bold tracking-wider uppercase">Active Response: {{ trader.response_time }}</p>
+              </div>
+              
+              <a href="/trader/{{ trader.id }}" class="px-5 py-3 bg-brand text-white font-semibold text-sm rounded-xl hover:bg-brand-crimson hover:shadow-md transition-all flex items-center gap-1.5 shadow-sm">
+                View Storefront <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </a>
+            </div>
+
+          </div>
+          {% endfor %}
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+{% endblock %}

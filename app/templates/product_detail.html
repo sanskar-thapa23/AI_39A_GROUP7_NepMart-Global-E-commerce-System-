@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} — Nep-Mart B2B{% endblock %}
+
+{% block content %}
+<div class="bg-brand-bgLight py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto space-y-6">
+    
+    <!-- Breadcrumb -->
+    <nav class="flex text-xs font-semibold text-brand-muted uppercase tracking-wider gap-2">
+      <a href="/" class="hover:text-brand-crimson transition-colors">Home</a>
+      <span>/</span>
+      <a href="/products" class="hover:text-brand-crimson transition-colors">Catalog</a>
+      <span>/</span>
+      <span class="text-brand-dark">{{ product.name }}</span>
+    </nav>
+
+    <!-- Product Briefing Panel -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      
+      <!-- Left: Interactive Gallery/Artboard + Spec Sheets -->
+      <div class="lg:col-span-2 space-y-8">
+        
+        <!-- Premium Visual Container -->
+        <div class="bg-gradient-to-br {% if product.category == 'Agro' %} from-emerald-950 to-emerald-800 {% elif product.category == 'Crafts' %} from-amber-950 to-amber-800 {% else %} from-indigo-950 to-indigo-800 {% endif %} rounded-3xl p-8 md:p-12 text-white relative shadow-xl overflow-hidden min-h-[400px] flex flex-col justify-between">
+          <div class="absolute -right-24 -bottom-24 w-80 h-80 bg-brand-crimson/15 rounded-full blur-3xl pointer-events-none"></div>
+          
+          <div class="flex items-center justify-between z-10">
+            <span class="px-3 py-1.5 rounded-lg bg-white/10 border border-white/20 text-xs font-bold uppercase tracking-widest backdrop-blur-md">
+              {{ product.category_display }} Spec
+            </span>
+            <span class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/25 border border-emerald-500/40 text-emerald-400 text-xs font-bold uppercase tracking-widest backdrop-blur-md">
+              <i data-lucide="shield-check" class="w-4 h-4"></i> Verified Origin
+            </span>
+          </div>
+
+          <!-- Abstract center design -->
+          <div class="w-full flex flex-col items-center justify-center py-10 opacity-30 space-y-4">
+            {% if product.category == 'Agro' %}
+              <i data-lucide="leaf" class="w-24 h-24 text-white"></i>
+            {% elif product.category == 'Crafts' %}
+              <i data-lucide="gem" class="w-24 h-24 text-white"></i>
+            {% else %}
+              <i data-lucide="settings" class="w-24 h-24 text-white"></i>
+            {% endif %}
+            <p class="text-xs uppercase font-bold tracking-widest text-center">Premium Quality Himalayan Export Standard</p>
+          </div>
+
+          <!-- Item origin info footer -->
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 z-10 pt-6 border-t border-white/10">
+            <div>
+              <p class="text-xs text-brand-muted uppercase font-bold tracking-wider">Himalayan Origin</p>
+              <h2 class="font-serif text-2xl md:text-3xl font-bold mt-1 text-white">{{ product.name }}</h2>
+            </div>
+            <div class="text-left sm:text-right">
+              <p class="text-[10px] text-brand-muted uppercase font-bold tracking-widest">Global Escrow Covered</p>
+              <p class="text-xl font-bold text-brand-crimson mt-0.5">{{ product.price_range }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Technical Specification Sheets -->
+        <div class="bg-white rounded-2xl border border-brand-border p-6 md:p-8 space-y-6 shadow-sm">
+          <h3 class="font-serif text-xl font-bold text-brand-dark">Standard Specification Sheet</h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="border border-brand-border rounded-xl p-4 space-y-1">
+              <span class="text-[10px] text-brand-muted uppercase tracking-wider block font-bold">Standard Packing</span>
+              <p class="text-sm font-semibold text-[#0f172a]">{{ product.specs.packing }}</p>
+            </div>
+            <div class="border border-brand-border rounded-xl p-4 space-y-1">
+              <span class="text-[10px] text-brand-muted uppercase tracking-wider block font-bold">Quality Certifications</span>
+              <p class="text-sm font-semibold text-[#0f172a]">{{ product.specs.certification }}</p>
+            </div>
+            <div class="border border-brand-border rounded-xl p-4 space-y-1">
+              <span class="text-[10px] text-brand-muted uppercase tracking-wider block font-bold">Logistics Capability</span>
+              <p class="text-sm font-semibold text-[#0f172a]">{{ product.specs.freight }}</p>
+            </div>
+            <div class="border border-brand-border rounded-xl p-4 space-y-1">
+              <span class="text-[10px] text-brand-muted uppercase tracking-wider block font-bold">Custom Duty Codes</span>
+              <p class="text-sm font-semibold text-[#0f172a]">{{ product.specs.hscode }}</p>
+            </div>
+          </div>
+
+          <!-- Product description -->
+          <div class="space-y-3 pt-4 border-t border-brand-border">
+            <h4 class="text-xs font-bold text-brand-dark uppercase tracking-wider">Product Overview</h4>
+            <p class="text-sm text-[#475569] leading-relaxed">
+              {{ product.description }}
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right: Interactive Supplier Card + Instant Negotiation Chatbox -->
+      <div class="lg:col-span-1 space-y-6">
+        
+        <!-- Supplier Details -->
+        <div class="bg-white rounded-2xl border border-brand-border p-6 space-y-6 shadow-sm">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-brand flex items-center justify-center font-bold text-white text-lg">
+              {{ product.company[0] }}
+            </div>
+            <div>
+              <h3 class="font-serif text-lg font-bold text-brand-dark leading-tight">{{ product.company }}</h3>
+              <p class="text-xs text-brand-muted font-medium flex items-center gap-1 mt-0.5">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-brand-crimson"></i> {{ product.location }}, Nepal
+              </p>
+            </div>
+          </div>
+
+          <!-- Trust KPIs -->
+          <div class="grid grid-cols-2 gap-4 bg-brand-bgLight p-4 rounded-xl border border-brand-border text-center">
+            <div>
+              <span class="text-brand-muted block uppercase text-[8px] tracking-widest font-bold">VERIFIED</span>
+              <span class="text-[#0f172a] font-bold text-sm">8 Years Gold</span>
+            </div>
+            <div>
+              <span class="text-brand-muted block uppercase text-[8px] tracking-widest font-bold">RESPONSE RATE</span>
+              <span class="text-emerald-600 font-bold text-sm">99.8% (< 1 hr)</span>
+            </div>
+          </div>
+
+          <!-- Direct profile link -->
+          <a href="/trader/{{ product.trader_id }}" class="w-full text-center block px-4 py-2.5 border border-brand-border text-sm font-semibold rounded-lg hover:bg-brand-bgLight transition-all text-[#0f172a]">
+            View Supplier Storefront
+          </a>
+        </div>
+
+        <!-- Interactive Lead Form / Instant Negotiation Chatbox -->
+        <div class="bg-brand-dark rounded-2xl border border-white/10 p-6 text-white space-y-6 shadow-xl relative overflow-hidden">
+          <div class="absolute -top-16 -right-16 w-32 h-32 bg-brand-crimson/15 rounded-full blur-2xl pointer-events-none"></div>
+          
+          <div class="space-y-1">
+            <h3 class="font-serif text-lg font-bold">Live Deal Negotiator</h3>
+            <p class="text-xs text-brand-muted">Message directly, request sample margins, or customize shipping.</p>
+          </div>
+
+          <!-- Quick Templates trigger -->
+          <div class="space-y-1.5">
+            <span class="text-[9px] uppercase font-bold text-brand-muted tracking-widest">Select Inquiry Template</span>
+            <div class="flex flex-wrap gap-1.5">
+              <button onclick="applyTemplate('sample')" class="px-2.5 py-1 bg-white/5 border border-white/10 rounded-md text-[10px] font-semibold text-brand-muted hover:border-brand-crimson hover:text-white transition-all">Request Sample</button>
+              <button onclick="applyTemplate('discount')" class="px-2.5 py-1 bg-white/5 border border-white/10 rounded-md text-[10px] font-semibold text-brand-muted hover:border-brand-crimson hover:text-white transition-all">MOQ Discount</button>
+              <button onclick="applyTemplate('shipping')" class="px-2.5 py-1 bg-white/5 border border-white/10 rounded-md text-[10px] font-semibold text-brand-muted hover:border-brand-crimson hover:text-white transition-all">Shipping manifest</button>
+            </div>
+          </div>
+
+          <!-- Direct Post Chat Form -->
+          <form class="space-y-4" action="/chat" method="POST">
+            <input type="hidden" name="supplier_id" value="{{ product.trader_id }}">
+            <input type="hidden" name="product_id" value="{{ product.id }}">
+            
+            <div class="space-y-1">
+              <label class="block text-[10px] font-bold text-brand-muted uppercase tracking-wider">Inquiry details</label>
+              <textarea id="negotiation-msg" name="message" required rows="4" 
+                class="w-full p-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-brand-muted/60 focus:outline-none focus:ring-2 focus:ring-brand-crimson/50 focus:border-brand-crimson text-xs resize-none"
+                placeholder="Type your specifications (e.g. quantity, logistics method, custom packaging requests)..."></textarea>
+            </div>
+
+            <!-- MOQ quick field selector -->
+            <div class="grid grid-cols-2 gap-3">
+              <div class="space-y-1">
+                <label class="block text-[10px] font-bold text-brand-muted uppercase tracking-wider">Order Volume</label>
+                <input type="text" name="volume" value="{{ product.moq }}" 
+                  class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-white placeholder-brand-muted focus:outline-none text-xs">
+              </div>
+              <div class="space-y-1">
+                <label class="block text-[10px] font-bold text-brand-muted uppercase tracking-wider">Target Price (USD)</label>
+                <input type="text" name="target_price" placeholder="Target Price" 
+                  class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-white placeholder-brand-muted focus:outline-none text-xs">
+              </div>
+            </div>
+
+            <button type="submit" class="w-full py-3 bg-brand-crimson hover:bg-brand-crimsonDark text-white font-semibold rounded-xl transition-all shadow-lg shadow-brand-crimson/25 flex items-center justify-center gap-1.5 text-xs">
+              Submit & Open Chat Thread <i data-lucide="send" class="w-3.5 h-3.5"></i>
+            </button>
+          </form>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function applyTemplate(type) {
+    const textNode = document.getElementById('negotiation-msg');
+    if (!textNode) return;
+    
+    let msg = "";
+    if (type === 'sample') {
+      msg = "Hello, we would like to request a sample pack of the {{ product.name }} for quality assessment before making a bulk order. Please let us know the air freight cost to our warehouse.";
+    } else if (type === 'discount') {
+      msg = "Hi, we are planning a bulk purchase exceeding your MOQ. What is your best FOB discount pricing for {{ product.moq }} units or above? Look forward to collaborating.";
+    } else if (type === 'shipping') {
+      msg = "Greetings, could you provide details about your shipping containers, packaging standards, and estimated lead times to cross-border delivery hubs? Thank you.";
+    }
+    
+    textNode.value = msg;
+    textNode.focus();
+  }
+</script>
+{% endblock %}

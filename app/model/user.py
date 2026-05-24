@@ -1,7 +1,13 @@
-def get_user_by_username(self, username):
+from app.model.database import Database
 
-    query = "SELECT * FROM users WHERE username=%s"
 
-    self.cursor.execute(query, (username,))
+class User:
 
-    return self.cursor.fetchone()
+    def __init__(self):
+        self.db = Database()
+        self.cursor = self.db.cursor
+
+    def get_user_by_username(self, username):
+        query = "SELECT * FROM users WHERE username=%s"
+        self.cursor.execute(query, (username,))
+        return self.cursor.fetchone()

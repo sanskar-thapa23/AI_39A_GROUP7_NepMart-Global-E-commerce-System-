@@ -84,7 +84,7 @@ class AuthController:
 
             if error:
                 flash(error, 'danger')
-                return render_template('landing_page.html')
+                return render_template('auth/register.html')  # FIXED: was 'landing_page.html'
 
             # Create user
             self.user_model.create_user(
@@ -101,4 +101,4 @@ class AuthController:
 
             return render_template("login.html")
 
-        return render_template('register.html')
+        return render_template('auth/register.html')

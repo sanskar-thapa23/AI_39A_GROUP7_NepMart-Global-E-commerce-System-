@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block title %}Seller Space B2B Dashboard — Nep-Mart{% endblock %}
+
+{% block content %}
+<div class="bg-brand-bgLight py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto space-y-8">
+    
+    <!-- Dashboard Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div>
+        <h1 class="font-serif text-2xl md:text-3xl font-bold text-brand-dark leading-tight">Seller Space</h1>
+        <p class="text-xs text-brand-muted font-medium mt-1">Manage global wholesale RFQs, secure escrow payments, and track freight logs.</p>
+      </div>
+      <div class="flex gap-3">
+        <a href="/products" class="px-4 py-2.5 border border-brand-border text-xs font-bold rounded-lg hover:bg-white transition-all text-[#0f172a] bg-white/50">Browse Marketplace</a>
+        <a href="#" class="px-4 py-2.5 bg-brand-crimson text-white text-xs font-bold rounded-lg hover:bg-brand-crimsonDark hover:shadow-md transition-all flex items-center gap-1.5 shadow-sm">
+          <i data-lucide="plus" class="w-4 h-4"></i> Add New B2B Spec
+        </a>
+      </div>
+    </div>
+
+    <!-- Metrics Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      
+      <!-- Card 1 -->
+      <div class="bg-white rounded-2xl border border-brand-border p-6 shadow-sm flex items-center justify-between">
+        <div class="space-y-1">
+          <span class="text-brand-muted block uppercase text-[9px] tracking-widest font-bold">Total Trade Revenue</span>
+          <span class="text-2xl font-bold text-[#0f172a]">$48,250.00</span>
+          <span class="text-[10px] text-emerald-500 font-bold flex items-center gap-0.5"><i data-lucide="trending-up" class="w-3.5 h-3.5"></i> +12.5% this month</span>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-brand/5 text-brand flex items-center justify-center flex-shrink-0">
+          <i data-lucide="dollar-sign" class="w-6 h-6"></i>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="bg-white rounded-2xl border border-brand-border p-6 shadow-sm flex items-center justify-between">
+        <div class="space-y-1">
+          <span class="text-brand-muted block uppercase text-[9px] tracking-widest font-bold">Funds in Escrow</span>
+          <span class="text-2xl font-bold text-[#0f172a]">$14,200.00</span>
+          <span class="text-[10px] text-brand-muted font-semibold block">Secured by Nep-Mart</span>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-emerald-500/5 text-emerald-600 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="lock" class="w-6 h-6"></i>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="bg-white rounded-2xl border border-brand-border p-6 shadow-sm flex items-center justify-between">
+        <div class="space-y-1">
+          <span class="text-brand-muted block uppercase text-[9px] tracking-widest font-bold">Active Contracts</span>
+          <span class="text-2xl font-bold text-[#0f172a]">8 Pending</span>
+          <span class="text-[10px] text-brand-crimson font-bold flex items-center gap-0.5"><i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> 3 Action Required</span>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-brand-crimson/5 text-brand-crimson flex items-center justify-center flex-shrink-0">
+          <i data-lucide="file-text" class="w-6 h-6"></i>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="bg-white rounded-2xl border border-brand-border p-6 shadow-sm flex items-center justify-between">
+        <div class="space-y-1">
+          <span class="text-brand-muted block uppercase text-[9px] tracking-widest font-bold">Audit Trust Rating</span>
+          <span class="text-2xl font-bold text-emerald-600">98% Health</span>
+          <span class="text-[10px] text-brand-muted font-semibold block">Verified Gold Tier</span>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-emerald-500/5 text-emerald-500 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="shield-check" class="w-6 h-6"></i>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Analytics Showcase Grid: SVG Charts + Contract Pipelines -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      
+      <!-- Left: Revenue Growth Chart (Responsive High Fidelity SVG Representation) -->
+      <div class="lg:col-span-2 bg-white rounded-2xl border border-brand-border p-6 shadow-sm space-y-6">
+        <div class="flex items-center justify-between border-b border-brand-border pb-4">
+          <h2 class="font-serif text-lg font-bold text-brand-dark flex items-center gap-2">
+            <i data-lucide="activity" class="w-5 h-5 text-brand-crimson"></i> Revenue Analytics
+          </h2>
+          <span class="text-[10px] font-bold text-brand-muted uppercase tracking-wider bg-brand-bgLight px-2 py-1 rounded">2026 Quarter Forecast</span>
+        </div>
+
+        <!-- High-fidelity SVG line chart -->
+        <div class="w-full relative aspect-[16/7] bg-brand-bgLight/40 rounded-xl p-4 border border-brand-border overflow-hidden">
+          <svg viewBox="0 0 500 200" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <!-- Grid Lines -->
+            <line x1="0" y1="40" x2="500" y2="40" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+            <line x1="0" y1="85" x2="500" y2="85" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+            <line x1="0" y1="130" x2="500" y2="130" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+            <line x1="0" y1="170" x2="500" y2="170" stroke="#cbd5e1" stroke-width="1.5"/>
+
+            <!-- Gradient under curve -->
+            <defs>
+              <linearGradient id="chart-grad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#DC143C" stop-opacity="0.2"/>
+                <stop offset="100%" stop-color="#DC143C" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M 0 170 Q 100 120 200 135 T 400 65 L 500 40 L 500 170 Z" fill="url(#chart-grad)"/>
+
+            <!-- Main Line -->
+            <path d="M 0 170 Q 100 120 200 135 T 400 65 L 500 40" fill="none" stroke="#DC143C" stroke-width="3" stroke-linecap="round"/>
+
+            <!-- Highlight Dots -->
+            <circle cx="200" cy="135" r="4.5" fill="#1A237E" stroke="#fff" stroke-width="1.5"/>
+            <circle cx="400" cy="65" r="4.5" fill="#1A237E" stroke="#fff" stroke-width="1.5"/>
+            <circle cx="500" cy="40" r="4.5" fill="#DC143C" stroke="#fff" stroke-width="1.5"/>
+          </svg>
+
+          <!-- SVG Labels Overlay -->
+          <div class="absolute bottom-2 left-4 right-4 flex justify-between text-[8px] font-bold text-brand-muted uppercase tracking-widest">
+            <span>Jan</span>
+            <span>Feb</span>
+            <span>Mar</span>
+            <span>Apr</span>
+            <span>May</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Category breakdown + Quick Tasks checklist -->
+      <div class="lg:col-span-1 bg-white rounded-2xl border border-brand-border p-6 shadow-sm space-y-6">
+        <h3 class="font-serif text-lg font-bold text-brand-dark pb-4 border-b border-brand-border">B2B Quick Action Panel</h3>
+        
+        <div class="space-y-4">
+          <a href="/chat" class="w-full flex items-center justify-between p-3.5 bg-brand-bgLight hover:bg-brand/5 border border-brand-border hover:border-brand/35 rounded-xl transition-all group">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg bg-brand/10 text-brand flex items-center justify-center">
+                <i data-lucide="message-square" class="w-5 h-5"></i>
+              </div>
+              <div class="text-left">
+                <h4 class="text-xs font-bold text-brand-dark">Active negotiations</h4>
+                <p class="text-[10px] text-brand-muted mt-0.5">5 customers waiting</p>
+              </div>
+            </div>
+            <i data-lucide="arrow-right" class="w-4 h-4 text-brand-muted group-hover:text-brand transition-colors"></i>
+          </a>
+
+          <div class="w-full p-4 bg-brand-deep rounded-xl text-white relative overflow-hidden space-y-2">
+            <h4 class="text-xs font-bold">Verification Tier</h4>
+            <p class="text-[10px] text-brand-muted">You are a Gold Supplier. Complete ISO re-audit by June 15 to maintain top visual badge placement.</p>
+            <div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden mt-2">
+              <div class="h-full bg-brand-crimson" style="width: 85%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Negotiations & Wholesale Orders Table -->
+    <div class="bg-white rounded-2xl border border-brand-border p-6 shadow-sm space-y-4">
+      <h2 class="font-serif text-lg font-bold text-brand-dark flex items-center gap-2">
+        <i data-lucide="file-signature" class="w-5 h-5 text-brand-crimson"></i> Active Negotiations Pipeline
+      </h2>
+
+      <!-- Responsive Table wrapper -->
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse text-left text-sm text-[#475569]">
+          <thead>
+            <tr class="bg-brand-bgLight text-[#0f172a] font-bold text-xs uppercase tracking-wider border-b border-brand-border">
+              <th class="py-3.5 px-4 rounded-l-xl">Global Client</th>
+              <th class="py-3.5 px-4">Negotiated Item</th>
+              <th class="py-3.5 px-4">Order Volume</th>
+              <th class="py-3.5 px-4">Proposed Unit Offer</th>
+              <th class="py-3.5 px-4">Logistics Method</th>
+              <th class="py-3.5 px-4 rounded-r-xl">Status Badge</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-brand-border">
+            
+            <!-- Row 1 -->
+            <tr class="hover:bg-brand-bgLight/40 transition-colors">
+              <td class="py-4 px-4 font-semibold text-[#0f172a]">Tokyo Tea Sourcing Ltd</td>
+              <td class="py-4 px-4 font-medium text-brand">Organic Himalayan Tea Leaves</td>
+              <td class="py-4 px-4 font-bold">1,200 KG</td>
+              <td class="py-4 px-4 text-emerald-600 font-bold">$9.20/KG</td>
+              <td class="py-4 px-4 font-medium">Air Freight (FOB)</td>
+              <td class="py-4 px-4">
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-600 text-[10px] font-bold uppercase tracking-wider">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Bid Received
+                </span>
+              </td>
+            </tr>
+
+            <!-- Row 2 -->
+            <tr class="hover:bg-brand-bgLight/40 transition-colors">
+              <td class="py-4 px-4 font-semibold text-[#0f172a]">London Crafts Co.</td>
+              <td class="py-4 px-4 font-medium text-brand">Handwoven Pashmina Shawls</td>
+              <td class="py-4 px-4 font-bold">300 Units</td>
+              <td class="py-4 px-4 text-emerald-600 font-bold">$45.00/Unit</td>
+              <td class="py-4 px-4 font-medium">DHL Express</td>
+              <td class="py-4 px-4">
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600 text-[10px] font-bold uppercase tracking-wider">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span> Approved/Escrowed
+                </span>
+              </td>
+            </tr>
+
+            <!-- Row 3 -->
+            <tr class="hover:bg-brand-bgLight/40 transition-colors">
+              <td class="py-4 px-4 font-semibold text-[#0f172a]">Berlin AgroMachinery</td>
+              <td class="py-4 px-4 font-medium text-brand">Industrial Rice Mill Machine</td>
+              <td class="py-4 px-4 font-bold">5 Units</td>
+              <td class="py-4 px-4 text-emerald-600 font-bold">$1,850.00/Unit</td>
+              <td class="py-4 px-4 font-medium">Sea Freight Manifest</td>
+              <td class="py-4 px-4">
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-600 text-[10px] font-bold uppercase tracking-wider">
+                  <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> Shipped/transit
+                </span>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

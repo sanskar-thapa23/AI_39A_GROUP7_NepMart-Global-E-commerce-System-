@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Create Partner Account — Nep-Mart Global B2B{% endblock %}
+
+{% block content %}
+<div class="min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-brand-deep via-brand-dark to-brand-deep relative overflow-hidden">
+  <!-- Glowing accent background blobs for premium aesthetic -->
+  <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-brand/10 rounded-full blur-[100px] pointer-events-none"></div>
+  <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-brand-crimson/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+  <div class="max-w-lg w-full space-y-8 relative z-10">
+    <!-- Brand badge/logo center -->
+    <div class="text-center">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand to-brand-crimson shadow-xl shadow-brand/35 mb-4 group hover:scale-105 transition-transform duration-300">
+        <span class="font-serif font-bold text-2xl text-white">N</span>
+      </div>
+      <h2 class="font-serif text-3xl font-bold text-white tracking-tight">Join Nep-Mart B2B</h2>
+      <p class="mt-2 text-sm text-brand-muted">
+        Connect with premium verified manufacturers, exporters, and importers
+      </p>
+    </div>
+
+    <!-- Registration Card -->
+    <div class="glass-dark border border-white/10 rounded-3xl p-8 shadow-2xl backdrop-blur-md">
+      <form class="space-y-5" action="{{ url_for('auth.register') }}" method="POST">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Username input group -->
+          <div class="space-y-1">
+            <label for="username" class="block text-xs font-semibold uppercase tracking-wider text-brand-muted">Username</label>
+            <div class="relative rounded-xl shadow-sm">
+              <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brand-muted/70">
+                <i data-lucide="user" class="w-4 h-4"></i>
+              </div>
+              <input id="username" name="username" type="text" required 
+                class="block w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-brand-muted/60 focus:outline-none focus:ring-2 focus:ring-brand-crimson/50 focus:border-brand-crimson transition-all text-sm" 
+                placeholder="Unique ID">
+            </div>
+          </div>
+
+          <!-- Role input group -->
+          <div class="space-y-1">
+            <label for="role" class="block text-xs font-semibold uppercase tracking-wider text-brand-muted">Account Type</label>
+            <div class="relative rounded-xl shadow-sm">
+              <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brand-muted/70">
+                <i data-lucide="briefcase" class="w-4 h-4"></i>
+              </div>
+              <select id="role" name="role" required
+                class="block w-full pl-10 pr-4 py-2.5 bg-brand-dark border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-brand-crimson/50 focus:border-brand-crimson transition-all text-sm appearance-none">
+                <option value="customer" class="bg-brand-dark text-white">Buyer / Customer</option>
+                <option value="manager" class="bg-brand-dark text-white">Seller / Manufacturer</option>
+                <option value="admin" class="bg-brand-dark text-white">Platform Administrator</option>
+              </select>
+              <!-- custom arrow icon since appearance-none deletes default styling -->
+              <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-brand-muted/70">
+                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Email input group -->
+        <div class="space-y-1">
+          <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-brand-muted">Corporate Email</label>
+          <div class="relative rounded-xl shadow-sm">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brand-muted/70">
+              <i data-lucide="mail" class="w-4 h-4"></i>
+            </div>
+            <input id="email" name="email" type="email" required 
+              class="block w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-brand-muted/60 focus:outline-none focus:ring-2 focus:ring-brand-crimson/50 focus:border-brand-crimson transition-all text-sm" 
+              placeholder="name@company.com">
+          </div>
+        </div>
+
+        <!-- Password inputs grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Password input group -->
+          <div class="space-y-1">
+            <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-brand-muted">Password</label>
+            <div class="relative rounded-xl shadow-sm">
+              <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brand-muted/70">
+                <i data-lucide="lock" class="w-4 h-4"></i>
+              </div>
+              <input id="password" name="password" type="password" required 
+                class="block w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-brand-muted/60 focus:outline-none focus:ring-2 focus:ring-brand-crimson/50 focus:border-brand-crimson transition-all text-sm" 
+                placeholder="Min 6 chars">
+            </div>
+          </div>
+
+          <!-- Confirm Password input group -->
+          <div class="space-y-1">
+            <label for="confirm_password" class="block text-xs font-semibold uppercase tracking-wider text-brand-muted">Confirm Password</label>
+            <div class="relative rounded-xl shadow-sm">
+              <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brand-muted/70">
+                <i data-lucide="lock" class="w-4 h-4"></i>
+              </div>
+              <input id="confirm_password" name="confirm_password" type="password" required 
+                class="block w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-brand-muted/60 focus:outline-none focus:ring-2 focus:ring-brand-crimson/50 focus:border-brand-crimson transition-all text-sm" 
+                placeholder="Repeat password">
+            </div>
+          </div>
+        </div>
+
+        <!-- Terms and conditions checkbox -->
+        <div class="flex items-start">
+          <input id="terms" name="terms" type="checkbox" required
+            class="mt-1 h-4 w-4 rounded bg-white/5 border-white/10 text-brand-crimson focus:ring-brand-crimson/30 accent-brand-crimson">
+          <label for="terms" class="ml-2.5 block text-xs text-brand-muted leading-snug">
+            I agree to the <a href="#" class="text-white hover:text-brand-crimson underline">Terms of Platform Use</a>, <a href="#" class="text-white hover:text-brand-crimson underline">Privacy Policy</a> and authorize global trade data verification.
+          </label>
+        </div>
+
+        <!-- CTA Submit Button -->
+        <div>
+          <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-semibold rounded-xl text-white bg-brand-crimson hover:bg-brand-crimsonDark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-crimson shadow-lg shadow-brand-crimson/25 transition-all duration-150 transform hover:-translate-y-0.5 active:translate-y-0">
+            <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+              <i data-lucide="user-plus" class="w-4 h-4 text-white/70 group-hover:text-white transition-colors"></i>
+            </span>
+            Create Partner Account
+          </button>
+        </div>
+      </form>
+
+      <!-- Redirect back to login -->
+      <div class="mt-6 text-center text-sm text-brand-muted">
+        Already have a partner account? 
+        <a href="{{ url_for('auth.login') }}" class="font-semibold text-white hover:text-brand-crimson transition-colors ml-1">
+          Sign in here
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
