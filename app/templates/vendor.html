@@ -1,265 +1,312 @@
-<!-- ========================= -->
-<!-- vendor-dashboard.html -->
-<!-- ========================= -->
+<!-- ========================================= -->
+<!-- vendor/dashboard.html -->
+<!-- ========================================= -->
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "base.html" %}
 
-  <title>Vendor Dashboard - NepMart</title>
+{% block title %}Vendor Dashboard - NepMart{% endblock %}
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+{% block content %}
 
-  <style>
-    body{
-      background:#f8fafc;
-      font-family:Inter,sans-serif;
-    }
-  </style>
-</head>
+<div class="bg-brand-bgLight min-h-screen">
 
-<body>
+  <div class="flex">
 
-<div class="flex min-h-screen">
-
-  <!-- Sidebar -->
-  <aside class="w-72 bg-slate-950 text-white p-6 hidden lg:flex flex-col justify-between">
-
-    <div>
-
-      <div class="mb-10">
-        <h1 class="text-3xl font-bold text-red-500">NepMart</h1>
-        <p class="text-slate-400 text-sm mt-1">Vendor Workspace</p>
-      </div>
-
-      <nav class="space-y-3">
-
-        <a href="#" class="flex items-center gap-3 bg-red-500 px-4 py-3 rounded-xl font-semibold">
-          <i data-lucide="layout-dashboard"></i>
-          Dashboard
-        </a>
-
-        <a href="#" class="flex items-center gap-3 hover:bg-slate-800 px-4 py-3 rounded-xl transition">
-          <i data-lucide="package"></i>
-          Products
-        </a>
-
-        <a href="#" class="flex items-center gap-3 hover:bg-slate-800 px-4 py-3 rounded-xl transition">
-          <i data-lucide="shopping-cart"></i>
-          Orders
-        </a>
-
-        <a href="#" class="flex items-center gap-3 hover:bg-slate-800 px-4 py-3 rounded-xl transition">
-          <i data-lucide="bar-chart-3"></i>
-          Analytics
-        </a>
-
-        <a href="#" class="flex items-center gap-3 hover:bg-slate-800 px-4 py-3 rounded-xl transition">
-          <i data-lucide="message-circle"></i>
-          Messages
-        </a>
-
-      </nav>
-
-    </div>
-
-    <div class="bg-slate-900 rounded-2xl p-4 border border-slate-800">
-      <p class="font-semibold">Verified Vendor</p>
-      <p class="text-slate-400 text-sm">Global exporter access enabled.</p>
-    </div>
-
-  </aside>
-
-  <!-- Main -->
-  <main class="flex-1 p-6 lg:p-10">
-
-    <!-- Topbar -->
-    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+    <!-- SIDEBAR -->
+    <aside class="w-72 bg-brand-dark text-white min-h-screen hidden lg:flex flex-col justify-between p-6">
 
       <div>
-        <h2 class="text-3xl font-bold text-slate-900">Vendor Dashboard</h2>
-        <p class="text-slate-500">Manage your products and sales.</p>
+
+        <div class="mb-10">
+          <h1 class="text-3xl font-bold text-brand-crimson">
+            NepMart
+          </h1>
+
+          <p class="text-brand-muted text-sm mt-1">
+            Vendor Workspace
+          </p>
+        </div>
+
+        <nav class="space-y-3">
+
+          <a href="{{ url_for('vendor.dashboard') }}"
+            class="flex items-center gap-3 bg-brand-crimson px-4 py-3 rounded-xl font-semibold">
+
+            <i data-lucide="layout-dashboard"></i>
+            Dashboard
+          </a>
+
+          <a href="{{ url_for('vendor.products') }}"
+            class="flex items-center gap-3 hover:bg-white/10 px-4 py-3 rounded-xl transition">
+
+            <i data-lucide="package"></i>
+            Products
+          </a>
+
+          <a href="{{ url_for('vendor.orders') }}"
+            class="flex items-center gap-3 hover:bg-white/10 px-4 py-3 rounded-xl transition">
+
+            <i data-lucide="shopping-cart"></i>
+            Orders
+          </a>
+
+          <a href="{{ url_for('vendor.analytics') }}"
+            class="flex items-center gap-3 hover:bg-white/10 px-4 py-3 rounded-xl transition">
+
+            <i data-lucide="bar-chart-3"></i>
+            Analytics
+          </a>
+
+          <a href="{{ url_for('vendor.messages') }}"
+            class="flex items-center gap-3 hover:bg-white/10 px-4 py-3 rounded-xl transition">
+
+            <i data-lucide="message-circle"></i>
+            Messages
+          </a>
+
+        </nav>
+
       </div>
 
-      <div class="flex items-center gap-4">
+      <!-- Vendor Info -->
+      <div class="bg-white/5 rounded-2xl p-4 border border-white/10">
 
-        <button class="bg-red-500 text-white px-5 py-3 rounded-2xl font-semibold shadow-lg hover:scale-105 transition">
-          + Add Product
-        </button>
+        <div class="flex items-center gap-3">
 
-        <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-xl border shadow-sm">
-          <img src="https://i.pravatar.cc/40?img=5" class="rounded-full">
+          <img src="{{ current_user.profile_image }}"
+            class="w-12 h-12 rounded-full object-cover">
 
           <div>
-            <p class="font-semibold">Everest Export</p>
-            <p class="text-xs text-emerald-600 font-semibold">Verified Seller</p>
+            <h3 class="font-semibold">
+              {{ current_user.business_name }}
+            </h3>
+
+            <p class="text-xs text-emerald-400 font-semibold">
+              Verified Vendor
+            </p>
           </div>
+
         </div>
 
       </div>
 
-    </div>
+    </aside>
 
-    <!-- Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+    <!-- MAIN -->
+    <main class="flex-1 p-6 lg:p-10">
 
-      <div class="bg-white p-6 rounded-3xl border shadow-sm">
-        <p class="text-slate-500 text-sm">Products</p>
-        <h3 class="text-3xl font-bold mt-2">248</h3>
-      </div>
-
-      <div class="bg-white p-6 rounded-3xl border shadow-sm">
-        <p class="text-slate-500 text-sm">Orders</p>
-        <h3 class="text-3xl font-bold mt-2">1,230</h3>
-      </div>
-
-      <div class="bg-white p-6 rounded-3xl border shadow-sm">
-        <p class="text-slate-500 text-sm">Customers</p>
-        <h3 class="text-3xl font-bold mt-2">845</h3>
-      </div>
-
-      <div class="bg-gradient-to-r from-slate-900 to-red-600 text-white p-6 rounded-3xl shadow-xl">
-        <p class="text-sm">Revenue</p>
-        <h3 class="text-3xl font-bold mt-2">$96,000</h3>
-      </div>
-
-    </div>
-
-    <!-- Product Table -->
-    <div class="bg-white rounded-3xl border shadow-sm p-6 mb-8">
-
-      <div class="flex justify-between items-center mb-6">
+      <!-- TOPBAR -->
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
 
         <div>
-          <h3 class="text-xl font-bold">Inventory Overview</h3>
-          <p class="text-slate-500 text-sm">Manage all your active products</p>
+          <h2 class="text-3xl font-bold text-brand-dark">
+            Vendor Dashboard
+          </h2>
+
+          <p class="text-brand-muted">
+            Manage your products and global buyers
+          </p>
         </div>
 
-        <button class="border px-4 py-2 rounded-xl font-semibold hover:bg-slate-100">
-          Export
-        </button>
+        <a href="{{ url_for('vendor.add_product') }}"
+          class="bg-brand-crimson text-white px-6 py-3 rounded-2xl font-semibold hover:shadow-xl transition-all">
+
+          + Add Product
+        </a>
 
       </div>
 
-      <div class="overflow-x-auto">
+      <!-- STATS -->
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
 
-        <table class="w-full">
+        <div class="bg-white rounded-3xl p-6 border border-brand-border shadow-sm">
 
-          <thead>
-            <tr class="text-left text-slate-500 text-sm border-b">
-              <th class="pb-4">Product</th>
-              <th class="pb-4">Category</th>
-              <th class="pb-4">Stock</th>
-              <th class="pb-4">Price</th>
-              <th class="pb-4">Status</th>
-            </tr>
-          </thead>
+          <p class="text-sm text-brand-muted">
+            Total Products
+          </p>
 
-          <tbody class="divide-y">
+          <h3 class="text-3xl font-bold mt-2 text-brand-dark">
+            {{ total_products }}
+          </h3>
 
-            <tr>
-              <td class="py-4 font-semibold">Himalayan Tea</td>
-              <td>Beverages</td>
-              <td>120</td>
-              <td>$12</td>
-              <td>
-                <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs font-bold">
-                  Active
-                </span>
-              </td>
-            </tr>
+        </div>
 
-            <tr>
-              <td class="py-4 font-semibold">Pashmina Shawl</td>
-              <td>Fashion</td>
-              <td>45</td>
-              <td>$80</td>
-              <td>
-                <span class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full text-xs font-bold">
-                  Low Stock
-                </span>
-              </td>
-            </tr>
+        <div class="bg-white rounded-3xl p-6 border border-brand-border shadow-sm">
 
-            <tr>
-              <td class="py-4 font-semibold">Organic Herbs</td>
-              <td>Health</td>
-              <td>300</td>
-              <td>$20</td>
-              <td>
-                <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs font-bold">
-                  Active
-                </span>
-              </td>
-            </tr>
+          <p class="text-sm text-brand-muted">
+            Orders
+          </p>
 
-          </tbody>
+          <h3 class="text-3xl font-bold mt-2 text-brand-dark">
+            {{ total_orders }}
+          </h3>
 
-        </table>
+        </div>
 
-      </div>
+        <div class="bg-white rounded-3xl p-6 border border-brand-border shadow-sm">
 
-    </div>
+          <p class="text-sm text-brand-muted">
+            Customers
+          </p>
 
-    <!-- Bottom Grid -->
-    <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+          <h3 class="text-3xl font-bold mt-2 text-brand-dark">
+            {{ total_customers }}
+          </h3>
 
-      <!-- Analytics -->
-      <div class="xl:col-span-2 bg-white rounded-3xl border shadow-sm p-6">
+        </div>
 
-        <h3 class="text-xl font-bold mb-6">Sales Analytics</h3>
+        <div class="bg-gradient-to-r from-brand-dark to-brand rounded-3xl p-6 text-white shadow-xl">
 
-        <div class="h-72 rounded-3xl bg-slate-100 flex items-center justify-center text-slate-400 text-lg font-semibold">
-          Analytics Chart Placeholder
+          <p class="text-sm text-white/80">
+            Revenue
+          </p>
+
+          <h3 class="text-3xl font-bold mt-2">
+            ${{ total_revenue }}
+          </h3>
+
         </div>
 
       </div>
 
-      <!-- Messages -->
-      <div class="bg-white rounded-3xl border shadow-sm p-6">
+      <!-- PRODUCTS -->
+      <div class="bg-white rounded-3xl border border-brand-border shadow-sm p-6 mb-8">
 
-        <h3 class="text-xl font-bold mb-6">Customer Inquiries</h3>
+        <div class="flex justify-between items-center mb-6">
 
-        <div class="space-y-5">
+          <div>
 
-          <div class="border rounded-2xl p-4">
-            <div class="flex justify-between items-center">
-              <h4 class="font-bold">John Carter</h4>
-              <span class="text-xs text-slate-400">2 mins ago</span>
-            </div>
+            <h3 class="text-xl font-bold text-brand-dark">
+              Product Inventory
+            </h3>
 
-            <p class="text-sm text-slate-500 mt-2">
-              Interested in wholesale tea shipment pricing.
+            <p class="text-sm text-brand-muted">
+              Manage all active listings
             </p>
-          </div>
 
-          <div class="border rounded-2xl p-4">
-            <div class="flex justify-between items-center">
-              <h4 class="font-bold">Lina Exports</h4>
-              <span class="text-xs text-slate-400">10 mins ago</span>
-            </div>
-
-            <p class="text-sm text-slate-500 mt-2">
-              Need shipping details for Europe delivery.
-            </p>
           </div>
 
         </div>
 
+        <div class="overflow-x-auto">
+
+          <table class="w-full">
+
+            <thead>
+
+              <tr class="border-b border-brand-border text-left text-sm text-brand-muted">
+
+                <th class="pb-4">Product</th>
+                <th class="pb-4">Category</th>
+                <th class="pb-4">Price</th>
+                <th class="pb-4">Stock</th>
+                <th class="pb-4">Status</th>
+
+              </tr>
+
+            </thead>
+
+            <tbody class="divide-y divide-brand-border">
+
+              {% for product in products %}
+
+              <tr>
+
+                <td class="py-4 font-semibold text-brand-dark">
+                  {{ product.name }}
+                </td>
+
+                <td>
+                  {{ product.category }}
+                </td>
+
+                <td>
+                  ${{ product.price }}
+                </td>
+
+                <td>
+                  {{ product.stock }}
+                </td>
+
+                <td>
+
+                  {% if product.stock > 10 %}
+
+                  <span class="bg-emerald-100 text-emerald-600 px-3 py-1 rounded-full text-xs font-bold">
+                    Active
+                  </span>
+
+                  {% else %}
+
+                  <span class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full text-xs font-bold">
+                    Low Stock
+                  </span>
+
+                  {% endif %}
+
+                </td>
+
+              </tr>
+
+              {% endfor %}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
       </div>
 
-    </div>
+      <!-- CUSTOMER MESSAGES -->
+      <div class="bg-white rounded-3xl border border-brand-border shadow-sm p-6">
 
-  </main>
+        <div class="mb-6">
+
+          <h3 class="text-xl font-bold text-brand-dark">
+            Customer Inquiries
+          </h3>
+
+          <p class="text-sm text-brand-muted">
+            Latest buyer messages
+          </p>
+
+        </div>
+
+        <div class="space-y-4">
+
+          {% for message in messages %}
+
+          <div class="border border-brand-border rounded-2xl p-4">
+
+            <div class="flex justify-between items-center">
+
+              <h4 class="font-semibold text-brand-dark">
+                {{ message.customer }}
+              </h4>
+
+              <span class="text-xs text-brand-muted">
+                {{ message.time }}
+              </span>
+
+            </div>
+
+            <p class="text-sm text-brand-muted mt-2">
+              {{ message.content }}
+            </p>
+
+          </div>
+
+          {% endfor %}
+
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
 
 </div>
 
-<script>
-  lucide.createIcons();
-</script>
-
-</body>
-</html>
+{% endblock %}

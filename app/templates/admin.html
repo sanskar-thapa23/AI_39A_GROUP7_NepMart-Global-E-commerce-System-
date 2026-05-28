@@ -1,241 +1,224 @@
-<!-- ========================= -->
-<!-- admin-dashboard.html -->
-<!-- ========================= -->
+<!-- ========================================= -->
+<!-- admin/dashboard.html -->
+<!-- ========================================= -->
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Dashboard - NepMart</title>
+{% extends "base.html" %}
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+{% block title %}Admin Dashboard - NepMart{% endblock %}
 
-  <style>
-    body{
-      background:#f8fafc;
-      font-family: Inter, sans-serif;
-    }
-  </style>
-</head>
+{% block content %}
 
-<body>
+<div class="bg-brand-bgLight min-h-screen">
 
-<div class="flex min-h-screen">
+  <div class="flex">
 
-  <!-- Sidebar -->
-  <aside class="w-72 bg-slate-950 text-white p-6 hidden lg:flex flex-col justify-between">
-
-    <div>
-
-      <div class="mb-10">
-        <h1 class="text-3xl font-bold text-red-500">NepMart</h1>
-        <p class="text-slate-400 text-sm mt-1">Admin Control Center</p>
-      </div>
-
-      <nav class="space-y-3">
-
-        <a href="#" class="flex items-center gap-3 bg-red-500 px-4 py-3 rounded-xl font-semibold">
-          <i data-lucide="layout-dashboard"></i>
-          Dashboard
-        </a>
-
-        <a href="#" class="flex items-center gap-3 hover:bg-slate-800 px-4 py-3 rounded-xl transition">
-          <i data-lucide="users"></i>
-          Users
-        </a>
-
-        <a href="#" class="flex items-center gap-3 hover:bg-slate-800 px-4 py-3 rounded-xl transition">
-          <i data-lucide="store"></i>
-          Vendors
-        </a>
-
-        <a href="#" class="flex items-center gap-3 hover:bg-slate-800 px-4 py-3 rounded-xl transition">
-          <i data-lucide="shopping-bag"></i>
-          Orders
-        </a>
-
-        <a href="#" class="flex items-center gap-3 hover:bg-slate-800 px-4 py-3 rounded-xl transition">
-          <i data-lucide="shield-check"></i>
-          Verification
-        </a>
-
-        <a href="#" class="flex items-center gap-3 hover:bg-slate-800 px-4 py-3 rounded-xl transition">
-          <i data-lucide="settings"></i>
-          Settings
-        </a>
-
-      </nav>
-
-    </div>
-
-    <div class="bg-slate-900 rounded-2xl p-4 border border-slate-800">
-      <p class="font-semibold">Admin Panel</p>
-      <p class="text-slate-400 text-sm">Manage your global trade platform efficiently.</p>
-    </div>
-
-  </aside>
-
-  <!-- Main -->
-  <main class="flex-1 p-6 lg:p-10">
-
-    <!-- Topbar -->
-    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+    <!-- SIDEBAR -->
+    <aside class="w-72 bg-brand-dark text-white min-h-screen hidden lg:flex flex-col justify-between p-6">
 
       <div>
-        <h2 class="text-3xl font-bold text-slate-900">Dashboard Overview</h2>
-        <p class="text-slate-500">Welcome back, Administrator.</p>
+
+        <div class="mb-10">
+          <h1 class="text-3xl font-bold text-brand-crimson">
+            NepMart
+          </h1>
+
+          <p class="text-brand-muted text-sm mt-1">
+            Admin Control Center
+          </p>
+        </div>
+
+        <nav class="space-y-3">
+
+          <a href="{{ url_for('admin.dashboard') }}"
+            class="flex items-center gap-3 bg-brand-crimson px-4 py-3 rounded-xl font-semibold">
+
+            <i data-lucide="layout-dashboard"></i>
+            Dashboard
+          </a>
+
+          <a href="{{ url_for('admin.users') }}"
+            class="flex items-center gap-3 hover:bg-white/10 px-4 py-3 rounded-xl transition">
+
+            <i data-lucide="users"></i>
+            Users
+          </a>
+
+          <a href="{{ url_for('admin.vendors') }}"
+            class="flex items-center gap-3 hover:bg-white/10 px-4 py-3 rounded-xl transition">
+
+            <i data-lucide="store"></i>
+            Vendors
+          </a>
+
+          <a href="{{ url_for('admin.orders') }}"
+            class="flex items-center gap-3 hover:bg-white/10 px-4 py-3 rounded-xl transition">
+
+            <i data-lucide="shopping-bag"></i>
+            Orders
+          </a>
+
+        </nav>
+
       </div>
 
-      <div class="flex items-center gap-4">
+      <!-- Admin Profile -->
+      <div class="bg-white/5 rounded-2xl p-4 border border-white/10">
 
-        <button class="relative bg-white border p-3 rounded-xl shadow-sm">
-          <i data-lucide="bell"></i>
-          <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
-        </button>
+        <div class="flex items-center gap-3">
 
-        <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-xl border shadow-sm">
-          <img src="https://i.pravatar.cc/40" class="rounded-full">
+          <img src="{{ current_user.profile_image }}"
+            class="w-12 h-12 rounded-full object-cover">
+
           <div>
-            <p class="font-semibold">Admin</p>
-            <p class="text-xs text-slate-500">Super User</p>
+            <h3 class="font-semibold">
+              {{ current_user.name }}
+            </h3>
+
+            <p class="text-xs text-brand-muted">
+              Administrator
+            </p>
           </div>
+
         </div>
 
       </div>
 
-    </div>
+    </aside>
 
-    <!-- Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6 mb-10">
+    <!-- MAIN -->
+    <main class="flex-1 p-6 lg:p-10">
 
-      <div class="bg-white p-6 rounded-3xl border shadow-sm">
-        <p class="text-slate-500 text-sm">Total Users</p>
-        <h3 class="text-3xl font-bold mt-2">12,540</h3>
+      <!-- TOP -->
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+
+        <div>
+
+          <h2 class="text-3xl font-bold text-brand-dark">
+            Dashboard Overview
+          </h2>
+
+          <p class="text-brand-muted">
+            Welcome back, {{ current_user.name }}
+          </p>
+
+        </div>
+
+        <div class="flex items-center gap-4">
+
+          <button class="relative bg-white border border-brand-border p-3 rounded-xl shadow-sm">
+
+            <i data-lucide="bell"></i>
+
+            {% if unread_notifications > 0 %}
+            <span class="absolute top-2 right-2 w-2 h-2 bg-brand-crimson rounded-full"></span>
+            {% endif %}
+
+          </button>
+
+        </div>
+
       </div>
 
-      <div class="bg-white p-6 rounded-3xl border shadow-sm">
-        <p class="text-slate-500 text-sm">Vendors</p>
-        <h3 class="text-3xl font-bold mt-2">842</h3>
+      <!-- STATS -->
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6 mb-10">
+
+        <div class="bg-white rounded-3xl p-6 border border-brand-border shadow-sm">
+          <p class="text-sm text-brand-muted">Total Users</p>
+
+          <h3 class="text-3xl font-bold mt-2 text-brand-dark">
+            {{ total_users }}
+          </h3>
+        </div>
+
+        <div class="bg-white rounded-3xl p-6 border border-brand-border shadow-sm">
+          <p class="text-sm text-brand-muted">Total Vendors</p>
+
+          <h3 class="text-3xl font-bold mt-2 text-brand-dark">
+            {{ total_vendors }}
+          </h3>
+        </div>
+
+        <div class="bg-white rounded-3xl p-6 border border-brand-border shadow-sm">
+          <p class="text-sm text-brand-muted">Customers</p>
+
+          <h3 class="text-3xl font-bold mt-2 text-brand-dark">
+            {{ total_customers }}
+          </h3>
+        </div>
+
+        <div class="bg-white rounded-3xl p-6 border border-brand-border shadow-sm">
+          <p class="text-sm text-brand-muted">Orders</p>
+
+          <h3 class="text-3xl font-bold mt-2 text-brand-dark">
+            {{ total_orders }}
+          </h3>
+        </div>
+
+        <div class="bg-gradient-to-r from-brand-dark to-brand rounded-3xl p-6 text-white shadow-xl">
+
+          <p class="text-sm text-white/80">
+            Revenue
+          </p>
+
+          <h3 class="text-3xl font-bold mt-2">
+            ${{ total_revenue }}
+          </h3>
+
+        </div>
+
       </div>
 
-      <div class="bg-white p-6 rounded-3xl border shadow-sm">
-        <p class="text-slate-500 text-sm">Customers</p>
-        <h3 class="text-3xl font-bold mt-2">11,698</h3>
-      </div>
-
-      <div class="bg-white p-6 rounded-3xl border shadow-sm">
-        <p class="text-slate-500 text-sm">Orders</p>
-        <h3 class="text-3xl font-bold mt-2">3,120</h3>
-      </div>
-
-      <div class="bg-gradient-to-r from-slate-900 to-red-600 text-white p-6 rounded-3xl shadow-xl">
-        <p class="text-sm">Revenue</p>
-        <h3 class="text-3xl font-bold mt-2">$482K</h3>
-      </div>
-
-    </div>
-
-    <!-- Tables -->
-    <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
-
-      <!-- Recent Activity -->
-      <div class="xl:col-span-2 bg-white rounded-3xl border shadow-sm p-6">
+      <!-- RECENT ACTIVITIES -->
+      <div class="bg-white rounded-3xl border border-brand-border shadow-sm p-6">
 
         <div class="flex justify-between items-center mb-6">
-          <h3 class="text-xl font-bold">Recent Activity</h3>
-          <button class="text-red-500 font-semibold">View All</button>
+
+          <div>
+            <h3 class="text-xl font-bold text-brand-dark">
+              Recent Activities
+            </h3>
+
+            <p class="text-sm text-brand-muted">
+              Latest platform actions
+            </p>
+          </div>
+
         </div>
 
-        <table class="w-full">
+        <div class="space-y-4">
 
-          <thead>
-            <tr class="text-left text-slate-500 text-sm border-b">
-              <th class="pb-4">User</th>
-              <th class="pb-4">Activity</th>
-              <th class="pb-4">Time</th>
-            </tr>
-          </thead>
+          {% for activity in activities %}
 
-          <tbody class="divide-y">
+          <div class="border border-brand-border rounded-2xl p-4 flex justify-between items-center">
 
-            <tr>
-              <td class="py-4 font-semibold">Rajesh Export</td>
-              <td>Uploaded New Product</td>
-              <td>2 mins ago</td>
-            </tr>
+            <div>
 
-            <tr>
-              <td class="py-4 font-semibold">Sita Traders</td>
-              <td>Requested Verification</td>
-              <td>15 mins ago</td>
-            </tr>
+              <h4 class="font-semibold text-brand-dark">
+                {{ activity.user }}
+              </h4>
 
-            <tr>
-              <td class="py-4 font-semibold">Global Himalayan</td>
-              <td>Completed Order</td>
-              <td>1 hour ago</td>
-            </tr>
+              <p class="text-sm text-brand-muted mt-1">
+                {{ activity.message }}
+              </p>
 
-          </tbody>
-
-        </table>
-
-      </div>
-
-      <!-- Approval -->
-      <div class="bg-white rounded-3xl border shadow-sm p-6">
-
-        <h3 class="text-xl font-bold mb-6">Vendor Approvals</h3>
-
-        <div class="space-y-5">
-
-          <div class="border rounded-2xl p-4">
-            <h4 class="font-bold">Everest Herbs</h4>
-            <p class="text-sm text-slate-500 mt-1">Organic Products Supplier</p>
-
-            <div class="flex gap-3 mt-4">
-              <button class="bg-green-500 text-white px-4 py-2 rounded-xl">
-                Approve
-              </button>
-
-              <button class="bg-red-500 text-white px-4 py-2 rounded-xl">
-                Reject
-              </button>
             </div>
+
+            <span class="text-xs text-brand-muted">
+              {{ activity.time }}
+            </span>
 
           </div>
 
-          <div class="border rounded-2xl p-4">
-            <h4 class="font-bold">Nep Textile House</h4>
-            <p class="text-sm text-slate-500 mt-1">Clothing Manufacturer</p>
-
-            <div class="flex gap-3 mt-4">
-              <button class="bg-green-500 text-white px-4 py-2 rounded-xl">
-                Approve
-              </button>
-
-              <button class="bg-red-500 text-white px-4 py-2 rounded-xl">
-                Reject
-              </button>
-            </div>
-
-          </div>
+          {% endfor %}
 
         </div>
 
       </div>
 
-    </div>
+    </main>
 
-  </main>
+  </div>
 
 </div>
 
-<script>
-  lucide.createIcons();
-</script>
-
-</body>
-</html>
+{% endblock %}
