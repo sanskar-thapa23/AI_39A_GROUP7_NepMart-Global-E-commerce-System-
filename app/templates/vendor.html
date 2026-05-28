@@ -73,7 +73,7 @@
 
         <div class="flex items-center gap-3">
 
-          <img src="{{ current_user.profile_image }}"
+          <img src="{{ current_user.profile_image or '/static/images/default.png' }}"
             class="w-12 h-12 rounded-full object-cover">
 
           <div>
