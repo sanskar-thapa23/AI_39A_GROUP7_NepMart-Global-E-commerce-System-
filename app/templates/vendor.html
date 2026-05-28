@@ -1,0 +1,265 @@
+<!-- ========================= -->
+<!-- vendor-dashboard.html -->
+<!-- ========================= -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Vendor Dashboard - NepMart</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body{
+      background:#f8fafc;
+      font-family:Inter,sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="flex min-h-screen">
+
+  <!-- Sidebar -->
+  <aside class="w-72 bg-slate-950 text-white p-6 hidden lg:flex flex-col justify-between">
+
+    <div>
+
+      <div class="mb-10">
+        <h1 class="text-3xl font-bold text-red-500">NepMart</h1>
+        <p class="text-slate-400 text-sm mt-1">Vendor Workspace</p>
+      </div>
+
+      <nav class="space-y-3">
+
+        <a href="#" class="flex items-center gap-3 bg-red-500 px-4 py-3 rounded-xl font-semibold">
+          <i data-lucide="layout-dashboard"></i>
+          Dashboard
+        </a>
+
+        <a href="#" class="flex items-center gap-3 hover:bg-slate-800 px-4 py-3 rounded-xl transition">
+          <i data-lucide="package"></i>
+          Products
+        </a>
+
+        <a href="#" class="flex items-center gap-3 hover:bg-slate-800 px-4 py-3 rounded-xl transition">
+          <i data-lucide="shopping-cart"></i>
+          Orders
+        </a>
+
+        <a href="#" class="flex items-center gap-3 hover:bg-slate-800 px-4 py-3 rounded-xl transition">
+          <i data-lucide="bar-chart-3"></i>
+          Analytics
+        </a>
+
+        <a href="#" class="flex items-center gap-3 hover:bg-slate-800 px-4 py-3 rounded-xl transition">
+          <i data-lucide="message-circle"></i>
+          Messages
+        </a>
+
+      </nav>
+
+    </div>
+
+    <div class="bg-slate-900 rounded-2xl p-4 border border-slate-800">
+      <p class="font-semibold">Verified Vendor</p>
+      <p class="text-slate-400 text-sm">Global exporter access enabled.</p>
+    </div>
+
+  </aside>
+
+  <!-- Main -->
+  <main class="flex-1 p-6 lg:p-10">
+
+    <!-- Topbar -->
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+
+      <div>
+        <h2 class="text-3xl font-bold text-slate-900">Vendor Dashboard</h2>
+        <p class="text-slate-500">Manage your products and sales.</p>
+      </div>
+
+      <div class="flex items-center gap-4">
+
+        <button class="bg-red-500 text-white px-5 py-3 rounded-2xl font-semibold shadow-lg hover:scale-105 transition">
+          + Add Product
+        </button>
+
+        <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-xl border shadow-sm">
+          <img src="https://i.pravatar.cc/40?img=5" class="rounded-full">
+
+          <div>
+            <p class="font-semibold">Everest Export</p>
+            <p class="text-xs text-emerald-600 font-semibold">Verified Seller</p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+
+      <div class="bg-white p-6 rounded-3xl border shadow-sm">
+        <p class="text-slate-500 text-sm">Products</p>
+        <h3 class="text-3xl font-bold mt-2">248</h3>
+      </div>
+
+      <div class="bg-white p-6 rounded-3xl border shadow-sm">
+        <p class="text-slate-500 text-sm">Orders</p>
+        <h3 class="text-3xl font-bold mt-2">1,230</h3>
+      </div>
+
+      <div class="bg-white p-6 rounded-3xl border shadow-sm">
+        <p class="text-slate-500 text-sm">Customers</p>
+        <h3 class="text-3xl font-bold mt-2">845</h3>
+      </div>
+
+      <div class="bg-gradient-to-r from-slate-900 to-red-600 text-white p-6 rounded-3xl shadow-xl">
+        <p class="text-sm">Revenue</p>
+        <h3 class="text-3xl font-bold mt-2">$96,000</h3>
+      </div>
+
+    </div>
+
+    <!-- Product Table -->
+    <div class="bg-white rounded-3xl border shadow-sm p-6 mb-8">
+
+      <div class="flex justify-between items-center mb-6">
+
+        <div>
+          <h3 class="text-xl font-bold">Inventory Overview</h3>
+          <p class="text-slate-500 text-sm">Manage all your active products</p>
+        </div>
+
+        <button class="border px-4 py-2 rounded-xl font-semibold hover:bg-slate-100">
+          Export
+        </button>
+
+      </div>
+
+      <div class="overflow-x-auto">
+
+        <table class="w-full">
+
+          <thead>
+            <tr class="text-left text-slate-500 text-sm border-b">
+              <th class="pb-4">Product</th>
+              <th class="pb-4">Category</th>
+              <th class="pb-4">Stock</th>
+              <th class="pb-4">Price</th>
+              <th class="pb-4">Status</th>
+            </tr>
+          </thead>
+
+          <tbody class="divide-y">
+
+            <tr>
+              <td class="py-4 font-semibold">Himalayan Tea</td>
+              <td>Beverages</td>
+              <td>120</td>
+              <td>$12</td>
+              <td>
+                <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs font-bold">
+                  Active
+                </span>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="py-4 font-semibold">Pashmina Shawl</td>
+              <td>Fashion</td>
+              <td>45</td>
+              <td>$80</td>
+              <td>
+                <span class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full text-xs font-bold">
+                  Low Stock
+                </span>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="py-4 font-semibold">Organic Herbs</td>
+              <td>Health</td>
+              <td>300</td>
+              <td>$20</td>
+              <td>
+                <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs font-bold">
+                  Active
+                </span>
+              </td>
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+    <!-- Bottom Grid -->
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+
+      <!-- Analytics -->
+      <div class="xl:col-span-2 bg-white rounded-3xl border shadow-sm p-6">
+
+        <h3 class="text-xl font-bold mb-6">Sales Analytics</h3>
+
+        <div class="h-72 rounded-3xl bg-slate-100 flex items-center justify-center text-slate-400 text-lg font-semibold">
+          Analytics Chart Placeholder
+        </div>
+
+      </div>
+
+      <!-- Messages -->
+      <div class="bg-white rounded-3xl border shadow-sm p-6">
+
+        <h3 class="text-xl font-bold mb-6">Customer Inquiries</h3>
+
+        <div class="space-y-5">
+
+          <div class="border rounded-2xl p-4">
+            <div class="flex justify-between items-center">
+              <h4 class="font-bold">John Carter</h4>
+              <span class="text-xs text-slate-400">2 mins ago</span>
+            </div>
+
+            <p class="text-sm text-slate-500 mt-2">
+              Interested in wholesale tea shipment pricing.
+            </p>
+          </div>
+
+          <div class="border rounded-2xl p-4">
+            <div class="flex justify-between items-center">
+              <h4 class="font-bold">Lina Exports</h4>
+              <span class="text-xs text-slate-400">10 mins ago</span>
+            </div>
+
+            <p class="text-sm text-slate-500 mt-2">
+              Need shipping details for Europe delivery.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+<script>
+  lucide.createIcons();
+</script>
+
+</body>
+</html>
