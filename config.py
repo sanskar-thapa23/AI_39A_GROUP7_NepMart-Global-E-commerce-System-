@@ -1,5 +1,5 @@
 SECRET_KEY = "random-secret-key"
 MYSQL_HOST = "localhost"
 MYSQL_USER = "root"
-MYSQL_PASSWORD = "h1elloworld"
-MYSQL_DATABASE = "nepmart_Db"
+MYSQL_PASSWORD = "qlz@9766#"
+MYSQL_DATABASE = "nepmart"

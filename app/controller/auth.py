@@ -11,7 +11,7 @@ class AuthController(BaseController):
     # ---------------- LOGIN ----------------
     def login(self):
         if self.is_logged_in():
-            return redirect(url_for("auth.dashboard"))
+            return redirect(url_for("main.dashboard"))
 
         if request.method == "POST":
             username, password = self.get_form_data("username", "password")
@@ -47,7 +47,7 @@ class AuthController(BaseController):
     # ---------------- REGISTER ----------------
     def register(self):
         if self.is_logged_in():
-            return redirect(url_for("auth.dashboard"))
+            return redirect(url_for("main.dashboard"))
 
         if request.method == "POST":
 
