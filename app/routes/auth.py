@@ -20,6 +20,11 @@ class AuthRoutes:
         @self.bp.route("/register", methods=["GET", "POST"])
         def register():
             return self.controller.register()
+        
+        @self.bp.route("/logout", methods=["GET"])
+        def logout():
+            return self.controller.logout()
+
 
     def get_blueprint(self):
         return self.bp
