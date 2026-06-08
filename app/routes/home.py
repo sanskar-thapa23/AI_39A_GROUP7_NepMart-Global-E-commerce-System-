@@ -1,6 +1,7 @@
 from flask import Blueprint
 from app.controller.home import MainController
 from app.controller.productcontroller import ProductController
+
  
 class MainRoutes:
  
