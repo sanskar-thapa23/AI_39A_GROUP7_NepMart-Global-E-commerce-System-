@@ -41,7 +41,7 @@
         <div class="space-y-1">
           <div class="flex justify-between items-center">
             <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-brand-muted">Password</label>
-            <a href="#" class="text-xs font-medium text-brand-crimson hover:text-white transition-colors">Forgot password?</a>
+            <a href="{{ url_for('auth.forgot_password') }}" class="text-xs font-medium text-brand-crimson hover:text-white transition-colors">Forgot password?</a>
           </div>
           <div class="relative rounded-xl shadow-sm">
             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brand-muted/70">

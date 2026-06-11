@@ -1,0 +1,126 @@
+
+{% extends "base.html" %}
+
+{% block title %}Manage Orders - NepMart{% endblock %}
+
+{% block content %}
+<div class="bg-brand-bgLight min-h-screen">
+  <div class="flex">
+    <!-- Sidebar -->
+    <aside class="w-72 bg-brand-dark text-white min-h-screen hidden lg:flex flex-col justify-between p-6">
+      <div>
+        <div class="mb-10">
+          <h1 class="text-3xl font-bold text-brand-crimson">NepMart</h1>
+          <p class="text-brand-muted text-sm mt-1">Vendor Workspace</p>
+        </div>
+        <nav class="space-y-3">
+          <a href="{{ url_for('vendor.dashboard') }}" class="flex items-center gap-3 hover:bg-white/10 px-4 py-3 rounded-xl transition">
+            <i data-lucide="layout-dashboard"></i> Dashboard
+          </a>
+          <a href="{{ url_for('vendor.products') }}" class="flex items-center gap-3 hover:bg-white/10 px-4 py-3 rounded-xl transition">
+            <i data-lucide="package"></i> Products
+          </a>
+          <a href="{{ url_for('vendor.orders') }}" class="flex items-center gap-3 bg-brand-crimson px-4 py-3 rounded-xl font-semibold">
+            <i data-lucide="shopping-cart"></i> Orders
+          </a>
+          <a href="{{ url_for('vendor.analytics') }}" class="flex items-center gap-3 hover:bg-white/10 px-4 py-3 rounded-xl transition">
+            <i data-lucide="bar-chart-3"></i> Analytics
+          </a>
+        </nav>
+      </div>
+
+      <div class="bg-white/5 rounded-2xl p-4 border border-white/10">
+        <p class="text-xs text-brand-muted uppercase tracking-wider font-semibold">Logged in as:</p>
+        <h3 class="font-semibold text-white text-base truncate">{{ session.get('business_name', 'Vendor Partner') }}</h3>
+      </div>
+    </aside>
+
+    <main class="flex-1 p-6 lg:p-10">
+      <div class="mb-8">
+        <h2 class="text-3xl font-bold text-brand-dark">Order Management</h2>
+        <p class="text-brand-muted">View and update customer orders for your products</p>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-brand-border shadow-sm p-6">
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b border-brand-border text-left text-sm text-brand-muted">
+                <th class="pb-4">Order ID</th>
+                <th class="pb-4">Product Name</th>
+                <th class="pb-4">Customer</th>
+                <th class="pb-4">Price</th>
+                <th class="pb-4">Status</th>
+                <th class="pb-4">Order Date</th>
+                <th class="pb-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-brand-border">
+              {% if orders %}
+                {% for order in orders %}
+                <tr>
+                  <td class="py-4 font-semibold text-brand-dark">#ORD-{{ order.order_id }}</td>
+                  <td class="py-4">
+                    <div class="flex items-center gap-3">
+                      {% if order.product_image %}
+                        <img src="{{ order.product_image }}" class="w-10 h-10 rounded-lg object-cover" alt="">
+                      {% endif %}
+                      <span class="font-medium text-brand-dark">{{ order.product_name }}</span>
+                    </div>
+                  </td>
+                  <td class="py-4 text-sm font-medium text-brand-dark">{{ order.customer_name }}</td>
+                  <td class="py-4 font-medium text-brand-dark">Rs. {{ order.total_amount }}</td>
+                  <td class="py-4">
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold 
+                      {% if order.status == 'completed' %} bg-emerald-100 text-emerald-600
+                      {% elif order.status == 'pending' %} bg-amber-100 text-amber-600
+                      {% else %} bg-gray-100 text-gray-600 {% endif %}">
+                      {{ order.status|capitalize }}
+                    </span>
+                  </td>
+                  <td class="py-4 text-sm text-brand-muted">{{ order.created_at }}</td>
+                  <td class="py-4">
+                    <div class="flex flex-col gap-1">
+                      <div class="flex gap-2 items-center">
+                        {% if order.status == 'pending' %}
+                        <form action="{{ url_for('vendor.process_order', order_id=order.order_id) }}" method="POST">
+                          <button type="submit" class="bg-brand-crimson text-white px-4 py-2 rounded-xl text-xs font-semibold hover:shadow-md transition">
+                            Process
+                          </button>
+                        </form>
+                        {% endif %}
+                        <a href="{{ url_for('vendor.order_details', order_id=order.order_id) }}" class="bg-brand-bgLight text-brand-dark border border-brand-border px-4 py-2 rounded-xl text-xs font-semibold transition">
+                          Details
+                        </a>
+                      </div>
+                      <p class="text-[10px] text-brand-muted mt-1 leading-tight">
+                        <span class="font-bold">Ship to:</span> {{ order.shipping_address }}<br>
+                        <span class="font-bold">Contact:</span> {{ order.phone_number }}
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              {% else %}
+                <tr>
+                  <td colspan="6" class="py-16">
+                    <div class="flex flex-col items-center justify-center">
+                      <i data-lucide="shopping-bag" class="w-16 h-16 text-gray-300 mb-4"></i>
+                      <h4 class="text-lg font-semibold text-brand-dark">No Orders Yet</h4>
+                      <p class="text-brand-muted mt-2">When customers purchase your products, they will appear here.</p>
+                    </div>
+                  </td>
+                </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+  lucide.createIcons();
+</script>
+{% endblock %}

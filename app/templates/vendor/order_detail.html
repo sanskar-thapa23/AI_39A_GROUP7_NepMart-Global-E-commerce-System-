@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Order Details - NepMart{% endblock %}
+
+{% block content %}
+<div class="bg-brand-bgLight min-h-screen">
+  <div class="flex">
+    <aside class="w-72 bg-brand-dark text-white min-h-screen hidden lg:flex flex-col justify-between p-6">
+      <div>
+        <div class="mb-10">
+          <h1 class="text-3xl font-bold text-brand-crimson">NepMart</h1>
+          <p class="text-brand-muted text-sm mt-1">Vendor Workspace</p>
+        </div>
+        <nav class="space-y-3">
+          <a href="{{ url_for('vendor.dashboard') }}" class="flex items-center gap-3 hover:bg-white/10 px-4 py-3 rounded-xl transition">
+            <i data-lucide="layout-dashboard"></i> Dashboard
+          </a>
+          <a href="{{ url_for('vendor.products') }}" class="flex items-center gap-3 hover:bg-white/10 px-4 py-3 rounded-xl transition">
+            <i data-lucide="package"></i> Products
+          </a>
+          <a href="{{ url_for('vendor.orders') }}" class="flex items-center gap-3 bg-brand-crimson px-4 py-3 rounded-xl font-semibold">
+            <i data-lucide="shopping-cart"></i> Orders
+          </a>
+        </nav>
+      </div>
+    </aside>
+
+    <main class="flex-1 p-6 lg:p-10">
+      <div class="mb-8 flex justify-between items-start">
+        <div>
+          <a href="{{ url_for('vendor.orders') }}" class="text-brand-crimson text-sm font-bold flex items-center gap-1 mb-2">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Orders
+          </a>
+          <h2 class="text-3xl font-bold text-brand-dark">Order #ORD-{{ order.order_id }}</h2>
+          <p class="text-brand-muted">Placed on {{ order.created_at }}</p>
+        </div>
+        {% if order.status == 'pending' %}
+        <form action="{{ url_for('vendor.process_order', order_id=order.order_id) }}" method="POST">
+          <button type="submit" class="bg-brand-crimson text-white px-6 py-3 rounded-2xl font-bold hover:shadow-lg transition">
+            Mark as Completed
+          </button>
+        </form>
+        {% endif %}
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2 space-y-8">
+          <div class="bg-white rounded-3xl border border-brand-border p-8 shadow-sm">
+            <h3 class="text-xl font-bold text-brand-dark mb-6">Product Information</h3>
+            <div class="flex flex-col md:flex-row gap-6">
+              <img src="{{ order.product_image }}" class="w-32 h-32 rounded-2xl object-cover border border-brand-border">
+              <div class="flex-1">
+                <h4 class="text-lg font-bold text-brand-dark mb-2">{{ order.product_name }}</h4>
+                <p class="text-brand-muted text-sm line-clamp-3 mb-4">{{ order.product_description }}</p>
+                <div class="flex justify-between items-center py-4 border-t border-brand-border">
+                  <span class="text-brand-muted font-medium">Order Amount:</span>
+                  <span class="text-2xl font-bold text-brand-crimson">Rs. {{ order.total_amount }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-8">
+          <div class="bg-white rounded-3xl border border-brand-border p-8 shadow-sm">
+            <h3 class="text-xl font-bold text-brand-dark mb-6">Logistics Details</h3>
+            <div class="space-y-4">
+              <div>
+                <p class="text-xs font-bold text-brand-muted uppercase tracking-wider mb-1">Customer Name</p>
+                <p class="text-brand-dark font-medium">{{ order.customer_name }}</p>
+              </div>
+              <div>
+                <p class="text-xs font-bold text-brand-muted uppercase tracking-wider mb-1">Contact Phone</p>
+                <p class="text-brand-dark font-medium">{{ order.phone_number }}</p>
+              </div>
+              <div>
+                <p class="text-xs font-bold text-brand-muted uppercase tracking-wider mb-1">Shipping Address</p>
+                <p class="text-brand-dark font-medium leading-relaxed">{{ order.shipping_address }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+  lucide.createIcons();
+</script>
+{% endblock %}

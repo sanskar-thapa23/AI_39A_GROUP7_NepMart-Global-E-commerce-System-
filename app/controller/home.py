@@ -1,4 +1,7 @@
-from flask import render_template, abort, request
+from flask import render_template, abort, request, session, redirect, url_for, flash
+from app.model.database import Database
+from app.model.productmodel import Product
+from app.controller.basecontroller import BaseController
 
 # Mock Database Storehouse representing our verified Himalayan B2B ecosystem
 PRODUCTS = [
@@ -106,35 +109,58 @@ TRADERS = [
     }
 ]
 
-class MainController:
+class MainController(BaseController):
 
     def home(self):
         # We can supply a list of products to showcase preview elements
         return render_template("landing_page.html", active_page='home')
 
     def products(self):
-        # Read filter options if supplied
-        search_query = request.args.get('search', '').strip().lower()
-        selected_category = request.args.get('category', '').strip()
-        selected_location = request.args.get('location', '').strip()
-        
-        filtered_products = PRODUCTS
-        if search_query:
-            filtered_products = [p for p in filtered_products if search_query in p['name'].lower() or search_query in p['company'].lower()]
-        
-        if selected_category:
-            filtered_products = [p for p in filtered_products if p['category'] == selected_category]
-            
-        if selected_location:
-            filtered_products = [p for p in filtered_products if p['location'] == selected_location]
+        db = Database()
+
+        # 1. Get query parameters
+        search = request.args.get("search", "").strip()
+        category = request.args.get("category", "").strip()
+        location = request.args.get("location", "").strip()
+        sort = request.args.get("sort", "").strip()
+
+        # 2. Build Query with JOIN to get the Vendor Name (Company)
+        query = """
+            SELECT p.*, u.username AS vendor_name 
+            FROM products p
+            LEFT JOIN user_products up ON p.id = up.product_id
+            LEFT JOIN users u ON up.user_id = u.id
+            WHERE 1=1
+        """
+        params = []
+
+        if search:
+            query += " AND p.product_name LIKE %s"
+            params.append(f"%{search}%")
+
+        # Sorting
+        if sort == "low":
+            query += " ORDER BY p.product_price ASC"
+        elif sort == "high":
+            query += " ORDER BY p.product_price DESC"
+        else:
+            query += " ORDER BY p.id DESC"
+
+        # 3. Fetch Data
+        products_data = db.fetch_all(query, tuple(params))
+        db.close()
+
+        # 4. Convert to Product objects
+        products = [Product.from_db(item) for item in products_data]
 
         return render_template(
             "products.html", 
-            products=filtered_products, 
+            products=products, 
             active_page='products',
-            search_query=search_query,
-            selected_category=selected_category,
-            selected_location=selected_location
+            search_query=search,
+            selected_category=category,
+            selected_location=location,
+            sort=sort
         )
 
     def product_detail(self, product_id):
@@ -178,7 +204,103 @@ class MainController:
         )
 
     def dashboard(self):
-        return render_template("dashboard.html", active_page='dashboard')
+        user_id = self.get_current_user_id()
+        if not user_id:
+            return redirect(url_for('auth.login'))
+
+        db = Database()
+        
+        # 1. Fetch real orders with product details
+        orders = db.fetch_all("""
+            SELECT o.id AS order_id, o.total_amount AS amount, o.status, p.product_name AS product 
+            FROM orders o
+            LEFT JOIN products p ON o.product_id = p.id
+            WHERE o.user_id = %s 
+            ORDER BY o.created_at DESC 
+            LIMIT 5
+        """, (user_id,))
+
+        # 2. Fetch Wishlist (including product ID for navigation)
+        wishlist = db.fetch_all("""
+            SELECT p.id, p.product_name AS name, p.category, p.product_price AS price, p.product_image AS image
+            FROM wishlist w
+            JOIN products p ON w.product_id = p.id
+            WHERE w.user_id = %s
+        """, (user_id,))
+
+        # 3. Fetch Shopping Cart
+        cart_items = db.fetch_all("""
+            SELECT p.id, p.product_name AS name, p.product_price AS price, p.product_image AS image, sc.quantity, p.category
+            FROM shopping_cart sc
+            JOIN products p ON sc.product_id = p.id
+            WHERE sc.user_id = %s
+        """, (user_id,))
+
+        # 4. Fetch statistics
+        stats = db.fetch_one("""
+            SELECT 
+                COUNT(*) AS total_orders, 
+                IFNULL(SUM(total_amount), 0) AS total_spending 
+            FROM orders 
+            WHERE user_id = %s
+        """, (user_id,))
+        
+        db.close()
+
+        return render_template(
+            "customer.html", 
+            active_page='dashboard',
+            total_orders=stats['total_orders'],
+            wishlist_count=len(wishlist),
+            saved_vendors=0,
+            total_spending=f"{stats['total_spending']:.2f}",
+            orders=orders,
+            wishlist=wishlist,
+            cart_items=cart_items
+        )
+
+    def checkout(self):
+        user_id = self.get_current_user_id()
+        if not user_id:
+            return redirect(url_for('auth.login'))
+
+        if request.method == 'POST':
+            address, phone = self.get_form_data('address', 'phone')
+
+            if not address or not phone:
+                flash("Shipping address and phone number are required.", "danger")
+                return redirect(url_for('main.dashboard'))
+
+            db = Database()
+            try:
+                # 1. Fetch items currently in the user's cart
+                cart_items = db.fetch_all("""
+                    SELECT sc.product_id, sc.quantity, p.product_price
+                    FROM shopping_cart sc
+                    JOIN products p ON sc.product_id = p.id
+                    WHERE sc.user_id = %s
+                """, (user_id,))
+
+                if cart_items:
+                    # 2. Transfer cart items to the orders table
+                    for item in cart_items:
+                        total = item['product_price'] * item['quantity']
+                        db.execute("""
+                            INSERT INTO orders (user_id, product_id, total_amount, status, shipping_address, phone_number)
+                            VALUES (%s, %s, %s, %s, %s, %s)
+                        """, (user_id, item['product_id'], total, 'pending', address, phone))
+                    
+                    # 3. Clear the shopping cart
+                    db.execute("DELETE FROM shopping_cart WHERE user_id = %s", (user_id,))
+                    flash("Order placed successfully! Payment method: Cash on Delivery.", "success")
+                else:
+                    flash("Your cart is empty.", "warning")
+            except Exception as e:
+                flash(f"Checkout failed: {str(e)}", "danger")
+            finally:
+                db.close()
+
+        return redirect(url_for('main.dashboard'))
 
     def chat(self):
         return render_template("chat.html", active_page='chat')

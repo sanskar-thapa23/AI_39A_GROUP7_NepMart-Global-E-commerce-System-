@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Sales Analytics - NepMart{% endblock %}
+
+{% block content %}
+<div class="bg-brand-bgLight min-h-screen flex">
+    <!-- Sidebar (Consistent with Dashboard) -->
+    <aside class="w-72 bg-brand-dark text-white min-h-screen hidden lg:flex flex-col justify-between p-6">
+        <div>
+            <div class="mb-10">
+                <h1 class="text-3xl font-bold text-brand-crimson">NepMart</h1>
+                <p class="text-brand-muted text-sm mt-1">Vendor Workspace</p>
+            </div>
+            <nav class="space-y-3">
+                <a href="{{ url_for('vendor.dashboard') }}" class="flex items-center gap-3 hover:bg-white/10 px-4 py-3 rounded-xl transition">
+                    <i data-lucide="layout-dashboard"></i> Dashboard
+                </a>
+                <a href="{{ url_for('vendor.products') }}" class="flex items-center gap-3 hover:bg-white/10 px-4 py-3 rounded-xl transition">
+                    <i data-lucide="package"></i> Products
+                </a>
+                <a href="{{ url_for('vendor.orders') }}" class="flex items-center gap-3 hover:bg-white/10 px-4 py-3 rounded-xl transition">
+                    <i data-lucide="shopping-cart"></i> Orders
+                </a>
+                <a href="{{ url_for('vendor.analytics') }}" class="flex items-center gap-3 bg-brand-crimson px-4 py-3 rounded-xl font-semibold">
+                    <i data-lucide="bar-chart-3"></i> Analytics
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6 lg:p-10">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+            <div>
+                <h2 class="text-3xl font-bold text-brand-dark">Sales Analytics</h2>
+                <p class="text-brand-muted">Deep dive into your business performance</p>
+            </div>
+            
+            <form action="{{ url_for('vendor.analytics') }}" method="GET" class="flex items-center gap-2">
+                <label class="text-sm font-bold text-brand-muted uppercase">Period:</label>
+                <select name="period" onchange="this.form.submit()" 
+                    class="bg-white border border-brand-border rounded-xl px-4 py-2 text-sm font-semibold text-brand-dark focus:outline-none focus:ring-2 focus:ring-brand-crimson">
+                    <option value="7" {% if period == '7' %}selected{% endif %}>Last 7 Days</option>
+                    <option value="30" {% if period == '30' %}selected{% endif %}>Last 30 Days</option>
+                    <option value="90" {% if period == '90' %}selected{% endif %}>Last 90 Days</option>
+                    <option value="365" {% if period == '365' %}selected{% endif %}>Last Year</option>
+                </select>
+            </form>
+        </div>
+
+        <!-- Summary Row -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-3xl p-6 border border-brand-border shadow-sm">
+                <p class="text-xs font-bold text-brand-muted uppercase tracking-wider">Revenue (Period)</p>
+                <h3 class="text-3xl font-bold mt-2 text-brand-crimson">Rs. {{ total_revenue }}</h3>
+            </div>
+            <div class="bg-white rounded-3xl p-6 border border-brand-border shadow-sm">
+                <p class="text-xs font-bold text-brand-muted uppercase tracking-wider">Orders (Period)</p>
+                <h3 class="text-3xl font-bold mt-2 text-brand-dark">{{ total_orders }}</h3>
+            </div>
+            <div class="bg-white rounded-3xl p-6 border border-brand-border shadow-sm">
+                <p class="text-xs font-bold text-brand-muted uppercase tracking-wider">Unique Customers</p>
+                <h3 class="text-3xl font-bold mt-2 text-brand-dark">{{ total_customers }}</h3>
+            </div>
+        </div>
+
+        <!-- Sales Performance Chart Card -->
+        <div class="bg-white rounded-3xl border border-brand-border shadow-sm p-8">
+            <div class="mb-8">
+                <h3 class="text-xl font-bold text-brand-dark">Daily Revenue Trend</h3>
+                <p class="text-sm text-brand-muted">Visualizing your growth over the last {{ period }} days</p>
+            </div>
+
+            {% if sales_trend %}
+            <div class="w-full relative aspect-[21/9] min-h-[400px] bg-brand-bgLight/30 rounded-2xl p-8 border border-brand-border overflow-hidden">
+                <div class="flex items-end justify-between h-full gap-2">
+                    {% for day in sales_trend %}
+                        {% set height = (day.revenue / max_rev * 100) if max_rev > 0 else 0 %}
+                        <div class="flex-1 group relative h-full flex flex-col justify-end">
+                            <!-- Tooltip -->
+                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1 bg-brand-dark text-white text-[10px] rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
+                                Rs. {{ day.revenue }}<br>
+                                {{ day.date }}
+                            </div>
+                            <!-- Bar -->
+                            <div class="w-full bg-brand-crimson/20 group-hover:bg-brand-crimson/40 border-t-4 border-brand-crimson rounded-t-lg transition-all" 
+                                 style="height: {{ height|round|int }}%;"></div>
+                            <!-- Date label -->
+                            <div class="mt-2 text-[10px] text-brand-muted text-center truncate overflow-hidden">
+                                {% if day.date is string %} {{ day.date }} {% else %} {{ day.date.strftime('%d %b') if period|int <= 31 else '' }} {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <!-- Background Grid lines -->
+                <div class="absolute inset-0 p-8 pointer-events-none flex flex-col justify-between -z-10">
+                    <div class="border-b border-brand-border w-full"></div>
+                    <div class="border-b border-brand-border w-full"></div>
+                    <div class="border-b border-brand-border w-full"></div>
+                </div>
+            </div>
+            {% else %}
+            <div class="py-24 flex flex-col items-center justify-center text-center">
+                <div class="w-20 h-20 rounded-full bg-brand-bgLight flex items-center justify-center mb-4">
+                    <i data-lucide="bar-chart" class="w-10 h-10 text-brand-muted"></i>
+                </div>
+                <h4 class="font-bold text-brand-dark text-xl">No Analytics Available Yet</h4>
+                <p class="text-brand-muted max-w-md mx-auto mt-2">Data will appear here once you have sales transactions within the selected period.</p>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+</div>
+{% endblock %}

@@ -124,17 +124,32 @@
           <div class="hidden md:flex items-center gap-6">
             <a href="/products" class="text-sm font-medium text-[#0f172a] hover:text-brand-crimson transition-colors {% if active_page == 'products' %} text-brand-crimson border-b-2 border-brand-crimson pb-1 {% endif %}">Products</a>
             <a href="/traders" class="text-sm font-medium text-[#0f172a] hover:text-brand-crimson transition-colors {% if active_page == 'traders' %} text-brand-crimson border-b-2 border-brand-crimson pb-1 {% endif %}">Traders Directory</a>
-            <a href="/chat" class="text-sm font-medium text-[#0f172a] hover:text-brand-crimson transition-colors {% if active_page == 'chat' %} text-brand-crimson border-b-2 border-brand-crimson pb-1 {% endif %}">Deal Negotations</a>
-            <a href="/dashboard" class="text-sm font-medium text-[#0f172a] hover:text-brand-crimson transition-colors {% if active_page == 'dashboard' %} text-brand-crimson border-b-2 border-brand-crimson pb-1 {% endif %}">Seller Space</a>
+            
+            {% if session.get('user_id') %}
+              <a href="/chat" class="text-sm font-medium text-[#0f172a] hover:text-brand-crimson transition-colors {% if active_page == 'chat' %} text-brand-crimson border-b-2 border-brand-crimson pb-1 {% endif %}">My Negotiations</a>
+              {% if session.get('role') == 'vendor' %}
+                <a href="{{ url_for('vendor.dashboard') }}" class="text-sm font-medium text-[#0f172a] hover:text-brand-crimson transition-colors {% if active_page == 'dashboard' %} text-brand-crimson border-b-2 border-brand-crimson pb-1 {% endif %}">Vendor Workspace</a>
+              {% else %}
+                <a href="/dashboard" class="text-sm font-medium text-[#0f172a] hover:text-brand-crimson transition-colors {% if active_page == 'dashboard' %} text-brand-crimson border-b-2 border-brand-crimson pb-1 {% endif %}">My Dashboard</a>
+              {% endif %}
+            {% else %}
+              <a href="/chat" class="text-sm font-medium text-[#0f172a] hover:text-brand-crimson transition-colors">Deal Negotiations</a>
+              <a href="/dashboard" class="text-sm font-medium text-[#0f172a] hover:text-brand-crimson transition-colors">Seller Space</a>
+            {% endif %}
           </div>
         </div>
 
         <!-- Desktop Action Buttons -->
         <div class="hidden md:flex items-center gap-4">
-          <a href="/auth/login" class="px-4 py-2 border border-brand-border text-sm font-semibold rounded-lg hover:bg-brand-bgLight transition-all text-[#0f172a]">Log in</a>
-          <a href="/auth/register" class="px-4 py-2 bg-brand text-white text-sm font-semibold rounded-lg hover:bg-brand-dark hover:shadow-lg hover:shadow-brand/10 transition-all flex items-center gap-1.5 shadow-md">
-            Get Started <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
-          </a>
+          {% if session.get('user_id') %}
+            <span class="text-sm font-bold text-brand-dark mr-2">Namaste, {{ session.get('user_name') }}</span>
+            <a href="{{ url_for('auth.logout') }}" class="px-4 py-2 border border-brand-crimson text-brand-crimson text-sm font-semibold rounded-lg hover:bg-brand-crimson hover:text-white transition-all">Logout</a>
+          {% else %}
+            <a href="/auth/login" class="px-4 py-2 border border-brand-border text-sm font-semibold rounded-lg hover:bg-brand-bgLight transition-all text-[#0f172a]">Log in</a>
+            <a href="/auth/register" class="px-4 py-2 bg-brand text-white text-sm font-semibold rounded-lg hover:bg-brand-dark hover:shadow-lg hover:shadow-brand/10 transition-all flex items-center gap-1.5 shadow-md">
+              Get Started <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+            </a>
+          {% endif %}
         </div>
 
         <!-- Mobile Menu Toggle Button -->
@@ -153,12 +168,23 @@
       <div class="px-2 pt-2 pb-4 space-y-1">
         <a href="/products" class="block px-3 py-2 rounded-lg text-base font-semibold text-[#0f172a] hover:bg-brand-bgLight hover:text-brand-crimson transition-colors">Products Catalog</a>
         <a href="/traders" class="block px-3 py-2 rounded-lg text-base font-semibold text-[#0f172a] hover:bg-brand-bgLight hover:text-brand-crimson transition-colors">Traders Directory</a>
-        <a href="/chat" class="block px-3 py-2 rounded-lg text-base font-semibold text-[#0f172a] hover:bg-brand-bgLight hover:text-brand-crimson transition-colors">Deal Negotiations</a>
-        <a href="/dashboard" class="block px-3 py-2 rounded-lg text-base font-semibold text-[#0f172a] hover:bg-brand-bgLight hover:text-brand-crimson transition-colors">Seller Space</a>
+        
+        {% if session.get('user_id') %}
+          <a href="/chat" class="block px-3 py-2 rounded-lg text-base font-semibold text-[#0f172a] hover:bg-brand-bgLight hover:text-brand-crimson transition-colors">My Negotiations</a>
+          <a href="/dashboard" class="block px-3 py-2 rounded-lg text-base font-semibold text-[#0f172a] hover:bg-brand-bgLight hover:text-brand-crimson transition-colors">My Dashboard</a>
+        {% else %}
+          <a href="/chat" class="block px-3 py-2 rounded-lg text-base font-semibold text-[#0f172a] hover:bg-brand-bgLight hover:text-brand-crimson transition-colors">Deal Negotiations</a>
+          <a href="/dashboard" class="block px-3 py-2 rounded-lg text-base font-semibold text-[#0f172a] hover:bg-brand-bgLight hover:text-brand-crimson transition-colors">Seller Space</a>
+        {% endif %}
+
         <div class="h-px bg-brand-border my-2 mx-3"></div>
         <div class="grid grid-cols-2 gap-2 px-3 pt-2">
-          <a href="/auth/login" class="w-full text-center px-4 py-2.5 border border-brand-border text-sm font-semibold rounded-lg hover:bg-brand-bgLight transition-all block">Log in</a>
-          <a href="/auth/register" class="w-full text-center px-4 py-2.5 bg-brand text-white text-sm font-semibold rounded-lg hover:bg-brand-dark transition-all block">Sign up</a>
+          {% if not session.get('user_id') %}
+            <a href="/auth/login" class="w-full text-center px-4 py-2.5 border border-brand-border text-sm font-semibold rounded-lg hover:bg-brand-bgLight transition-all block">Log in</a>
+            <a href="/auth/register" class="w-full text-center px-4 py-2.5 bg-brand text-white text-sm font-semibold rounded-lg hover:bg-brand-dark transition-all block">Sign up</a>
+          {% else %}
+            <a href="{{ url_for('auth.logout') }}" class="col-span-2 w-full text-center px-4 py-2.5 border border-brand-crimson text-brand-crimson text-sm font-semibold rounded-lg transition-all block">Logout</a>
+          {% endif %}
         </div>
       </div>
     </div>

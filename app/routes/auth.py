@@ -5,10 +5,8 @@ from app.controller.auth import AuthController
 class AuthRoutes:
 
     def __init__(self):
-        self.bp = Blueprint("auth", __name__,url_prefix="/auth")
+        self.bp = Blueprint("auth", __name__, url_prefix="/auth")
         self.controller = AuthController()
-
-        # register routes
         self._register_routes()
 
     def _register_routes(self):
@@ -20,6 +18,18 @@ class AuthRoutes:
         @self.bp.route("/register", methods=["GET", "POST"])
         def register():
             return self.controller.register()
+
+        @self.bp.route("/forgot-password", methods=["GET", "POST"])
+        def forgot_password():
+            return self.controller.forgot_password()
+
+        @self.bp.route("/reset-password/<token>", methods=["GET", "POST"])
+        def reset_password(token):
+            return self.controller.reset_password(token)
+
+        @self.bp.route("/logout")
+        def logout():
+            return self.controller.logout()
 
     def get_blueprint(self):
         return self.bp

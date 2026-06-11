@@ -1,7 +1,3 @@
-<!-- ========================================= -->
-<!-- vendor/dashboard.html -->
-<!-- ========================================= -->
-
 {% extends "base.html" %}
 
 {% block title %}Vendor Dashboard - NepMart{% endblock %}
@@ -12,7 +8,6 @@
 
   <div class="flex">
 
-    <!-- SIDEBAR -->
     <aside class="w-72 bg-brand-dark text-white min-h-screen hidden lg:flex flex-col justify-between p-6">
 
       <div>
@@ -68,20 +63,21 @@
 
       </div>
 
-      <!-- Vendor Info -->
       <div class="bg-white/5 rounded-2xl p-4 border border-white/10">
 
-        <div class="flex items-center gap-3">
+        <div class="flex flex-col gap-1">
+          
+          <p class="text-xs text-brand-muted uppercase tracking-wider font-semibold">
+            Logged in as:
+          </p>
 
-          <img src="{{ current_user.profile_image or '/static/images/default.png' }}"
-            class="w-12 h-12 rounded-full object-cover">
+          <h3 class="font-semibold text-white text-base truncate">
+            {{ session.get('business_name', 'Vendor Partner') }}
+          </h3>
 
-          <div>
-            <h3 class="font-semibold">
-              {{ current_user.business_name }}
-            </h3>
-
-            <p class="text-xs text-emerald-400 font-semibold">
+          <div class="flex items-center gap-1.5 mt-1">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <p class="text-xs text-emerald-400 font-medium">
               Verified Vendor
             </p>
           </div>
@@ -92,221 +88,167 @@
 
     </aside>
 
-    <!-- MAIN -->
     <main class="flex-1 p-6 lg:p-10">
 
-      <!-- TOPBAR -->
       <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
 
-        <div>
-          <h2 class="text-3xl font-bold text-brand-dark">
-            Vendor Dashboard
-          </h2>
-
-          <p class="text-brand-muted">
-            Manage your products and global buyers
-          </p>
+        <div class="flex items-center gap-6">
+          <div>
+            <h2 class="text-3xl font-bold text-brand-dark">
+              Vendor Dashboard
+            </h2>
+            <p class="text-brand-muted">
+              Manage your products and global buyers
+            </p>
+          </div>
+          
+          <form action="{{ url_for('vendor.dashboard') }}" method="GET" class="flex items-center gap-2">
+            <select name="period" onchange="this.form.submit()" 
+              class="bg-white border border-brand-border rounded-xl px-4 py-2 text-sm font-semibold text-brand-dark focus:outline-none focus:ring-2 focus:ring-brand-crimson">
+              <option value="7" {% if period == '7' %}selected{% endif %}>Last 7 Days</option>
+              <option value="30" {% if period == '30' %}selected{% endif %}>Last 30 Days</option>
+              <option value="90" {% if period == '90' %}selected{% endif %}>Last 90 Days</option>
+              <option value="365" {% if period == '365' %}selected{% endif %}>Last Year</option>
+            </select>
+          </form>
         </div>
 
-        <a href="{{ url_for('vendor.add_product') }}"
+        <a href="{{ url_for('vendor.products') }}"
           class="bg-brand-crimson text-white px-6 py-3 rounded-2xl font-semibold hover:shadow-xl transition-all">
-
           + Add Product
         </a>
 
       </div>
 
-      <!-- STATS -->
       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
 
         <div class="bg-white rounded-3xl p-6 border border-brand-border shadow-sm">
-
-          <p class="text-sm text-brand-muted">
-            Total Products
-          </p>
-
-          <h3 class="text-3xl font-bold mt-2 text-brand-dark">
-            {{ total_products }}
-          </h3>
-
+          <p class="text-sm text-brand-muted">Total Products</p>
+          <h3 class="text-3xl font-bold mt-2 text-brand-dark">{{ total_products }}</h3>
         </div>
 
         <div class="bg-white rounded-3xl p-6 border border-brand-border shadow-sm">
-
-          <p class="text-sm text-brand-muted">
-            Orders
-          </p>
-
-          <h3 class="text-3xl font-bold mt-2 text-brand-dark">
-            {{ total_orders }}
-          </h3>
-
+          <p class="text-sm text-brand-muted">Orders</p>
+          <h3 class="text-3xl font-bold mt-2 text-brand-dark">{{ total_orders }}</h3>
         </div>
 
         <div class="bg-white rounded-3xl p-6 border border-brand-border shadow-sm">
-
-          <p class="text-sm text-brand-muted">
-            Customers
-          </p>
-
-          <h3 class="text-3xl font-bold mt-2 text-brand-dark">
-            {{ total_customers }}
-          </h3>
-
+          <p class="text-sm text-brand-muted">Customers</p>
+          <h3 class="text-3xl font-bold mt-2 text-brand-dark">{{ total_customers }}</h3>
         </div>
 
         <div class="bg-gradient-to-r from-brand-dark to-brand rounded-3xl p-6 text-white shadow-xl">
-
-          <p class="text-sm text-white/80">
-            Revenue
-          </p>
-
-          <h3 class="text-3xl font-bold mt-2">
-            ${{ total_revenue }}
-          </h3>
-
+          <p class="text-sm text-white/80">Revenue</p>
+          <h3 class="text-3xl font-bold mt-2">Rs. {{ total_revenue }}</h3>
         </div>
 
       </div>
 
-      <!-- PRODUCTS -->
+      <!-- Quick link to full analytics if needed -->
+      <div class="mb-10">
+          <a href="{{ url_for('vendor.analytics') }}" class="flex items-center justify-between p-6 bg-white rounded-3xl border border-brand-border hover:shadow-md transition shadow-sm group">
+              <div>
+                  <h3 class="font-bold text-brand-dark">Detailed Performance Reports</h3>
+                  <p class="text-sm text-brand-muted">Analyze your sales trends, customer demographics, and more.</p>
+              </div>
+              <i data-lucide="arrow-right" class="text-brand-crimson group-hover:translate-x-1 transition-transform"></i>
+          </a>
+      </div>
       <div class="bg-white rounded-3xl border border-brand-border shadow-sm p-6 mb-8">
 
         <div class="flex justify-between items-center mb-6">
-
           <div>
-
-            <h3 class="text-xl font-bold text-brand-dark">
-              Product Inventory
-            </h3>
-
-            <p class="text-sm text-brand-muted">
-              Manage all active listings
-            </p>
-
+            <h3 class="text-xl font-bold text-brand-dark">Product Inventory</h3>
+            <p class="text-sm text-brand-muted">Manage all active product listings</p>
           </div>
 
+          <a href="{{ url_for('vendor.products') }}"
+             class="bg-brand-crimson text-white px-6 py-3 rounded-2xl font-semibold hover:shadow-xl transition-all">
+              + Add Product
+          </a>
         </div>
 
         <div class="overflow-x-auto">
-
           <table class="w-full">
-
             <thead>
-
               <tr class="border-b border-brand-border text-left text-sm text-brand-muted">
-
-                <th class="pb-4">Product</th>
-                <th class="pb-4">Category</th>
-                <th class="pb-4">Price</th>
-                <th class="pb-4">Stock</th>
-                <th class="pb-4">Status</th>
-
+                  <th class="pb-4">Image</th>
+                  <th class="pb-4">Product Name</th>
+                  <th class="pb-4">Price</th>
+                  <th class="pb-4">Description</th>
+                  <th class="pb-4">Actions</th>
               </tr>
-
             </thead>
-
             <tbody class="divide-y divide-brand-border">
-
-              {% for product in products %}
-
-              <tr>
-
-                <td class="py-4 font-semibold text-brand-dark">
-                  {{ product.name }}
-                </td>
-
-                <td>
-                  {{ product.category }}
-                </td>
-
-                <td>
-                  ${{ product.price }}
-                </td>
-
-                <td>
-                  {{ product.stock }}
-                </td>
-
-                <td>
-
-                  {% if product.stock > 10 %}
-
-                  <span class="bg-emerald-100 text-emerald-600 px-3 py-1 rounded-full text-xs font-bold">
-                    Active
-                  </span>
-
-                  {% else %}
-
-                  <span class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full text-xs font-bold">
-                    Low Stock
-                  </span>
-
-                  {% endif %}
-
-                </td>
-
-              </tr>
-
-              {% endfor %}
-
+                {% if products %}
+                    {% for product in products %}
+                    <tr>
+                        <td class="py-4">
+                            <img src="{{ product.product_image }}" alt="{{ product.product_name }}"
+                                 class="w-16 h-16 rounded-xl object-cover border border-brand-border">
+                        </td>
+                        <td class="font-semibold text-brand-dark">{{ product.product_name }}</td>
+                        <td class="font-medium text-brand-dark">Rs. {{ product.product_price }}</td>
+                        <td class="text-brand-muted max-w-md">{{ product.product_description }}</td>
+                        <td>
+                            <div class="flex gap-2">
+                                <a href="#"
+                                   class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl text-sm transition">
+                                    Edit
+                                </a>
+                                <form method="POST" action="#">
+                                    <button type="submit" onclick="return confirm('Delete this product?')"
+                                        class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl text-sm transition">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="py-16">
+                            <div class="flex flex-col items-center justify-center">
+                                <i data-lucide="package-x" class="w-16 h-16 text-gray-400 mb-4"></i>
+                                <h4 class="text-lg font-semibold text-brand-dark">No Products Available</h4>
+                                <p class="text-brand-muted mt-2">Add your first product to start selling.</p>
+                                <a href="{{ url_for('vendor.products') }}"
+                                   class="mt-6 bg-brand-crimson text-white px-6 py-3 rounded-2xl font-semibold">
+                                    + Add Product
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endif %}
             </tbody>
-
           </table>
-
         </div>
 
       </div>
 
-      <!-- CUSTOMER MESSAGES -->
       <div class="bg-white rounded-3xl border border-brand-border shadow-sm p-6">
-
         <div class="mb-6">
-
-          <h3 class="text-xl font-bold text-brand-dark">
-            Customer Inquiries
-          </h3>
-
-          <p class="text-sm text-brand-muted">
-            Latest buyer messages
-          </p>
-
+          <h3 class="text-xl font-bold text-brand-dark">Customer Inquiries</h3>
+          <p class="text-sm text-brand-muted">Latest buyer messages</p>
         </div>
 
         <div class="space-y-4">
-
           {% for message in messages %}
-
           <div class="border border-brand-border rounded-2xl p-4">
-
             <div class="flex justify-between items-center">
-
-              <h4 class="font-semibold text-brand-dark">
-                {{ message.customer }}
-              </h4>
-
-              <span class="text-xs text-brand-muted">
-                {{ message.time }}
-              </span>
-
+              <h4 class="font-semibold text-brand-dark">{{ message.customer }}</h4>
+              <span class="text-xs text-brand-muted">{{ message.time }}</span>
             </div>
-
-            <p class="text-sm text-brand-muted mt-2">
-              {{ message.content }}
-            </p>
-
+            <p class="text-sm text-brand-muted mt-2">{{ message.content }}</p>
           </div>
-
           {% endfor %}
-
         </div>
-
       </div>
 
     </main>
 
   </div>
-
 </div>
 
 {% endblock %}

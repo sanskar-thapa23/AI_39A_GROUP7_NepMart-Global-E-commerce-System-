@@ -44,40 +44,145 @@ class Database:
         """Close the database connection."""
         self.__connection.close()
 
-                        
     # ── Static Method: Create tables on app startup ─────────
 
     @staticmethod
     def create_tables():
         """
         Create database tables if they don't exist.
-
-        @staticmethod: belongs to the class but doesn't need
-        'self' — it doesn't use any instance data.
-        You call it as: Database.create_tables()
+        Includes Many-to-Many structural mapping between Users and Products.
         """
         db = Database()
+        
+        # 1. USERS TABLE (Checked mapping configuration fields)
         db.execute("""
             CREATE TABLE IF NOT EXISTS users (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                name VARCHAR(100) NOT NULL,
+                username VARCHAR(100) NOT NULL UNIQUE,
                 email VARCHAR(100) NOT NULL UNIQUE,
                 password VARCHAR(255) NOT NULL,
-                role VARCHAR(20) NOT NULL DEFAULT 'user',
+                role VARCHAR(20) NOT NULL DEFAULT 'customer',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """) 
+
+        # 2. PRODUCTS TABLE (Aligned with Product Model specifications)
+        db.execute("""
+            CREATE TABLE IF NOT EXISTS products (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                vendor_id INT,
+                product_image TEXT NOT NULL,
+                product_name VARCHAR(255) NOT NULL,
+                product_prices TEXT,
+                product_price DECIMAL(10, 2) NOT NULL,
+                category VARCHAR(100),
+                location VARCHAR(100),
+                product_description TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (vendor_id) REFERENCES users(id) ON DELETE SET NULL
+            )
+        """)
+
+        # Migrations for existing products table
+        try:
+            db.execute("ALTER TABLE products ADD COLUMN vendor_id INT AFTER id")
+            db.execute("ALTER TABLE products ADD CONSTRAINT fk_vendor FOREIGN KEY (vendor_id) REFERENCES users(id) ON DELETE SET NULL")
+        except Exception:
+            pass
+
+        try:
+            db.execute("ALTER TABLE products ADD COLUMN category VARCHAR(100) AFTER product_price")
+        except Exception:
+            pass
+
+        try:
+            db.execute("ALTER TABLE products ADD COLUMN location VARCHAR(100) AFTER category")
+        except Exception:
+            pass
+
+        try:
+            db.execute("ALTER TABLE products ADD CONSTRAINT fk_vendor FOREIGN KEY (vendor_id) REFERENCES users(id) ON DELETE SET NULL")
+        except Exception:
+            pass
+
+        # 3. MANY-TO-MANY PIVOT TABLE (User <-> Product Mapping System)
+        db.execute("""
+            CREATE TABLE IF NOT EXISTS user_products (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NOT NULL,
+                product_id INT NOT NULL,
+                assigned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+                UNIQUE KEY unique_user_product (user_id, product_id)
+            )
+        """)
+
+        # 4. ORDERS TABLE 
         db.execute("""
             CREATE TABLE IF NOT EXISTS orders (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                name VARCHAR(100) NOT NULL,
-                email VARCHAR(100) NOT NULL UNIQUE,
-                password VARCHAR(255) NOT NULL,
-                role VARCHAR(20) NOT NULL DEFAULT 'user',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                user_id INT NOT NULL,
+                product_id INT,
+                total_amount DECIMAL(10, 2) NOT NULL,
+                status VARCHAR(50) NOT NULL DEFAULT 'pending',
+                shipping_address TEXT,
+                phone_number VARCHAR(20),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
             )
         """) 
+
+        # Migrations for existing orders table
+        try:
+            db.execute("ALTER TABLE orders ADD COLUMN product_id INT AFTER user_id")
+        except Exception:
+            pass
+
+        try:
+            db.execute("ALTER TABLE orders ADD COLUMN shipping_address TEXT AFTER status")
+        except Exception:
+            pass
+
+        try:
+            db.execute("ALTER TABLE orders ADD COLUMN phone_number VARCHAR(20) AFTER shipping_address")
+        except Exception:
+            pass
+
+        try:
+            db.execute("ALTER TABLE orders ADD CONSTRAINT fk_order_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL")
+        except Exception:
+            pass
+
         
+        # 5. SHOPPING CART TABLE (Mapping User <-> Product with Quantity)
+        db.execute("""
+            CREATE TABLE IF NOT EXISTS shopping_cart (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NOT NULL,
+                product_id INT NOT NULL,
+                quantity INT NOT NULL DEFAULT 1,
+                added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+                UNIQUE KEY unique_user_cart_product (user_id, product_id)
+            )
+        """)
+
+        # 6. WISHLIST TABLE (Mapping User <-> Product)
+        db.execute("""
+            CREATE TABLE IF NOT EXISTS wishlist (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NOT NULL,
+                product_id INT NOT NULL,
+                added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+                UNIQUE KEY unique_user_wishlist_product (user_id, product_id)
+            )
+        """)
+
         # Create default admin if not exists
         admin = db.fetch_one(
             "SELECT * FROM users WHERE email = %s", ("admin@admin.com",)
@@ -86,7 +191,7 @@ class Database:
             from werkzeug.security import generate_password_hash
 
             db.execute(
-                "INSERT INTO users (name, email, password, role) VALUES (%s, %s, %s, %s)",
+                "INSERT INTO users (username, email, password, role) VALUES (%s, %s, %s, %s)",
                 ("Admin", "admin@admin.com", generate_password_hash("admin123"), "admin"),
             )
 
