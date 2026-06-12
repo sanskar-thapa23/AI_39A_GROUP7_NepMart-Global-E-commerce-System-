@@ -119,7 +119,7 @@ class MainController:
         if search_query:
             sellers = [
                 s for s in sellers
-                if search_query in s.get("business_name", "").lower()
+                if search_query in s.get("company_name", "").lower()
                 or search_query in s.get("full_name", "").lower()
             ]
 

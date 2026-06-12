@@ -99,7 +99,7 @@ class AuthController(BaseController):
 
             # Check email uniqueness
             new_user = User(full_name=full_name, email=email,
-                            password=password, role=role, phone=phone)
+                            password=password, role=role, phone_number=phone)
             if new_user.email_exists():
                 flash("An account with this email already exists.", "danger")
                 return render_template("auth/register.html", default_role=role)
@@ -111,7 +111,7 @@ class AuthController(BaseController):
             if role == "seller":
                 seller = Seller(
                     user_id=uid,
-                    business_name=business_name,
+                    company_name=business_name,
                     whatsapp_number=whatsapp_number,
                     business_phone=business_phone,
                     business_address=business_address,

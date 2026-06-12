@@ -2,6 +2,9 @@
 =============================================================
   NepMart — Order Model
 =============================================================
+  Includes seller_id, seller_notes, tracking_number.
+  Status: pending → confirmed → processing → shipped → delivered → cancelled
+=============================================================
 """
 
 from app.model.basemodel import BaseModel
@@ -14,11 +17,12 @@ class Order(BaseModel):
     def table(self):
         return "orders"
 
-    VALID_STATUSES = ("pending", "confirmed", "shipped", "delivered", "cancelled")
+    VALID_STATUSES = ("pending", "confirmed", "processing", "shipped", "delivered", "cancelled")
 
-    def __init__(self, buyer_id=None, product_id=None,
+    def __init__(self, buyer_id=None, seller_id=None, product_id=None,
                  quantity=1, total_amount=0.0, order_status="pending"):
         self.buyer_id     = buyer_id
+        self.seller_id    = seller_id
         self.product_id   = product_id
         self.quantity     = quantity
         self.total_amount = total_amount
@@ -29,21 +33,28 @@ class Order(BaseModel):
     def save(self):
         db = Database()
         oid = db.execute_returning_id(
-            """INSERT INTO orders (buyer_id, product_id, quantity, total_amount, order_status)
-               VALUES (%s, %s, %s, %s, %s)""",
-            (self.buyer_id, self.product_id, self.quantity,
-             self.total_amount, self.order_status),
+            """INSERT INTO orders (buyer_id, seller_id, product_id, quantity, total_amount, order_status)
+               VALUES (%s,%s,%s,%s,%s,%s)""",
+            (self.buyer_id, self.seller_id, self.product_id,
+             self.quantity, self.total_amount, self.order_status),
         )
         db.close()
         return oid
 
     @staticmethod
-    def update_status(order_id, status):
+    def update_status(order_id, status, seller_notes=None, tracking_number=None):
         db = Database()
-        db.execute(
-            "UPDATE orders SET order_status=%s WHERE order_id=%s",
-            (status, order_id)
-        )
+        if seller_notes is not None or tracking_number is not None:
+            db.execute(
+                """UPDATE orders SET order_status=%s, seller_notes=%s, tracking_number=%s
+                   WHERE order_id=%s""",
+                (status, seller_notes, tracking_number, order_id)
+            )
+        else:
+            db.execute(
+                "UPDATE orders SET order_status=%s WHERE order_id=%s",
+                (status, order_id)
+            )
         db.close()
 
     # ── Lookups ──────────────────────────────────────────────────
@@ -52,9 +63,10 @@ class Order(BaseModel):
     def get_by_buyer(buyer_id):
         db = Database()
         results = db.fetch_all(
-            """SELECT o.*, p.name AS product_name, p.image AS product_image,
+            """SELECT o.*, p.name AS product_name, p.image_path AS product_image,
                       p.category AS product_category,
-                      s.business_name AS seller_name
+                      s.company_name AS seller_name,
+                      s.whatsapp_number AS seller_whatsapp
                FROM orders o
                JOIN products p ON o.product_id=p.product_id
                JOIN sellers  s ON p.seller_id=s.seller_id
@@ -69,9 +81,9 @@ class Order(BaseModel):
     def get_by_seller(seller_id):
         db = Database()
         results = db.fetch_all(
-            """SELECT o.*, p.name AS product_name, p.image AS product_image,
+            """SELECT o.*, p.name AS product_name, p.image_path AS product_image,
                       u.full_name AS buyer_name, u.email AS buyer_email,
-                      u.phone AS buyer_phone
+                      u.phone_number AS buyer_phone
                FROM orders o
                JOIN products p ON o.product_id=p.product_id
                JOIN users    u ON o.buyer_id=u.id
@@ -86,7 +98,7 @@ class Order(BaseModel):
     def get_by_id(order_id):
         db = Database()
         result = db.fetch_one(
-            """SELECT o.*, p.name AS product_name, s.business_name AS seller_name,
+            """SELECT o.*, p.name AS product_name, s.company_name AS seller_name,
                       u.full_name AS buyer_name
                FROM orders o
                JOIN products p ON o.product_id=p.product_id

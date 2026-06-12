@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Seller Dashboard — Nep-Mart Global B2B{% endblock %}
+
+{% block content %}
+<div class="bg-brand-bgLight min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto space-y-8">
+    
+    <!-- Header banner -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-3xl border border-brand-border shadow-sm">
+      <div class="flex items-center gap-4">
+        {% if seller.company_logo %}
+          <img src="{{ url_for('static', filename=seller.company_logo) }}" alt="Logo" class="w-16 h-16 rounded-2xl object-cover border border-brand-border shadow-sm">
+        {% else %}
+          <div class="w-16 h-16 rounded-2xl bg-brand text-white flex items-center justify-center font-bold text-2xl shadow-md">
+            {{ seller.company_name[0]|upper }}
+          </div>
+        {% endif %}
+        <div>
+          <h1 class="font-serif text-2xl font-bold text-brand-dark">{{ seller.company_name }} Workspace</h1>
+          <p class="text-xs text-brand-muted">Welcome back, <span class="font-bold text-brand-dark">{{ seller.full_name }}</span> ({{ seller.company_type or 'Supplier' }})</p>
+        </div>
+      </div>
+      
+      <!-- Quick actions -->
+      <div class="flex flex-wrap gap-3">
+        <a href="{{ url_for('seller.add_product') }}" class="px-4 py-2.5 bg-brand text-white font-semibold text-xs rounded-xl hover:bg-brand-dark hover:shadow-md transition-all flex items-center gap-1.5 shadow-sm">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i> Add New Product
+        </a>
+        <a href="{{ url_for('seller.orders') }}" class="px-4 py-2.5 bg-brand-crimson text-white font-semibold text-xs rounded-xl hover:bg-brand-crimsonDark hover:shadow-md transition-all flex items-center gap-1.5 shadow-sm">
+          <i data-lucide="clipboard-list" class="w-4 h-4"></i> View All Orders
+        </a>
+      </div>
+    </div>
+
+    <!-- Stats grid -->
+    <div class="grid grid-cols-2 lg:grid-cols-6 gap-4">
+      
+      <div class="bg-white p-5 rounded-2xl border border-brand-border shadow-sm text-center space-y-1">
+        <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-2">
+          <i data-lucide="package" class="w-4.5 h-4.5"></i>
+        </div>
+        <span class="text-brand-muted block uppercase text-[8px] tracking-widest font-bold">Total Products</span>
+        <span class="text-2xl font-black text-[#0f172a] block">{{ stats.total_products }}</span>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-brand-border shadow-sm text-center space-y-1">
+        <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-2">
+          <i data-lucide="shopping-bag" class="w-4.5 h-4.5"></i>
+        </div>
+        <span class="text-brand-muted block uppercase text-[8px] tracking-widest font-bold">Active Orders</span>
+        <span class="text-2xl font-black text-[#0f172a] block">{{ stats.total_orders }}</span>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-brand-border shadow-sm text-center space-y-1">
+        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-2">
+          <i data-lucide="dollar-sign" class="w-4.5 h-4.5"></i>
+        </div>
+        <span class="text-brand-muted block uppercase text-[8px] tracking-widest font-bold">Revenue</span>
+        <span class="text-2xl font-black text-[#0f172a] block">${{ "{:,.0f}".format(stats.total_revenue) }}</span>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-brand-border shadow-sm text-center space-y-1">
+        <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-2">
+          <i data-lucide="eye" class="w-4.5 h-4.5"></i>
+        </div>
+        <span class="text-brand-muted block uppercase text-[8px] tracking-widest font-bold">Product Views</span>
+        <span class="text-2xl font-black text-[#0f172a] block">{{ stats.total_views }}</span>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-brand-border shadow-sm text-center space-y-1">
+        <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center mx-auto mb-2">
+          <i data-lucide="users" class="w-4.5 h-4.5"></i>
+        </div>
+        <span class="text-brand-muted block uppercase text-[8px] tracking-widest font-bold">Total Buyers</span>
+        <span class="text-2xl font-black text-[#0f172a] block">{{ stats.total_buyers }}</span>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-brand-border shadow-sm text-center space-y-1">
+        <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center mx-auto mb-2">
+          <i data-lucide="thumbs-up" class="w-4.5 h-4.5"></i>
+        </div>
+        <span class="text-brand-muted block uppercase text-[8px] tracking-widest font-bold">Recs Count</span>
+        <span class="text-2xl font-black text-[#0f172a] block">{{ stats.total_recommendations }}</span>
+      </div>
+
+    </div>
+
+    <!-- Core logs layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      
+      <!-- Recent Products -->
+      <div class="bg-white rounded-3xl border border-brand-border p-6 md:p-8 space-y-6 shadow-sm">
+        <div class="flex items-center justify-between pb-4 border-b border-brand-bgLight">
+          <h2 class="font-serif text-lg font-bold text-brand-dark flex items-center gap-2">
+            <i data-lucide="package" class="w-5 h-5 text-brand-crimson"></i> Recent Products
+          </h2>
+          <a href="{{ url_for('seller.products') }}" class="text-xs font-semibold text-brand hover:underline">Manage All</a>
+        </div>
+
+        <div class="space-y-4">
+          {% if recent_products %}
+            {% for item in recent_products %}
+            <div class="flex items-center justify-between text-sm py-2 border-b border-brand-bgLight last:border-b-0 last:pb-0">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-brand-bgLight border border-brand-border flex items-center justify-center overflow-hidden flex-shrink-0">
+                  {% if item.image_path %}
+                    <img src="{{ url_for('static', filename=item.image_path) }}" alt="" class="w-full h-full object-cover">
+                  {% else %}
+                    <i data-lucide="image" class="w-5 h-5 text-brand-muted"></i>
+                  {% endif %}
+                </div>
+                <div>
+                  <h4 class="font-bold text-brand-dark leading-tight">{{ item.name }}</h4>
+                  <p class="text-xs text-brand-muted">Category: {{ item.category }} &bull; Stock: {{ item.stock }}</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="font-black text-brand-dark">${{ "{:,.2f}".format(item.price) }}</p>
+                <span class="text-[9px] uppercase font-bold px-2 py-0.5 rounded
+                  {% if item.status == 'active' %} bg-emerald-50 text-emerald-700
+                  {% elif item.status == 'inactive' %} bg-rose-50 text-rose-700
+                  {% else %} bg-amber-50 text-amber-700 {% endif %}">
+                  {{ item.status }}
+                </span>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+            <p class="text-sm text-brand-muted text-center py-6">No products added yet.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Recent Orders -->
+      <div class="bg-white rounded-3xl border border-brand-border p-6 md:p-8 space-y-6 shadow-sm">
+        <div class="flex items-center justify-between pb-4 border-b border-brand-bgLight">
+          <h2 class="font-serif text-lg font-bold text-brand-dark flex items-center gap-2">
+            <i data-lucide="clipboard-list" class="w-5 h-5 text-brand-crimson"></i> Recent Orders
+          </h2>
+          <a href="{{ url_for('seller.orders') }}" class="text-xs font-semibold text-brand hover:underline">Manage All</a>
+        </div>
+
+        <div class="space-y-4">
+          {% if recent_orders %}
+            {% for item in recent_orders %}
+            <div class="flex items-center justify-between text-sm py-2 border-b border-brand-bgLight last:border-b-0 last:pb-0">
+              <div>
+                <h4 class="font-bold text-brand-dark leading-tight">#NEP-{{ item.order_id }} &bull; {{ item.product_name }}</h4>
+                <p class="text-xs text-brand-muted">Buyer: {{ item.buyer_name }} &bull; Qty: {{ item.quantity }}</p>
+              </div>
+              <div class="text-right">
+                <p class="font-black text-brand-crimson">${{ "{:,.2f}".format(item.total_amount) }}</p>
+                <span class="inline-flex items-center gap-1 text-[9px] uppercase font-bold px-2 py-0.5 rounded
+                  {% if item.order_status == 'pending' %} bg-amber-50 text-amber-700
+                  {% elif item.order_status == 'confirmed' %} bg-blue-50 text-blue-700
+                  {% elif item.order_status == 'processing' %} bg-indigo-50 text-indigo-700
+                  {% elif item.order_status == 'shipped' %} bg-purple-50 text-purple-700
+                  {% elif item.order_status == 'delivered' %} bg-emerald-50 text-emerald-700
+                  {% else %} bg-rose-50 text-rose-700 {% endif %}">
+                  {{ item.order_status }}
+                </span>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+            <p class="text-sm text-brand-muted text-center py-6">No orders received yet.</p>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+{% endblock %}

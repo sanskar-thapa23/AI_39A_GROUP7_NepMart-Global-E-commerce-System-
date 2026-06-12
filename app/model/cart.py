@@ -52,9 +52,9 @@ class Cart:
         """Return cart rows with full product info."""
         db = Database()
         results = db.fetch_all(
-            """SELECT c.cart_id, c.quantity, p.product_id, p.name, p.price,
-                      p.image, p.stock, p.category,
-                      s.business_name AS seller_name, s.whatsapp_number,
+            """SELECT c.cart_id, c.quantity, p.product_id, p.seller_id, p.name, p.price,
+                      p.image_path, p.stock, p.category,
+                      s.company_name AS seller_name, s.whatsapp_number,
                       (p.price * c.quantity) AS subtotal
                FROM cart c
                JOIN products p ON c.product_id=p.product_id

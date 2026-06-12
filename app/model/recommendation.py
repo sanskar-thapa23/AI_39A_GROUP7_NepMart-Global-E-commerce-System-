@@ -32,11 +32,11 @@ class RecommendationEngine:
         """Load all active products from DB and compute the TF-IDF matrix."""
         db = Database()
         rows = db.fetch_all(
-            """SELECT p.product_id, p.name, p.category, p.description,
-                      s.business_name AS company
+            """SELECT p.*, s.company_name AS seller_business_name,
+                      s.whatsapp_number, s.company_name AS company
                FROM products p
                JOIN sellers s ON p.seller_id=s.seller_id
-               WHERE p.is_active=1"""
+               WHERE p.is_active=1 AND p.status='active'"""
         )
         db.close()
 
@@ -140,9 +140,9 @@ class RecommendationEngine:
         db2 = Database()
         for pid, score in sorted_pids[:top_n]:
             db2.execute(
-                """INSERT INTO recommendations (user_id, product_id, score)
+                """INSERT INTO recommendations (user_id, product_id, recommendation_score)
                    VALUES (%s, %s, %s)
-                   ON DUPLICATE KEY UPDATE score=%s""",
+                   ON DUPLICATE KEY UPDATE recommendation_score=%s""",
                 (user_id, pid, score, score)
             )
         db2.close()
@@ -154,9 +154,9 @@ class RecommendationEngine:
         """When no history exists, return newest products."""
         db = Database()
         rows = db.fetch_all(
-            """SELECT p.*, s.business_name AS seller_business_name, s.whatsapp_number
+            """SELECT p.*, s.company_name AS seller_business_name, s.whatsapp_number
                FROM products p JOIN sellers s ON p.seller_id=s.seller_id
-               WHERE p.is_active=1 ORDER BY p.created_at DESC LIMIT %s""",
+               WHERE p.is_active=1 AND p.status='active' ORDER BY p.created_at DESC LIMIT %s""",
             (top_n,)
         )
         db.close()

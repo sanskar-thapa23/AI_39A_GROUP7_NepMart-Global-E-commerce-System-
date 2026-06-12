@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Orders — Seller Panel{% endblock %}
+
+{% block content %}
+<div class="bg-brand-bgLight min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-6xl mx-auto space-y-6">
+    
+    <!-- Breadcrumbs -->
+    <nav class="flex text-xs font-semibold text-brand-muted uppercase tracking-wider gap-2">
+      <a href="/seller/dashboard" class="hover:text-brand-crimson transition-colors">Workspace</a>
+      <span>/</span>
+      <span class="text-brand-dark">Orders</span>
+    </nav>
+
+    <!-- Header bar -->
+    <div class="bg-white p-6 rounded-2xl border border-brand-border shadow-sm">
+      <h1 class="font-serif text-2xl font-bold text-brand-dark">Bulk Sourcing Orders</h1>
+      <p class="text-xs text-brand-muted mt-1">Review orders placed by global buyers, update status, dispatch cargo, and log shipping manifests.</p>
+    </div>
+
+    <!-- Orders Logs Table -->
+    <div class="bg-white rounded-3xl border border-brand-border overflow-hidden shadow-sm">
+      {% if orders %}
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-brand-border text-sm text-[#0f172a]">
+          <thead class="bg-brand-bgLight text-brand-muted text-[10px] font-bold uppercase tracking-wider">
+            <tr>
+              <th scope="col" class="px-6 py-4 text-left">Order Detail</th>
+              <th scope="col" class="px-6 py-4 text-left">Buyer Contact</th>
+              <th scope="col" class="px-6 py-4 text-left">Quantity / Value</th>
+              <th scope="col" class="px-6 py-4 text-left">Current Status</th>
+              <th scope="col" class="px-6 py-4 text-left">Update Shipping & Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-brand-border bg-white">
+            {% for item in orders %}
+            <tr class="hover:bg-brand-bgLight/40 transition-colors">
+              
+              <!-- Order detail -->
+              <td class="px-6 py-4">
+                <div class="space-y-1">
+                  <h4 class="font-bold text-brand-dark">#NEP-{{ item.order_id }}</h4>
+                  <p class="text-xs text-[#475569] font-medium">{{ item.product_name }}</p>
+                  <p class="text-[10px] text-brand-muted">Placed: {{ item.created_at.strftime('%Y-%m-%d %H:%M') if item.created_at else 'N/A' }}</p>
+                </div>
+              </td>
+
+              <!-- Buyer contact -->
+              <td class="px-6 py-4 text-xs space-y-1 text-[#475569]">
+                <p class="font-bold text-brand-dark">{{ item.buyer_name }}</p>
+                <p class="flex items-center gap-1"><i data-lucide="mail" class="w-3.5 h-3.5 text-brand-muted"></i> {{ item.buyer_email }}</p>
+                <p class="flex items-center gap-1"><i data-lucide="phone" class="w-3.5 h-3.5 text-brand-muted"></i> {{ item.buyer_phone or 'No phone number' }}</p>
+              </td>
+
+              <!-- Quantity & Total -->
+              <td class="px-6 py-4">
+                <div class="space-y-0.5">
+                  <p class="font-semibold text-brand-dark text-xs">{{ item.quantity }} units</p>
+                  <p class="font-black text-brand-crimson">${{ "{:,.2f}".format(item.total_amount) }}</p>
+                </div>
+              </td>
+
+              <!-- Status badge & notes -->
+              <td class="px-6 py-4 space-y-2">
+                <span class="inline-flex items-center gap-1 text-[9px] uppercase font-bold px-2 py-0.5 rounded
+                  {% if item.order_status == 'pending' %} bg-amber-50 text-amber-700 border border-amber-200
+                  {% elif item.order_status == 'confirmed' %} bg-blue-50 text-blue-700 border border-blue-200
+                  {% elif item.order_status == 'processing' %} bg-indigo-50 text-indigo-700 border border-indigo-200
+                  {% elif item.order_status == 'shipped' %} bg-purple-50 text-purple-700 border border-purple-200
+                  {% elif item.order_status == 'delivered' %} bg-emerald-50 text-emerald-700 border border-emerald-200
+                  {% else %} bg-rose-50 text-rose-700 border border-rose-200 {% endif %}">
+                  {{ item.order_status }}
+                </span>
+                
+                {% if item.tracking_number %}
+                <div class="text-[10px] text-brand-muted">
+                  <span class="font-bold text-brand-dark">Tracking:</span> {{ item.tracking_number }}
+                </div>
+                {% endif %}
+                
+                {% if item.seller_notes %}
+                <div class="text-[10px] text-brand-muted italic max-w-[150px] truncate" title="{{ item.seller_notes }}">
+                  "{{ item.seller_notes }}"
+                </div>
+                {% endif %}
+              </td>
+
+              <!-- Update form -->
+              <td class="px-6 py-4">
+                <form action="{{ url_for('seller.update_order_status', order_id=item.order_id) }}" method="POST" class="space-y-2 max-w-[200px]">
+                  
+                  <!-- Select status -->
+                  <select name="status" class="w-full text-xs font-semibold border border-brand-border rounded-lg py-1.5 px-2 bg-brand-bgLight text-brand-dark focus:outline-none focus:ring-2 focus:ring-brand-crimson">
+                    <option value="pending" {% if item.order_status == 'pending' %}selected{% endif %}>Pending Approval</option>
+                    <option value="confirmed" {% if item.order_status == 'confirmed' %}selected{% endif %}>Confirm Order</option>
+                    <option value="processing" {% if item.order_status == 'processing' %}selected{% endif %}>Manufacturing / Processing</option>
+                    <option value="shipped" {% if item.order_status == 'shipped' %}selected{% endif %}>Cargo Shipped</option>
+                    <option value="delivered" {% if item.order_status == 'delivered' %}selected{% endif %}>Delivered</option>
+                    <option value="cancelled" {% if item.order_status == 'cancelled' %}selected{% endif %}>Cancel Order</option>
+                  </select>
+
+                  <div class="flex items-center gap-1.5">
+                    <button type="submit" class="w-full py-1 bg-brand text-white font-bold rounded text-[10px] hover:bg-brand-dark transition-all">
+                      Apply Status
+                    </button>
+                    <!-- Expand details button to show full fields edit -->
+                    <button type="button" onclick="openDispatchModal('{{ item.order_id }}', '{{ item.order_status }}', '{{ item.tracking_number or '' }}', '{{ item.seller_notes or '' }}')" 
+                            class="p-1.5 bg-brand-bgLight text-brand hover:bg-brand/10 border border-brand-border rounded" title="Add Tracking / Notes">
+                      <i data-lucide="truck" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
+
+                </form>
+              </td>
+
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="p-16 text-center space-y-4">
+        <div class="w-16 h-16 bg-brand-bgLight text-brand-muted rounded-full flex items-center justify-center mx-auto">
+          <i data-lucide="clipboard-list" class="w-8 h-8"></i>
+        </div>
+        <h3 class="font-serif text-lg font-bold text-brand-dark">No orders found</h3>
+        <p class="text-brand-muted text-sm max-w-md mx-auto">You haven't received any orders yet. Ensure your products catalog is active and up to date.</p>
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+<!-- DISPATCH CARGO MODAL (Add Tracking ID & Notes) -->
+<div id="dispatch-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-brand-dark/40 backdrop-blur-sm hidden">
+  <div class="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full border border-brand-border shadow-2xl relative space-y-6">
+    <button onclick="closeDispatchModal()" class="absolute top-4 right-4 text-brand-muted hover:text-brand-dark transition-colors">
+      <i data-lucide="x" class="w-5 h-5"></i>
+    </button>
+    
+    <div>
+      <h3 class="font-serif text-lg font-bold text-brand-dark">Log Cargo Dispatch</h3>
+      <p class="text-xs text-brand-muted mt-0.5">Add cargo tracking manifest numbers and custom supplier notes.</p>
+    </div>
+
+    <form id="dispatch-form" action="" method="POST" class="space-y-4 text-sm">
+      <input type="hidden" id="modal-status" name="status" value="">
+      
+      <!-- Tracking -->
+      <div class="space-y-1">
+        <label for="tracking_number" class="block text-xs font-semibold text-brand-muted uppercase">Cargo Tracking ID / Bill of Lading</label>
+        <input type="text" id="tracking_number" name="tracking_number"
+          class="w-full px-3 py-2 border border-brand-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-crimson text-xs"
+          placeholder="e.g. BL-NPKTM-9812">
+      </div>
+
+      <!-- Notes -->
+      <div class="space-y-1">
+        <label for="seller_notes" class="block text-xs font-semibold text-brand-muted uppercase">Supplier Notes / Dispatch Details</label>
+        <textarea id="seller_notes" name="seller_notes" rows="4"
+          class="w-full p-3 border border-brand-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-crimson text-xs resize-none"
+          placeholder="Describe weight details, freight carrier name, expected customs hub arrival dates..."></textarea>
+      </div>
+
+      <!-- Submit -->
+      <div class="flex gap-2 pt-2">
+        <button type="submit" class="w-full py-2.5 bg-brand text-white font-bold rounded-xl hover:bg-brand-dark transition-all text-xs">
+          Save Shipping Info
+        </button>
+        <button type="button" onclick="closeDispatchModal()" class="w-full py-2.5 bg-brand-bgLight text-brand-dark font-bold rounded-xl hover:bg-brand-border transition-all text-xs">
+          Cancel
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<script>
+  function openDispatchModal(orderId, currentStatus, trackingNum, notes) {
+    const form = document.getElementById('dispatch-form');
+    form.action = `/seller/order/${orderId}/status`;
+    
+    document.getElementById('modal-status').value = currentStatus;
+    document.getElementById('tracking_number').value = trackingNum;
+    document.getElementById('seller_notes').value = notes;
+    
+    document.getElementById('dispatch-modal').classList.remove('hidden');
+  }
+
+  function closeDispatchModal() {
+    document.getElementById('dispatch-modal').classList.add('hidden');
+  }
+</script>
+{% endblock %}

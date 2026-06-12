@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Sourcing Cart — Nep-Mart Global B2B{% endblock %}
+
+{% block content %}
+<div class="bg-brand-bgLight py-12 px-4 sm:px-6 lg:px-8 min-h-[80vh]">
+  <div class="max-w-5xl mx-auto space-y-6">
+    
+    <div>
+      <h1 class="font-serif text-3xl font-bold text-brand-dark">Sourcing Cart</h1>
+      <p class="text-sm text-brand-muted mt-1">Review and manage your pending bulk orders before final trade checkout.</p>
+    </div>
+
+    {% if cart_items %}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      
+      <!-- Cart Items List -->
+      <div class="lg:col-span-2 space-y-4">
+        {% for item in cart_items %}
+        <div class="bg-white rounded-2xl border border-brand-border p-5 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative">
+          
+          <div class="flex items-center gap-4">
+            <!-- Image -->
+            <div class="w-16 h-16 rounded-xl overflow-hidden bg-brand-bgLight border border-brand-border flex-shrink-0 flex items-center justify-center">
+              {% if item.image_path %}
+                <img src="{{ url_for('static', filename=item.image_path) }}" alt="{{ item.name }}" class="w-full h-full object-cover">
+              {% else %}
+                <i data-lucide="image" class="w-6 h-6 text-brand-muted"></i>
+              {% endif %}
+            </div>
+
+            <!-- Detail -->
+            <div class="space-y-1">
+              <span class="text-[9px] uppercase font-bold text-brand-crimson bg-brand-crimson/5 border border-brand-crimson/10 px-2 py-0.5 rounded">
+                {{ item.category }}
+              </span>
+              <h3 class="font-serif text-base font-bold text-brand-dark leading-tight pt-1">
+                <a href="/product/{{ item.product_id }}" class="hover:text-brand-crimson transition-colors">{{ item.name }}</a>
+              </h3>
+              <p class="text-xs text-brand-muted">Supplier: {{ item.seller_name }}</p>
+              <p class="text-xs font-bold text-brand-dark">Unit Price: ${{ "{:,.2f}".format(item.price) }}</p>
+            </div>
+          </div>
+
+          <!-- Quantity controls and Remove button -->
+          <div class="flex sm:flex-col items-end justify-between sm:justify-center gap-4 w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-t-0 border-brand-border">
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-brand-muted uppercase font-bold">Qty:</span>
+              <form action="{{ url_for('buyer.update_cart') }}" method="POST" class="flex items-center">
+                <input type="hidden" name="cart_id" value="{{ item.cart_id }}">
+                <input type="number" name="quantity" min="1" max="{{ item.stock }}" value="{{ item.quantity }}" onchange="this.form.submit()"
+                  class="w-16 px-2 py-1 border border-brand-border rounded-lg text-center font-bold text-xs focus:outline-none focus:ring-2 focus:ring-brand-crimson">
+              </form>
+            </div>
+
+            <div class="text-right">
+              <span class="text-xs text-brand-muted block font-semibold">Subtotal:</span>
+              <span class="text-base font-extrabold text-brand-dark">${{ "{:,.2f}".format(item.subtotal) }}</span>
+            </div>
+
+            <!-- Remove Button -->
+            <form action="{{ url_for('buyer.remove_from_cart', product_id=item.product_id) }}" method="POST">
+              <button type="submit" class="text-xs text-rose-600 hover:underline flex items-center gap-1">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Remove
+              </button>
+            </form>
+          </div>
+
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Order Summary Column -->
+      <div class="lg:col-span-1 bg-white rounded-2xl border border-brand-border p-6 space-y-6 shadow-sm">
+        <h3 class="font-serif text-lg font-bold text-brand-dark pb-3 border-b border-brand-border">Trade Order Summary</h3>
+        
+        <div class="space-y-3 text-sm">
+          <div class="flex justify-between text-[#475569]">
+            <span>Active items count:</span>
+            <span class="font-semibold text-brand-dark">{{ cart_items|length }}</span>
+          </div>
+          <div class="flex justify-between text-[#475569]">
+            <span>Pre-shipment tax:</span>
+            <span class="font-semibold text-brand-dark">FOB Excluded</span>
+          </div>
+          <div class="border-t border-brand-border pt-3 flex justify-between items-baseline">
+            <span class="font-bold text-brand-dark">FOB Total:</span>
+            <span class="text-2xl font-black text-brand-crimson">${{ "{:,.2f}".format(cart_total) }}</span>
+          </div>
+        </div>
+
+        <a href="{{ url_for('buyer.checkout') }}" class="w-full py-3.5 bg-brand text-white text-center font-semibold rounded-xl hover:bg-brand-dark hover:shadow-lg transition-all flex items-center justify-center gap-2 shadow-md">
+          Proceed to Checkout <i data-lucide="credit-card" class="w-5 h-5"></i>
+        </a>
+
+        <div class="bg-brand-bgLight p-4 rounded-xl border border-brand-border text-xs text-brand-muted leading-relaxed">
+          <div class="flex gap-2 items-start">
+            <i data-lucide="info" class="w-4 h-4 text-brand-crimson flex-shrink-0 mt-0.5"></i>
+            <span>Upon checkout, individual orders will be sent to respective suppliers. Each seller will establish contact via email, phone, or WhatsApp to negotiate custom freight rates.</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    {% else %}
+    <!-- Empty Cart state -->
+    <div class="bg-white rounded-3xl border border-brand-border p-16 text-center space-y-6 shadow-sm max-w-xl mx-auto">
+      <div class="w-20 h-20 bg-brand-bgLight text-brand-muted rounded-full flex items-center justify-center mx-auto">
+        <i data-lucide="shopping-cart" class="w-10 h-10"></i>
+      </div>
+      <div class="space-y-2">
+        <h2 class="font-serif text-2xl font-bold text-brand-dark">Your sourcing cart is empty</h2>
+        <p class="text-sm text-brand-muted">You haven't added any products to your cart yet. Explore our global B2B catalog to find Himalayan suppliers.</p>
+      </div>
+      <a href="/products" class="inline-flex items-center gap-2 px-6 py-3.5 bg-brand text-white font-semibold rounded-xl hover:bg-brand-dark transition-all shadow-md">
+        Browse Catalog <i data-lucide="arrow-right" class="w-4 h-4"></i>
+      </a>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

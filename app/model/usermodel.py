@@ -2,8 +2,8 @@
 =============================================================
   NepMart — User Model
 =============================================================
-  Inherits BaseModel. Handles buyer/seller/admin accounts.
-  Encapsulates password hashing.
+  Email-based authentication. Roles: buyer / seller / admin.
+  phone_number column matches DB spec.
 =============================================================
 """
 
@@ -19,11 +19,11 @@ class User(BaseModel):
         return "users"
 
     def __init__(self, full_name=None, email=None, password=None,
-                 role="buyer", phone=None):
-        self.full_name = full_name
-        self.email     = email
-        self.role      = role
-        self.phone     = phone
+                 role="buyer", phone_number=None):
+        self.full_name    = full_name
+        self.email        = email
+        self.role         = role
+        self.phone_number = phone_number
         self.__password_hash = None
         if password:
             self.set_password(password)
@@ -47,9 +47,9 @@ class User(BaseModel):
         """Insert a new user and return the new ID."""
         db = Database()
         uid = db.execute_returning_id(
-            "INSERT INTO users (full_name, email, password_hash, role, phone) "
+            "INSERT INTO users (full_name, email, password_hash, role, phone_number) "
             "VALUES (%s, %s, %s, %s, %s)",
-            (self.full_name, self.email, self.__password_hash, self.role, self.phone),
+            (self.full_name, self.email, self.__password_hash, self.role, self.phone_number),
         )
         db.close()
         return uid
@@ -58,13 +58,13 @@ class User(BaseModel):
         db = Database()
         if update_password:
             db.execute(
-                "UPDATE users SET full_name=%s, email=%s, phone=%s, password_hash=%s WHERE id=%s",
-                (self.full_name, self.email, self.phone, self.__password_hash, user_id),
+                "UPDATE users SET full_name=%s, email=%s, phone_number=%s, password_hash=%s WHERE id=%s",
+                (self.full_name, self.email, self.phone_number, self.__password_hash, user_id),
             )
         else:
             db.execute(
-                "UPDATE users SET full_name=%s, email=%s, phone=%s WHERE id=%s",
-                (self.full_name, self.email, self.phone, user_id),
+                "UPDATE users SET full_name=%s, email=%s, phone_number=%s WHERE id=%s",
+                (self.full_name, self.email, self.phone_number, user_id),
             )
         db.close()
 
@@ -94,12 +94,10 @@ class User(BaseModel):
         if data is None:
             return None
         u = cls()
-        u.full_name = data.get("full_name")
-        u.email     = data.get("email")
-        u.role      = data.get("role", "buyer")
-        u.phone     = data.get("phone")
-        u.__password_hash = data.get("password_hash")
-        # Patch name-mangled attr for check_password to work
+        u.full_name    = data.get("full_name")
+        u.email        = data.get("email")
+        u.role         = data.get("role", "buyer")
+        u.phone_number = data.get("phone_number") or data.get("phone")
         u._User__password_hash = data.get("password_hash")
         return u
 

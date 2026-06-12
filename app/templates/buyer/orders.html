@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}My Sourcing Orders — Nep-Mart Global B2B{% endblock %}
+
+{% block content %}
+<div class="bg-brand-bgLight py-12 px-4 sm:px-6 lg:px-8 min-h-[80vh]">
+  <div class="max-w-6xl mx-auto space-y-6">
+    
+    <div>
+      <h1 class="font-serif text-3xl font-bold text-brand-dark">My Sourcing Orders</h1>
+      <p class="text-sm text-brand-muted mt-1">Track the manufacturing, shipping, and delivery status of your wholesale trade orders.</p>
+    </div>
+
+    {% if orders %}
+    <div class="space-y-6">
+      {% for order in orders %}
+      <div class="bg-white rounded-3xl border border-brand-border p-6 md:p-8 shadow-sm space-y-6">
+        
+        <!-- Order Header info -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-brand-bgLight text-sm">
+          <div class="space-y-1">
+            <p class="text-brand-muted font-bold text-xs uppercase tracking-wider">Order ID</p>
+            <p class="font-extrabold text-brand-dark">#NEP-{{ order.order_id }}</p>
+          </div>
+          <div class="space-y-1">
+            <p class="text-brand-muted font-bold text-xs uppercase tracking-wider">Date Placed</p>
+            <p class="font-semibold text-brand-dark">{{ order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at else 'N/A' }}</p>
+          </div>
+          <div class="space-y-1">
+            <p class="text-brand-muted font-bold text-xs uppercase tracking-wider">Total FOB Value</p>
+            <p class="font-black text-brand-crimson">${{ "{:,.2f}".format(order.total_amount) }}</p>
+          </div>
+          <div>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider
+              {% if order.order_status == 'pending' %} bg-amber-50 text-amber-700 border border-amber-200
+              {% elif order.order_status == 'confirmed' %} bg-blue-50 text-blue-700 border border-blue-200
+              {% elif order.order_status == 'processing' %} bg-indigo-50 text-indigo-700 border border-indigo-200
+              {% elif order.order_status == 'shipped' %} bg-purple-50 text-purple-700 border border-purple-200
+              {% elif order.order_status == 'delivered' %} bg-emerald-50 text-emerald-700 border border-emerald-200
+              {% else %} bg-rose-50 text-rose-700 border border-rose-200 {% endif %}">
+              <span class="w-1.5 h-1.5 rounded-full 
+                {% if order.order_status == 'pending' %} bg-amber-500
+                {% elif order.order_status == 'confirmed' %} bg-blue-500
+                {% elif order.order_status == 'processing' %} bg-indigo-500
+                {% elif order.order_status == 'shipped' %} bg-purple-500
+                {% elif order.order_status == 'delivered' %} bg-emerald-500
+                {% else %} bg-rose-500 {% endif %}"></span>
+              {{ order.order_status }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Order Body Details -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+          
+          <!-- Product and quantity -->
+          <div class="md:col-span-2 flex items-start gap-4">
+            <div class="w-16 h-16 rounded-xl overflow-hidden bg-brand-bgLight border border-brand-border flex-shrink-0 flex items-center justify-center">
+              {% if order.product_image %}
+                <img src="{{ url_for('static', filename=order.product_image) }}" alt="Product Image" class="w-full h-full object-cover">
+              {% else %}
+                <i data-lucide="image" class="w-6 h-6 text-brand-muted"></i>
+              {% endif %}
+            </div>
+            <div class="space-y-1">
+              <span class="text-[9px] uppercase font-bold text-brand-muted bg-brand-bgLight border border-brand-border px-2 py-0.5 rounded">
+                {{ order.product_category }}
+              </span>
+              <h3 class="font-serif text-lg font-bold text-brand-dark leading-tight pt-1">
+                <a href="/product/{{ order.product_id }}" class="hover:text-brand-crimson transition-colors">{{ order.product_name }}</a>
+              </h3>
+              <p class="text-xs text-brand-muted">Quantity Ordered: <span class="font-bold text-brand-dark">{{ order.quantity }} units</span></p>
+              <p class="text-xs text-brand-muted">Supplier Company: <span class="font-bold text-brand-dark">{{ order.seller_name }}</span></p>
+            </div>
+          </div>
+
+          <!-- Actions & Notes Column -->
+          <div class="space-y-4 bg-brand-bgLight p-5 rounded-2xl border border-brand-border text-xs">
+            <!-- Tracking Number -->
+            <div class="space-y-1">
+              <span class="text-brand-muted uppercase font-bold block text-[9px] tracking-wider">Cargo Tracking ID</span>
+              <p class="font-bold text-brand-dark text-xs flex items-center gap-1">
+                <i data-lucide="truck" class="w-4 h-4 text-brand-crimson"></i> 
+                {{ order.tracking_number or 'Unassigned / Pending Cargo Route' }}
+              </p>
+            </div>
+
+            <!-- Seller Notes -->
+            <div class="space-y-1">
+              <span class="text-brand-muted uppercase font-bold block text-[9px] tracking-wider">Seller Notes / Status Update</span>
+              <p class="text-[#475569] leading-relaxed italic">
+                "{{ order.seller_notes or 'No specific manufacturing notes provided yet.' }}"
+              </p>
+            </div>
+
+            <!-- WhatsApp Chat Trigger -->
+            {% if order.seller_whatsapp %}
+            <div class="pt-2 border-t border-brand-border">
+              <a href="https://wa.me/{{ order.seller_whatsapp.strip().replace(' ', '') }}?text=Hello,%20I%20am%20inquiring%20about%20Order%20%23NEP-{{ order.order_id }}%20for%20{{ order.product_name }}." target="_blank"
+                class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold transition-all flex items-center justify-center gap-1.5 text-[10px] shadow-sm">
+                <i data-lucide="message-square" class="w-3.5 h-3.5"></i> Contact Supplier on WhatsApp
+              </a>
+            </div>
+            {% endif %}
+          </div>
+
+        </div>
+
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <!-- Empty Orders state -->
+    <div class="bg-white rounded-3xl border border-brand-border p-16 text-center space-y-6 shadow-sm max-w-xl mx-auto">
+      <div class="w-20 h-20 bg-brand-bgLight text-brand-muted rounded-full flex items-center justify-center mx-auto">
+        <i data-lucide="clipboard-list" class="w-10 h-10"></i>
+      </div>
+      <div class="space-y-2">
+        <h2 class="font-serif text-2xl font-bold text-brand-dark">No sourcing orders placed</h2>
+        <p class="text-sm text-brand-muted">You haven't placed any sourcing orders yet. Go to the marketplace catalog to discover premium products.</p>
+      </div>
+      <a href="/products" class="inline-flex items-center gap-2 px-6 py-3.5 bg-brand-crimson text-white font-semibold rounded-xl hover:bg-brand-crimsonDark transition-all shadow-md">
+        Find Exporters <i data-lucide="search" class="w-4 h-4"></i>
+      </a>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

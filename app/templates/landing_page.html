@@ -121,6 +121,179 @@
   </div>
 </section>
 
+<!-- ========== PRODUCT SECTIONS ========== -->
+<section class="py-16 bg-brand-bgLight px-4 sm:px-6 lg:px-8 border-b border-brand-border">
+  <div class="max-w-7xl mx-auto space-y-16">
+    
+    <!-- 1. Recommended Section (Personalized) -->
+    {% if recommended_products %}
+    <div>
+      <div class="flex items-end justify-between mb-8 border-b border-brand-border pb-4">
+        <div>
+          <h2 class="font-serif text-2xl sm:text-3xl font-bold text-brand-dark">Recommended For You</h2>
+          <p class="text-xs text-brand-muted mt-1">Personalized matching based on your interests and search history</p>
+        </div>
+        <a href="/products" class="text-xs font-bold text-brand-crimson hover:text-brand-crimsonDark flex items-center gap-1">
+          View All <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for product in recommended_products %}
+          <div class="bg-white rounded-2xl border border-brand-border hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col group relative product-card">
+            <a href="/product/{{ product.product_id }}" class="block aspect-[4/3] w-full overflow-hidden bg-brand-bgLight">
+              {% if product.image_path %}
+                <img src="{{ url_for('static', filename=product.image_path) }}" alt="{{ product.name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              {% else %}
+                <div class="w-full h-full bg-gradient-to-br from-brand/5 to-brand-crimson/5 flex items-center justify-center text-brand-muted">
+                  <i data-lucide="image" class="w-8 h-8"></i>
+                </div>
+              {% endif %}
+            </a>
+            <div class="p-5 flex-grow flex flex-col">
+              <span class="text-[10px] uppercase font-bold text-brand-crimson tracking-wider">{{ product.category }}</span>
+              <h3 class="font-serif text-sm font-bold text-[#0f172a] mt-1 group-hover:text-brand transition-colors line-clamp-1">
+                <a href="/product/{{ product.product_id }}">{{ product.name }}</a>
+              </h3>
+              <p class="text-[11px] text-brand-muted mt-1">Supplier: {{ product.seller_business_name or product.company }}</p>
+              <div class="flex items-baseline gap-1.5 mt-auto pt-3">
+                <span class="text-base font-extrabold text-brand-dark">${{ "{:,.2f}".format(product.price) }}</span>
+                <span class="text-[9px] text-brand-muted uppercase font-bold tracking-wider">/ unit</span>
+              </div>
+              
+              <div class="mt-4 pt-4 border-t border-brand-border flex items-center justify-between gap-2">
+                <form action="{{ url_for('buyer.add_to_cart', product_id=product.product_id) }}" method="POST" class="w-1/2">
+                  <input type="hidden" name="quantity" value="1">
+                  <button type="submit" class="w-full py-2 bg-brand/5 border border-brand/10 hover:bg-brand hover:text-white rounded-lg text-[10px] font-semibold text-brand transition-all flex items-center justify-center gap-1">
+                    <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i> Add to Cart
+                  </button>
+                </form>
+                {% if product.whatsapp_number %}
+                  <a href="https://wa.me/{{ product.whatsapp_number.strip().replace(' ', '') }}?text=Hello,%20I%20am%20interested%20in%20your%20product:%20{{ product.name }}" target="_blank" class="w-1/2 py-2 bg-emerald-50 hover:bg-emerald-600 hover:text-white border border-emerald-100 rounded-lg text-[10px] font-semibold text-emerald-700 transition-all flex items-center justify-center gap-1">
+                    <i data-lucide="message-square" class="w-3.5 h-3.5"></i> Contact
+                  </a>
+                {% else %}
+                  <div class="w-1/2 py-2 bg-brand-bgLight text-center text-brand-muted text-[10px] font-semibold rounded-lg border border-brand-border">No WA</div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- 2. Featured Section -->
+    <div>
+      <div class="flex items-end justify-between mb-8 border-b border-brand-border pb-4">
+        <div>
+          <h2 class="font-serif text-2xl sm:text-3xl font-bold text-brand-dark">Featured Products</h2>
+          <p class="text-xs text-brand-muted mt-1">Latest new arrivals and catalog launches from our suppliers</p>
+        </div>
+        <a href="/products" class="text-xs font-bold text-brand-crimson hover:text-brand-crimsonDark flex items-center gap-1">
+          View All <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for product in featured_products %}
+          <div class="bg-white rounded-2xl border border-brand-border hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col group relative product-card">
+            <a href="/product/{{ product.product_id }}" class="block aspect-[4/3] w-full overflow-hidden bg-brand-bgLight">
+              {% if product.image_path %}
+                <img src="{{ url_for('static', filename=product.image_path) }}" alt="{{ product.name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              {% else %}
+                <div class="w-full h-full bg-gradient-to-br from-brand/5 to-brand-crimson/5 flex items-center justify-center text-brand-muted">
+                  <i data-lucide="image" class="w-8 h-8"></i>
+                </div>
+              {% endif %}
+            </a>
+            <div class="p-5 flex-grow flex flex-col">
+              <span class="text-[10px] uppercase font-bold text-brand-crimson tracking-wider">{{ product.category }}</span>
+              <h3 class="font-serif text-sm font-bold text-[#0f172a] mt-1 group-hover:text-brand transition-colors line-clamp-1">
+                <a href="/product/{{ product.product_id }}">{{ product.name }}</a>
+              </h3>
+              <p class="text-[11px] text-brand-muted mt-1">Supplier: {{ product.seller_business_name or product.company }}</p>
+              <div class="flex items-baseline gap-1.5 mt-auto pt-3">
+                <span class="text-base font-extrabold text-brand-dark">${{ "{:,.2f}".format(product.price) }}</span>
+                <span class="text-[9px] text-brand-muted uppercase font-bold tracking-wider">/ unit</span>
+              </div>
+              
+              <div class="mt-4 pt-4 border-t border-brand-border flex items-center justify-between gap-2">
+                <form action="{{ url_for('buyer.add_to_cart', product_id=product.product_id) }}" method="POST" class="w-1/2">
+                  <input type="hidden" name="quantity" value="1">
+                  <button type="submit" class="w-full py-2 bg-brand/5 border border-brand/10 hover:bg-brand hover:text-white rounded-lg text-[10px] font-semibold text-brand transition-all flex items-center justify-center gap-1">
+                    <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i> Add to Cart
+                  </button>
+                </form>
+                {% if product.whatsapp_number %}
+                  <a href="https://wa.me/{{ product.whatsapp_number.strip().replace(' ', '') }}?text=Hello,%20I%20am%20interested%20in%20your%20product:%20{{ product.name }}" target="_blank" class="w-1/2 py-2 bg-emerald-50 hover:bg-emerald-600 hover:text-white border border-emerald-100 rounded-lg text-[10px] font-semibold text-emerald-700 transition-all flex items-center justify-center gap-1">
+                    <i data-lucide="message-square" class="w-3.5 h-3.5"></i> Contact
+                  </a>
+                {% else %}
+                  <div class="w-1/2 py-2 bg-brand-bgLight text-center text-brand-muted text-[10px] font-semibold rounded-lg border border-brand-border">No WA</div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- 3. Trending Section -->
+    <div>
+      <div class="flex items-end justify-between mb-8 border-b border-brand-border pb-4">
+        <div>
+          <h2 class="font-serif text-2xl sm:text-3xl font-bold text-brand-dark">Trending Now</h2>
+          <p class="text-xs text-brand-muted mt-1">Most popular products in the marketplace by recent views</p>
+        </div>
+        <a href="/products" class="text-xs font-bold text-brand-crimson hover:text-brand-crimsonDark flex items-center gap-1">
+          View All <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for product in trending_products %}
+          <div class="bg-white rounded-2xl border border-brand-border hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col group relative product-card">
+            <a href="/product/{{ product.product_id }}" class="block aspect-[4/3] w-full overflow-hidden bg-brand-bgLight">
+              {% if product.image_path %}
+                <img src="{{ url_for('static', filename=product.image_path) }}" alt="{{ product.name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              {% else %}
+                <div class="w-full h-full bg-gradient-to-br from-brand/5 to-brand-crimson/5 flex items-center justify-center text-brand-muted">
+                  <i data-lucide="image" class="w-8 h-8"></i>
+                </div>
+              {% endif %}
+            </a>
+            <div class="p-5 flex-grow flex flex-col">
+              <span class="text-[10px] uppercase font-bold text-brand-crimson tracking-wider">{{ product.category }}</span>
+              <h3 class="font-serif text-sm font-bold text-[#0f172a] mt-1 group-hover:text-brand transition-colors line-clamp-1">
+                <a href="/product/{{ product.product_id }}">{{ product.name }}</a>
+              </h3>
+              <p class="text-[11px] text-brand-muted mt-1">Supplier: {{ product.seller_business_name or product.company }}</p>
+              <div class="flex items-baseline gap-1.5 mt-auto pt-3">
+                <span class="text-base font-extrabold text-brand-dark">${{ "{:,.2f}".format(product.price) }}</span>
+                <span class="text-[9px] text-brand-muted uppercase font-bold tracking-wider">/ unit</span>
+              </div>
+              
+              <div class="mt-4 pt-4 border-t border-brand-border flex items-center justify-between gap-2">
+                <form action="{{ url_for('buyer.add_to_cart', product_id=product.product_id) }}" method="POST" class="w-1/2">
+                  <input type="hidden" name="quantity" value="1">
+                  <button type="submit" class="w-full py-2 bg-brand/5 border border-brand/10 hover:bg-brand hover:text-white rounded-lg text-[10px] font-semibold text-brand transition-all flex items-center justify-center gap-1">
+                    <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i> Add to Cart
+                  </button>
+                </form>
+                {% if product.whatsapp_number %}
+                  <a href="https://wa.me/{{ product.whatsapp_number.strip().replace(' ', '') }}?text=Hello,%20I%20am%20interested%20in%20your%20product:%20{{ product.name }}" target="_blank" class="w-1/2 py-2 bg-emerald-50 hover:bg-emerald-600 hover:text-white border border-emerald-100 rounded-lg text-[10px] font-semibold text-emerald-700 transition-all flex items-center justify-center gap-1">
+                    <i data-lucide="message-square" class="w-3.5 h-3.5"></i> Contact
+                  </a>
+                {% else %}
+                  <div class="w-1/2 py-2 bg-brand-bgLight text-center text-brand-muted text-[10px] font-semibold rounded-lg border border-brand-border">No WA</div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+</section>
 
 <!-- ========== KEY INDUSTRIES CATEGORIES ========== -->
 <section class="py-20 bg-white px-4 sm:px-6 lg:px-8">

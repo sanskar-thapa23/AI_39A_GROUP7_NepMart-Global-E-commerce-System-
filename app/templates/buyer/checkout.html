@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout — Nep-Mart Global B2B{% endblock %}
+
+{% block content %}
+<div class="bg-brand-bgLight py-12 px-4 sm:px-6 lg:px-8 min-h-[80vh]">
+  <div class="max-w-4xl mx-auto space-y-6">
+    
+    <div>
+      <a href="{{ url_for('buyer.cart') }}" class="text-xs font-bold text-brand-muted hover:text-brand-crimson flex items-center gap-1 uppercase tracking-wider mb-2">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Cart
+      </a>
+      <h1 class="font-serif text-3xl font-bold text-brand-dark">Confirm Sourcing Order</h1>
+      <p class="text-sm text-brand-muted mt-1">Review your corporate information and items before confirming order placement.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      
+      <!-- Checkout Form & Details -->
+      <div class="lg:col-span-2 space-y-6">
+        
+        <!-- Corporate Info -->
+        <div class="bg-white rounded-2xl border border-brand-border p-6 space-y-4 shadow-sm">
+          <h3 class="font-serif text-lg font-bold text-brand-dark pb-2 border-b border-brand-border">Corporate Sourcing Account</h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-[#475569]">
+            <div>
+              <span class="text-brand-muted block text-[10px] uppercase font-bold tracking-wider">Representative Name</span>
+              <p class="font-bold text-brand-dark">{{ session.get('user_name') }}</p>
+            </div>
+            <div>
+              <span class="text-brand-muted block text-[10px] uppercase font-bold tracking-wider">Corporate Role</span>
+              <p class="font-bold text-brand-dark">{{ session.get('role')|capitalize }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Items Summary List -->
+        <div class="bg-white rounded-2xl border border-brand-border p-6 space-y-4 shadow-sm">
+          <h3 class="font-serif text-lg font-bold text-brand-dark pb-2 border-b border-brand-border">Review Items</h3>
+          
+          <div class="space-y-4">
+            {% for item in cart_items %}
+            <div class="flex items-center justify-between text-sm py-2 border-b border-brand-bgLight last:border-b-0">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-brand-bgLight border border-brand-border flex items-center justify-center font-bold text-brand text-xs">
+                  {{ item.quantity }}x
+                </div>
+                <div>
+                  <h4 class="font-bold text-brand-dark leading-tight">{{ item.name }}</h4>
+                  <p class="text-xs text-brand-muted">Supplier: {{ item.seller_name }}</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="font-extrabold text-brand-dark">${{ "{:,.2f}".format(item.subtotal) }}</p>
+                <p class="text-[10px] text-brand-muted">${{ "{:,.2f}".format(item.price) }} / unit</p>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Final Actions Summary -->
+      <div class="lg:col-span-1 bg-white rounded-2xl border border-brand-border p-6 space-y-6 shadow-sm">
+        <h3 class="font-serif text-lg font-bold text-brand-dark pb-3 border-b border-brand-border">Checkout Total</h3>
+        
+        <div class="space-y-3 text-sm">
+          <div class="flex justify-between text-[#475569]">
+            <span>FOB Subtotal:</span>
+            <span class="font-semibold text-brand-dark">${{ "{:,.2f}".format(cart_total) }}</span>
+          </div>
+          <div class="flex justify-between text-[#475569]">
+            <span>Freight & Shipping:</span>
+            <span class="text-xs text-brand-crimson font-bold">To Be Negotiated</span>
+          </div>
+          <div class="border-t border-brand-border pt-3 flex justify-between items-baseline">
+            <span class="font-bold text-brand-dark">FOB Total:</span>
+            <span class="text-xl font-black text-brand-crimson">${{ "{:,.2f}".format(cart_total) }}</span>
+          </div>
+        </div>
+
+        <form action="{{ url_for('buyer.checkout') }}" method="POST">
+          <button type="submit" class="w-full py-3.5 bg-brand-crimson text-white text-center font-semibold rounded-xl hover:bg-brand-crimsonDark hover:shadow-lg transition-all flex items-center justify-center gap-2 shadow-md">
+            Confirm Sourcing Order <i data-lucide="check" class="w-5 h-5"></i>
+          </button>
+        </form>
+
+        <div class="bg-brand-bgLight p-4 rounded-xl border border-brand-border text-[11px] text-brand-muted leading-relaxed">
+          <p>By clicking "Confirm Sourcing Order", you authorize NepMart to generate formal Request for Quotations (RFQs) to the suppliers of your products. The respective manufacturers will reach out to you standardly within 24 hours to organize freight delivery and escrow schedules.</p>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+{% endblock %}

@@ -18,43 +18,52 @@
     <!-- Product Briefing Panel -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
       
-      <!-- Left: Interactive Gallery/Artboard + Spec Sheets -->
+      <!-- Left: Gallery / Description / Specs -->
       <div class="lg:col-span-2 space-y-8">
         
-        <!-- Premium Visual Container -->
-        <div class="bg-gradient-to-br {% if product.category == 'Agro' %} from-emerald-950 to-emerald-800 {% elif product.category == 'Crafts' %} from-amber-950 to-amber-800 {% else %} from-indigo-950 to-indigo-800 {% endif %} rounded-3xl p-8 md:p-12 text-white relative shadow-xl overflow-hidden min-h-[400px] flex flex-col justify-between">
-          <div class="absolute -right-24 -bottom-24 w-80 h-80 bg-brand-crimson/15 rounded-full blur-3xl pointer-events-none"></div>
-          
-          <div class="flex items-center justify-between z-10">
-            <span class="px-3 py-1.5 rounded-lg bg-white/10 border border-white/20 text-xs font-bold uppercase tracking-widest backdrop-blur-md">
-              {{ product.category_display }} Spec
-            </span>
-            <span class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/25 border border-emerald-500/40 text-emerald-400 text-xs font-bold uppercase tracking-widest backdrop-blur-md">
-              <i data-lucide="shield-check" class="w-4 h-4"></i> Verified Origin
-            </span>
-          </div>
-
-          <!-- Abstract center design -->
-          <div class="w-full flex flex-col items-center justify-center py-10 opacity-30 space-y-4">
-            {% if product.category == 'Agro' %}
-              <i data-lucide="leaf" class="w-24 h-24 text-white"></i>
-            {% elif product.category == 'Crafts' %}
-              <i data-lucide="gem" class="w-24 h-24 text-white"></i>
+        <!-- Premium Visual Container with Uploaded Product Image -->
+        <div class="bg-white rounded-3xl overflow-hidden border border-brand-border shadow-xl flex flex-col md:flex-row min-h-[400px]">
+          <!-- Left side: Image -->
+          <div class="md:w-1/2 bg-brand-bgLight relative flex items-center justify-center p-6 border-r border-brand-border">
+            {% if product.image_path %}
+              <img src="{{ url_for('static', filename=product.image_path) }}" alt="{{ product.name }}" class="max-w-full max-h-[350px] object-contain rounded-2xl hover:scale-105 transition-transform duration-300">
             {% else %}
-              <i data-lucide="settings" class="w-24 h-24 text-white"></i>
+              <div class="w-full h-64 bg-gradient-to-br from-brand/5 to-brand-crimson/5 flex items-center justify-center text-brand-muted rounded-2xl">
+                <i data-lucide="image" class="w-16 h-16"></i>
+              </div>
             {% endif %}
-            <p class="text-xs uppercase font-bold tracking-widest text-center">Premium Quality Himalayan Export Standard</p>
+            <span class="absolute top-4 left-4 bg-brand-crimson text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-md">
+              {{ product.category }}
+            </span>
           </div>
 
-          <!-- Item origin info footer -->
-          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 z-10 pt-6 border-t border-white/10">
+          <!-- Right side: Quick Info -->
+          <div class="md:w-1/2 p-8 flex flex-col justify-between space-y-6">
             <div>
-              <p class="text-xs text-brand-muted uppercase font-bold tracking-wider">Himalayan Origin</p>
-              <h2 class="font-serif text-2xl md:text-3xl font-bold mt-1 text-white">{{ product.name }}</h2>
+              <span class="text-xs font-bold text-brand-muted uppercase tracking-wider block">Verified Supplier: {{ product.seller_business_name }}</span>
+              <h1 class="font-serif text-2xl md:text-3xl font-bold mt-1 text-brand-dark">{{ product.name }}</h1>
+              
+              <!-- Tagged location -->
+              <p class="text-xs text-brand-muted font-medium flex items-center gap-1.5 mt-2">
+                <i data-lucide="map-pin" class="w-4 h-4 text-brand-crimson"></i> Origin: {{ product.business_address or 'Nepal' }}
+              </p>
             </div>
-            <div class="text-left sm:text-right">
-              <p class="text-[10px] text-brand-muted uppercase font-bold tracking-widest">Global Escrow Covered</p>
-              <p class="text-xl font-bold text-brand-crimson mt-0.5">{{ product.price_range }}</p>
+
+            <div class="bg-brand-bgLight p-4 rounded-2xl border border-brand-border space-y-3">
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-brand-muted font-semibold">Unit Price:</span>
+                <span class="text-2xl font-extrabold text-brand-crimson">${{ "{:,.2f}".format(product.price) }}</span>
+              </div>
+              <div class="flex justify-between items-center text-xs text-brand-muted">
+                <span>Inventory Status:</span>
+                <span class="font-bold text-brand-dark">{{ product.stock }} units available</span>
+              </div>
+            </div>
+
+            <!-- Escrow Badge -->
+            <div class="flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+              <i data-lucide="shield-check" class="w-5 h-5 text-emerald-500"></i>
+              <span class="text-xs text-emerald-800 font-semibold">100% Payment Protection Escrow Covered</span>
             </div>
           </div>
         </div>
@@ -66,19 +75,19 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="border border-brand-border rounded-xl p-4 space-y-1">
               <span class="text-[10px] text-brand-muted uppercase tracking-wider block font-bold">Standard Packing</span>
-              <p class="text-sm font-semibold text-[#0f172a]">{{ product.specs.packing }}</p>
+              <p class="text-sm font-semibold text-[#0f172a]">B2B export standard palletized cargo wrapping</p>
             </div>
             <div class="border border-brand-border rounded-xl p-4 space-y-1">
               <span class="text-[10px] text-brand-muted uppercase tracking-wider block font-bold">Quality Certifications</span>
-              <p class="text-sm font-semibold text-[#0f172a]">{{ product.specs.certification }}</p>
+              <p class="text-sm font-semibold text-[#0f172a]">NepMart Certified Gold exporter inspect</p>
             </div>
             <div class="border border-brand-border rounded-xl p-4 space-y-1">
               <span class="text-[10px] text-brand-muted uppercase tracking-wider block font-bold">Logistics Capability</span>
-              <p class="text-sm font-semibold text-[#0f172a]">{{ product.specs.freight }}</p>
+              <p class="text-sm font-semibold text-[#0f172a]">FOB Border Hub, Air/Dry freight logistics options</p>
             </div>
             <div class="border border-brand-border rounded-xl p-4 space-y-1">
-              <span class="text-[10px] text-brand-muted uppercase tracking-wider block font-bold">Custom Duty Codes</span>
-              <p class="text-sm font-semibold text-[#0f172a]">{{ product.specs.hscode }}</p>
+              <span class="text-[10px] text-brand-muted uppercase tracking-wider block font-bold">HS Code category</span>
+              <p class="text-sm font-semibold text-[#0f172a]">Industry category: {{ product.category }}</p>
             </div>
           </div>
 
@@ -93,117 +102,138 @@
 
       </div>
 
-      <!-- Right: Interactive Supplier Card + Instant Negotiation Chatbox -->
+      <!-- Right: Interactive Supplier Details + Instant Checkout/WhatsApp Panels -->
       <div class="lg:col-span-1 space-y-6">
         
+        <!-- Sourcing/Checkout Panel -->
+        <div class="bg-white rounded-2xl border border-brand-border p-6 space-y-5 shadow-sm">
+          <h3 class="font-serif text-lg font-bold text-brand-dark">Place Bulk Order</h3>
+          <form action="{{ url_for('buyer.add_to_cart', product_id=product.product_id) }}" method="POST" class="space-y-4">
+            <div class="space-y-1">
+              <label for="quantity" class="block text-xs font-semibold text-brand-muted uppercase">Quantity</label>
+              <div class="relative rounded-xl">
+                <input type="number" id="quantity" name="quantity" min="1" max="{{ product.stock }}" value="1" required
+                  class="w-full px-4 py-2.5 border border-brand-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-crimson text-sm">
+              </div>
+            </div>
+            <button type="submit" class="w-full py-3.5 bg-brand text-white font-semibold rounded-xl hover:bg-brand-dark hover:shadow-lg transition-all flex items-center justify-center gap-2 shadow-md">
+              <i data-lucide="shopping-cart" class="w-5 h-5"></i> Add to Sourcing Cart
+            </button>
+          </form>
+        </div>
+
         <!-- Supplier Details -->
         <div class="bg-white rounded-2xl border border-brand-border p-6 space-y-6 shadow-sm">
           <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-xl bg-brand flex items-center justify-center font-bold text-white text-lg">
-              {{ product.company[0] }}
-            </div>
+            {% if product.company_logo %}
+              <img src="{{ url_for('static', filename=product.company_logo) }}" alt="Logo" class="w-12 h-12 rounded-xl object-cover border border-brand-border">
+            {% else %}
+              <div class="w-12 h-12 rounded-xl bg-brand flex items-center justify-center font-bold text-white text-lg">
+                {{ product.seller_business_name[0]|upper }}
+              </div>
+            {% endif %}
             <div>
-              <h3 class="font-serif text-lg font-bold text-brand-dark leading-tight">{{ product.company }}</h3>
-              <p class="text-xs text-brand-muted font-medium flex items-center gap-1 mt-0.5">
-                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-brand-crimson"></i> {{ product.location }}, Nepal
-              </p>
+              <h3 class="font-serif text-sm font-bold text-brand-dark leading-tight">{{ product.seller_business_name }}</h3>
+              <p class="text-[10px] text-brand-muted font-bold uppercase tracking-wider mt-0.5">{{ product.company_type or 'Verified Supplier' }}</p>
             </div>
           </div>
 
-          <!-- Trust KPIs -->
-          <div class="grid grid-cols-2 gap-4 bg-brand-bgLight p-4 rounded-xl border border-brand-border text-center">
-            <div>
-              <span class="text-brand-muted block uppercase text-[8px] tracking-widest font-bold">VERIFIED</span>
-              <span class="text-[#0f172a] font-bold text-sm">8 Years Gold</span>
+          <!-- Contact details -->
+          <div class="space-y-2.5 text-xs border-t border-brand-border pt-4 text-[#475569]">
+            <div class="flex items-center gap-2">
+              <i data-lucide="phone" class="w-4 h-4 text-brand-muted"></i>
+              <span>Phone: {{ product.seller_phone or product.business_phone or 'Not provided' }}</span>
             </div>
-            <div>
-              <span class="text-brand-muted block uppercase text-[8px] tracking-widest font-bold">RESPONSE RATE</span>
-              <span class="text-emerald-600 font-bold text-sm">99.8% (< 1 hr)</span>
+            <div class="flex items-center gap-2">
+              <i data-lucide="mail" class="w-4 h-4 text-brand-muted"></i>
+              <span>Email: {{ product.seller_email }}</span>
+            </div>
+            <div class="flex items-start gap-2">
+              <i data-lucide="map-pin" class="w-4 h-4 text-brand-muted mt-0.5 flex-shrink-0"></i>
+              <span>Address: {{ product.business_address }}</span>
             </div>
           </div>
 
           <!-- Direct profile link -->
-          <a href="/trader/{{ product.trader_id }}" class="w-full text-center block px-4 py-2.5 border border-brand-border text-sm font-semibold rounded-lg hover:bg-brand-bgLight transition-all text-[#0f172a]">
+          <a href="/seller/store/{{ product.seller_id }}" class="w-full text-center block px-4 py-2.5 border border-brand-border text-xs font-semibold rounded-lg hover:bg-brand-bgLight transition-all text-[#0f172a]">
             View Supplier Storefront
           </a>
         </div>
 
-        <!-- Interactive Lead Form / Instant Negotiation Chatbox -->
-        <div class="bg-brand-dark rounded-2xl border border-white/10 p-6 text-white space-y-6 shadow-xl relative overflow-hidden">
-          <div class="absolute -top-16 -right-16 w-32 h-32 bg-brand-crimson/15 rounded-full blur-2xl pointer-events-none"></div>
+        <!-- WhatsApp Contact -->
+        {% if wa_url %}
+        <div class="bg-brand-dark rounded-2xl border border-white/10 p-6 text-white space-y-4 shadow-xl relative overflow-hidden">
+          <div class="absolute -top-16 -right-16 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
           
           <div class="space-y-1">
-            <h3 class="font-serif text-lg font-bold">Live Deal Negotiator</h3>
-            <p class="text-xs text-brand-muted">Message directly, request sample margins, or customize shipping.</p>
+            <h3 class="font-serif text-base font-bold text-emerald-400 flex items-center gap-1.5">
+              <i data-lucide="message-square" class="w-5 h-5"></i> WhatsApp Sourcing
+            </h3>
+            <p class="text-xs text-brand-muted leading-relaxed">Chat directly with the manufacturer to request custom specifications, bulk discounts, or inspect cargo schedules.</p>
           </div>
 
-          <!-- Quick Templates trigger -->
-          <div class="space-y-1.5">
-            <span class="text-[9px] uppercase font-bold text-brand-muted tracking-widest">Select Inquiry Template</span>
-            <div class="flex flex-wrap gap-1.5">
-              <button onclick="applyTemplate('sample')" class="px-2.5 py-1 bg-white/5 border border-white/10 rounded-md text-[10px] font-semibold text-brand-muted hover:border-brand-crimson hover:text-white transition-all">Request Sample</button>
-              <button onclick="applyTemplate('discount')" class="px-2.5 py-1 bg-white/5 border border-white/10 rounded-md text-[10px] font-semibold text-brand-muted hover:border-brand-crimson hover:text-white transition-all">MOQ Discount</button>
-              <button onclick="applyTemplate('shipping')" class="px-2.5 py-1 bg-white/5 border border-white/10 rounded-md text-[10px] font-semibold text-brand-muted hover:border-brand-crimson hover:text-white transition-all">Shipping manifest</button>
-            </div>
-          </div>
-
-          <!-- Direct Post Chat Form -->
-          <form class="space-y-4" action="/chat" method="POST">
-            <input type="hidden" name="supplier_id" value="{{ product.trader_id }}">
-            <input type="hidden" name="product_id" value="{{ product.id }}">
-            
-            <div class="space-y-1">
-              <label class="block text-[10px] font-bold text-brand-muted uppercase tracking-wider">Inquiry details</label>
-              <textarea id="negotiation-msg" name="message" required rows="4" 
-                class="w-full p-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-brand-muted/60 focus:outline-none focus:ring-2 focus:ring-brand-crimson/50 focus:border-brand-crimson text-xs resize-none"
-                placeholder="Type your specifications (e.g. quantity, logistics method, custom packaging requests)..."></textarea>
-            </div>
-
-            <!-- MOQ quick field selector -->
-            <div class="grid grid-cols-2 gap-3">
-              <div class="space-y-1">
-                <label class="block text-[10px] font-bold text-brand-muted uppercase tracking-wider">Order Volume</label>
-                <input type="text" name="volume" value="{{ product.moq }}" 
-                  class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-white placeholder-brand-muted focus:outline-none text-xs">
-              </div>
-              <div class="space-y-1">
-                <label class="block text-[10px] font-bold text-brand-muted uppercase tracking-wider">Target Price (USD)</label>
-                <input type="text" name="target_price" placeholder="Target Price" 
-                  class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-white placeholder-brand-muted focus:outline-none text-xs">
-              </div>
-            </div>
-
-            <button type="submit" class="w-full py-3 bg-brand-crimson hover:bg-brand-crimsonDark text-white font-semibold rounded-xl transition-all shadow-lg shadow-brand-crimson/25 flex items-center justify-center gap-1.5 text-xs">
-              Submit & Open Chat Thread <i data-lucide="send" class="w-3.5 h-3.5"></i>
-            </button>
-          </form>
+          <a href="{{ wa_url }}" target="_blank" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 text-xs">
+            <i data-lucide="message-square" class="w-4 h-4"></i> Chat on WhatsApp
+          </a>
         </div>
+        {% endif %}
 
       </div>
 
     </div>
 
+    <!-- Similar Products Recommendations -->
+    {% if similar_products %}
+    <div class="pt-12 border-t border-brand-border space-y-8">
+      <div class="text-left">
+        <h2 class="font-serif text-2xl font-bold text-brand-dark">Similar Products You May Interest</h2>
+        <p class="text-xs text-brand-muted mt-1">Himalayan B2B recommendations matching product description parameters</p>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for sim in similar_products %}
+          <div class="bg-white rounded-2xl border border-brand-border hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col group relative product-card">
+            <a href="/product/{{ sim.product_id }}" class="block aspect-[4/3] w-full overflow-hidden bg-brand-bgLight">
+              {% if sim.image_path %}
+                <img src="{{ url_for('static', filename=sim.image_path) }}" alt="{{ sim.name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              {% else %}
+                <div class="w-full h-full bg-gradient-to-br from-brand/5 to-brand-crimson/5 flex items-center justify-center text-brand-muted">
+                  <i data-lucide="image" class="w-8 h-8"></i>
+                </div>
+              {% endif %}
+            </a>
+            <div class="p-5 flex-grow flex flex-col">
+              <span class="text-[10px] uppercase font-bold text-brand-crimson tracking-wider">{{ sim.category }}</span>
+              <h3 class="font-serif text-sm font-bold text-[#0f172a] mt-1 group-hover:text-brand transition-colors line-clamp-1">
+                <a href="/product/{{ sim.product_id }}">{{ sim.name }}</a>
+              </h3>
+              <p class="text-[11px] text-brand-muted mt-1">Supplier: {{ sim.seller_business_name or sim.company }}</p>
+              <div class="flex items-baseline gap-1.5 mt-auto pt-3">
+                <span class="text-base font-extrabold text-brand-dark">${{ "{:,.2f}".format(sim.price) }}</span>
+                <span class="text-[9px] text-brand-muted uppercase font-bold tracking-wider">/ unit</span>
+              </div>
+              
+              <div class="mt-4 pt-4 border-t border-brand-border flex items-center justify-between gap-2">
+                <form action="{{ url_for('buyer.add_to_cart', product_id=sim.product_id) }}" method="POST" class="w-1/2">
+                  <input type="hidden" name="quantity" value="1">
+                  <button type="submit" class="w-full py-2 bg-brand/5 border border-brand/10 hover:bg-brand hover:text-white rounded-lg text-[10px] font-semibold text-brand transition-all flex items-center justify-center gap-1">
+                    <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i> Add to Cart
+                  </button>
+                </form>
+                {% if sim.whatsapp_number %}
+                  <a href="https://wa.me/{{ sim.whatsapp_number.strip().replace(' ', '') }}?text=Hello,%20I%20am%20interested%20in%20your%20product:%20{{ sim.name }}" target="_blank" class="w-1/2 py-2 bg-emerald-50 hover:bg-emerald-600 hover:text-white border border-emerald-100 rounded-lg text-[10px] font-semibold text-emerald-700 transition-all flex items-center justify-center gap-1">
+                    <i data-lucide="message-square" class="w-3.5 h-3.5"></i> Contact
+                  </a>
+                {% else %}
+                  <div class="w-1/2 py-2 bg-brand-bgLight text-center text-brand-muted text-[10px] font-semibold rounded-lg border border-brand-border">No WA</div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
   </div>
 </div>
-{% endblock %}
-
-{% block extra_scripts %}
-<script>
-  function applyTemplate(type) {
-    const textNode = document.getElementById('negotiation-msg');
-    if (!textNode) return;
-    
-    let msg = "";
-    if (type === 'sample') {
-      msg = "Hello, we would like to request a sample pack of the {{ product.name }} for quality assessment before making a bulk order. Please let us know the air freight cost to our warehouse.";
-    } else if (type === 'discount') {
-      msg = "Hi, we are planning a bulk purchase exceeding your MOQ. What is your best FOB discount pricing for {{ product.moq }} units or above? Look forward to collaborating.";
-    } else if (type === 'shipping') {
-      msg = "Greetings, could you provide details about your shipping containers, packaging standards, and estimated lead times to cross-border delivery hubs? Thank you.";
-    }
-    
-    textNode.value = msg;
-    textNode.focus();
-  }
-</script>
 {% endblock %}

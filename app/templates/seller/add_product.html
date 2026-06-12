@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Add New Product — Seller Panel{% endblock %}
+
+{% block content %}
+<div class="bg-brand-bgLight min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-2xl mx-auto space-y-6">
+    
+    <!-- Breadcrumbs -->
+    <nav class="flex text-xs font-semibold text-brand-muted uppercase tracking-wider gap-2">
+      <a href="/seller/dashboard" class="hover:text-brand-crimson transition-colors">Workspace</a>
+      <span>/</span>
+      <a href="/seller/products" class="hover:text-brand-crimson transition-colors">My Products</a>
+      <span>/</span>
+      <span class="text-brand-dark">Add Product</span>
+    </nav>
+
+    <!-- Form Container -->
+    <div class="bg-white rounded-3xl border border-brand-border p-8 shadow-sm space-y-6">
+      <div>
+        <h1 class="font-serif text-2xl font-bold text-brand-dark">List New B2B Product</h1>
+        <p class="text-xs text-brand-muted mt-1">Provide pricing, specifications, and upload product imagery to start wholesale sourcing.</p>
+      </div>
+
+      <form action="{{ url_for('seller.add_product') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+        
+        <!-- Name -->
+        <div class="space-y-1">
+          <label for="name" class="block text-xs font-semibold text-brand-muted uppercase tracking-wider">Product Name</label>
+          <input type="text" id="name" name="name" required
+            class="w-full px-4 py-2.5 border border-brand-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-crimson text-sm"
+            placeholder="e.g. Organic Himalayan Green Tea Leaves (A Grade)">
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Category -->
+          <div class="space-y-1">
+            <label for="category" class="block text-xs font-semibold text-brand-muted uppercase tracking-wider">Product Category</label>
+            <input type="text" id="category" name="category" required
+              class="w-full px-4 py-2.5 border border-brand-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-crimson text-sm"
+              placeholder="e.g. Tea & Herbs, Handicrafts, Garments">
+          </div>
+
+          <!-- Price -->
+          <div class="space-y-1">
+            <label for="price" class="block text-xs font-semibold text-brand-muted uppercase tracking-wider">Wholesale FOB Price (USD)</label>
+            <input type="number" id="price" name="price" min="0" step="0.01" required
+              class="w-full px-4 py-2.5 border border-brand-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-crimson text-sm"
+              placeholder="e.g. 15.50">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Stock -->
+          <div class="space-y-1">
+            <label for="stock" class="block text-xs font-semibold text-brand-muted uppercase tracking-wider">Stock Available (Units)</label>
+            <input type="number" id="stock" name="stock" min="0" required
+              class="w-full px-4 py-2.5 border border-brand-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-crimson text-sm"
+              placeholder="e.g. 500">
+          </div>
+
+          <!-- Image upload -->
+          <div class="space-y-1">
+            <label for="image" class="block text-xs font-semibold text-brand-muted uppercase tracking-wider">Product Image</label>
+            <input type="file" id="image" name="image" accept="image/*"
+              class="w-full text-xs text-brand-muted file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-brand/10 file:text-brand hover:file:bg-brand/20 cursor-pointer">
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="space-y-1">
+          <label for="description" class="block text-xs font-semibold text-brand-muted uppercase tracking-wider">Detailed Description</label>
+          <textarea id="description" name="description" rows="5"
+            class="w-full p-4 border border-brand-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-crimson text-sm resize-none"
+            placeholder="Describe specifications, grades, packing methods, MOQ constraints..."></textarea>
+        </div>
+
+        <!-- Image Preview Panel -->
+        <div id="preview-panel" class="hidden space-y-2">
+          <span class="block text-xs font-semibold text-brand-muted uppercase tracking-wider">Selected Image Preview</span>
+          <div class="w-40 h-40 border border-brand-border rounded-2xl overflow-hidden bg-brand-bgLight flex items-center justify-center p-2">
+            <img id="image-preview" src="#" alt="" class="max-w-full max-h-full object-contain rounded-xl">
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="pt-4 border-t border-brand-border flex gap-3">
+          <button type="submit" class="px-6 py-3 bg-brand text-white font-semibold text-xs rounded-xl hover:bg-brand-dark transition-all shadow-md">
+            Publish Product Listing
+          </button>
+          <a href="{{ url_for('seller.products') }}" class="px-6 py-3 bg-brand-bgLight border border-brand-border text-brand-dark font-semibold text-xs rounded-xl hover:bg-brand-border transition-all">
+            Cancel
+          </a>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('image');
+    const previewPanel = document.getElementById('preview-panel');
+    const previewImg = document.getElementById('image-preview');
+
+    fileInput.addEventListener('change', function() {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          previewImg.setAttribute('src', e.target.result);
+          previewPanel.classList.remove('hidden');
+        }
+        reader.readAsDataURL(file);
+      } else {
+        previewPanel.classList.add('hidden');
+      }
+    });
+  });
+</script>
+{% endblock %}

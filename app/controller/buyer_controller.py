@@ -90,6 +90,7 @@ class BuyerController(BaseController):
             for item in items:
                 order = Order(
                     buyer_id=user_id,
+                    seller_id=item["seller_id"],
                     product_id=item["product_id"],
                     quantity=item["quantity"],
                     total_amount=float(item["subtotal"]),

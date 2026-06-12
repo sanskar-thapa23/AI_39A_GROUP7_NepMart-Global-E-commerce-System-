@@ -95,7 +95,7 @@ class SellerController(BaseController):
                 description=description,
                 price=price,
                 stock=stock,
-                image=image_path,
+                image_path=image_path,
             )
             product.save()
             flash(f'"{name}" has been listed on the marketplace!', "success")
@@ -137,7 +137,7 @@ class SellerController(BaseController):
                                        product=prod_row, active_page="seller_dashboard")
 
             # Handle image replacement
-            image_path = prod_row.get("image")
+            image_path = prod_row.get("image_path")
             new_image  = save_product_image(image_file)
             if new_image:
                 delete_product_image(image_path)
@@ -150,7 +150,7 @@ class SellerController(BaseController):
                 description=description,
                 price=price,
                 stock=stock,
-                image=image_path,
+                image_path=image_path,
             )
             p.update(product_id)
             flash(f'"{name}" updated successfully.', "success")
@@ -197,9 +197,12 @@ class SellerController(BaseController):
     def update_order_status(self, order_id):
         """AJAX-friendly status update."""
         status = request.form.get("status", "").strip()
+        tracking_number = request.form.get("tracking_number", "").strip() or None
+        seller_notes = request.form.get("seller_notes", "").strip() or None
+        
         if status in Order.VALID_STATUSES:
-            Order.update_status(order_id, status)
-            flash("Order status updated.", "success")
+            Order.update_status(order_id, status, seller_notes=seller_notes, tracking_number=tracking_number)
+            flash("Order status and shipping details updated.", "success")
         return redirect(url_for("seller.orders"))
 
     # ── ANALYTICS ────────────────────────────────────────────────
@@ -228,7 +231,7 @@ class SellerController(BaseController):
             business_address = request.form.get("business_address", "").strip()
 
             s = Seller(
-                business_name=business_name,
+                company_name=business_name,
                 whatsapp_number=whatsapp_number,
                 business_phone=business_phone,
                 business_address=business_address,
@@ -239,7 +242,7 @@ class SellerController(BaseController):
             from app.model.usermodel import User
             full_name = request.form.get("full_name", "").strip()
             phone     = request.form.get("phone", "").strip()
-            u         = User(full_name=full_name, phone=phone)
+            u         = User(full_name=full_name, email=seller["email"], phone_number=phone)
             u.update_profile(session["user_id"])
             session["user_name"] = full_name
 
