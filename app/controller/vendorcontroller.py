@@ -1,5 +1,7 @@
-from flask import render_template, session, redirect, url_for, flash, request
+from flask import render_template, session, redirect, url_for, flash, request, current_app
+from flask_mail import Message
 from app.controller.basecontroller import BaseController
+from app.controller.couponcontroller import CouponController
 from app.model.database import Database
 from app.model.productmodel import Product
 
@@ -51,18 +53,32 @@ class VendorController(BaseController):
         # Calculate max revenue for chart scaling
         max_rev = max([day['revenue'] for day in sales_trend]) if sales_trend else 0
 
-        # 3. Fetch only products associated with this vendor via the pivot table
+        # 3. Fetch only products associated with this vendor via the pivot table, along with view counts
         products_query = """
-            SELECT p.* FROM products p
+            SELECT p.*, IFNULL(v.views, 0) AS view_count
+            FROM products p
             JOIN user_products up ON p.id = up.product_id
+            LEFT JOIN (
+                SELECT product_id, COUNT(*) AS views
+                FROM product_views
+                GROUP BY product_id
+            ) v ON p.id = v.product_id
             WHERE up.user_id = %s
             ORDER BY p.id DESC
         """
         products_data = db.fetch_all(products_query, (user_id,))
         db.close()
 
-        # 4. Convert data to Product objects and pass everything to template
-        products = [Product.from_db(item) for item in products_data]
+        # 4. Convert data to Product objects and map the view count
+        products = []
+        for item in products_data:
+            prod = Product.from_db(item)
+            prod.view_count = item.get("view_count", 0)
+            products.append(prod)
+
+        coupon_controller = CouponController()
+        vendor_coupons = coupon_controller.get_vendor_coupons(user_id)
+        coupon_controller.close()
 
         return render_template(
             "vendor.html",
@@ -74,11 +90,13 @@ class VendorController(BaseController):
             sales_trend=sales_trend,
             max_rev=max_rev,
             period=period,
-            messages=[]  # Providing empty list to avoid errors if messages table isn't ready
+            messages=[],  # Providing empty list to avoid errors if messages table isn't ready
+            vendor_coupons=vendor_coupons,
+            editing_coupon=None,
         )
 
     def products(self):
-        return render_template("vendor/products.html")
+        return render_template("products/create.html")
 
     def orders(self):
         # 1. Get the logged-in vendor's ID from the session
@@ -167,6 +185,115 @@ class VendorController(BaseController):
     def messages(self):
         return render_template("vendor/messages.html")
 
+    def create_coupon(self):
+        vendor_id = self.get_current_user_id()
+        coupon_code, discount_percentage, duration_days = self.get_form_data(
+            'coupon_code', 'discount_percentage', 'duration_days'
+        )
+        coupon_controller = CouponController()
+        coupon_controller.create_coupon(vendor_id, coupon_code, discount_percentage, duration_days)
+        coupon_controller.close()
+        return redirect(url_for('vendor.dashboard'))
+
+    def edit_coupon(self, coupon_id):
+        vendor_id = self.get_current_user_id()
+        coupon_controller = CouponController()
+        coupon = coupon_controller.get_coupon(coupon_id, vendor_id)
+        vendor_coupons = coupon_controller.get_vendor_coupons(vendor_id)
+        coupon_controller.close()
+
+        if not coupon:
+            flash("Coupon not found or access denied.", "danger")
+            return redirect(url_for('vendor.dashboard'))
+
+        # Reuse dashboard context with editing coupon details
+        user_id = vendor_id
+        db = Database()
+
+        prod_count_row = db.fetch_one("SELECT COUNT(*) as count FROM user_products WHERE user_id = %s", (user_id,))
+        total_products = prod_count_row['count'] if prod_count_row else 0
+
+        stats_query = """
+            SELECT 
+                COUNT(o.id) as total_orders,
+                COUNT(DISTINCT o.user_id) as total_customers,
+                IFNULL(SUM(o.total_amount), 0) as total_revenue
+            FROM orders o
+            JOIN user_products up ON o.product_id = up.product_id
+            WHERE up.user_id = %s AND o.created_at >= DATE_SUB(NOW(), INTERVAL %s DAY)
+        """
+        period = request.args.get('period', '30')
+        try:
+            days = int(period)
+        except ValueError:
+            days = 30
+
+        stats = db.fetch_one(stats_query, (user_id, days))
+
+        trend_query = """
+            SELECT DATE(o.created_at) as date, SUM(o.total_amount) as revenue
+            FROM orders o
+            JOIN user_products up ON o.product_id = up.product_id
+            WHERE up.user_id = %s AND o.created_at >= DATE_SUB(NOW(), INTERVAL %s DAY)
+            GROUP BY DATE(o.created_at)
+            ORDER BY date ASC
+        """
+        sales_trend = db.fetch_all(trend_query, (user_id, days))
+        max_rev = max([day['revenue'] for day in sales_trend]) if sales_trend else 0
+
+        products_query = """
+            SELECT p.*, IFNULL(v.views, 0) AS view_count
+            FROM products p
+            JOIN user_products up ON p.id = up.product_id
+            LEFT JOIN (
+                SELECT product_id, COUNT(*) AS views
+                FROM product_views
+                GROUP BY product_id
+            ) v ON p.id = v.product_id
+            WHERE up.user_id = %s
+            ORDER BY p.id DESC
+        """
+        products_data = db.fetch_all(products_query, (user_id,))
+        db.close()
+
+        products = []
+        for item in products_data:
+            prod = Product.from_db(item)
+            prod.view_count = item.get("view_count", 0)
+            products.append(prod)
+
+        return render_template(
+            "vendor.html",
+            products=products,
+            total_products=total_products,
+            total_orders=stats['total_orders'] if stats else 0,
+            total_customers=stats['total_customers'] if stats else 0,
+            total_revenue=stats['total_revenue'] if stats else 0,
+            sales_trend=sales_trend,
+            max_rev=max_rev,
+            period=period,
+            messages=[],
+            vendor_coupons=vendor_coupons,
+            editing_coupon=coupon,
+        )
+
+    def update_coupon(self, coupon_id):
+        vendor_id = self.get_current_user_id()
+        coupon_code, discount_percentage, duration_days = self.get_form_data(
+            'coupon_code', 'discount_percentage', 'duration_days'
+        )
+        coupon_controller = CouponController()
+        coupon_controller.update_coupon(coupon_id, vendor_id, coupon_code, discount_percentage, duration_days)
+        coupon_controller.close()
+        return redirect(url_for('vendor.dashboard'))
+
+    def delete_coupon(self, coupon_id):
+        vendor_id = self.get_current_user_id()
+        coupon_controller = CouponController()
+        coupon_controller.delete_coupon(coupon_id, vendor_id)
+        coupon_controller.close()
+        return redirect(url_for('vendor.dashboard'))
+
     def process_order(self, order_id):
         vendor_id = self.get_current_user_id()
         db = Database()
@@ -208,3 +335,26 @@ class VendorController(BaseController):
             return redirect(url_for('vendor.orders'))
             
         return render_template("vendor/order_detail.html", order=order)
+
+    @staticmethod
+    def send_low_stock_alert(product_info):
+        """Sends an automated email alert to the vendor when inventory levels are critical."""
+        mail = current_app.extensions.get("mail")
+        if not mail:
+            return
+
+        msg = Message(
+            subject=f"NepMart Alert: Low Stock for {product_info['product_name']}",
+            sender=current_app.config.get("MAIL_DEFAULT_SENDER"),
+            recipients=[product_info['email']],
+            body=f"Hello {product_info['username']},\n\n"
+                 f"This is an automated notification that the stock level for '{product_info['product_name']}' "
+                 f"has reached {product_info['stock']} units.\n\n"
+                 f"Please restock soon to ensure continued fulfillment of customer orders.\n\n"
+                 f"Best regards,\nNep-Mart Global Inventory System"
+        )
+        
+        try:
+            mail.send(msg)
+        except Exception as e:
+            print(f"Error notifying vendor: {e}")

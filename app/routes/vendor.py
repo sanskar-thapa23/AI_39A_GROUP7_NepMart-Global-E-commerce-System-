@@ -30,6 +30,22 @@ class VendorRoutes:
         @self.bp.route("/messages")
         def messages():
             return self.controller.messages()
+
+        @self.bp.route("/coupon/create", methods=["POST"])
+        def create_coupon():
+            return self.controller.create_coupon()
+
+        @self.bp.route("/coupon/edit/<int:coupon_id>")
+        def edit_coupon(coupon_id):
+            return self.controller.edit_coupon(coupon_id)
+
+        @self.bp.route("/coupon/update/<int:coupon_id>", methods=["POST"])
+        def update_coupon(coupon_id):
+            return self.controller.update_coupon(coupon_id)
+
+        @self.bp.route("/coupon/delete/<int:coupon_id>", methods=["POST"])
+        def delete_coupon(coupon_id):
+            return self.controller.delete_coupon(coupon_id)
             
         @self.bp.route("/order/process/<int:order_id>", methods=["POST"])
         def process_order(order_id):
