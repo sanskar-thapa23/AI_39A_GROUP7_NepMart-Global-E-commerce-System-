@@ -72,7 +72,7 @@
           </p>
 
           <h3 class="font-semibold text-white text-base truncate">
-            {{ session.get('business_name', 'Vendor Partner') }}
+            {{ session.get('user_name', 'Vendor Partner') }}
           </h3>
 
           <div class="flex items-center gap-1.5 mt-1">
@@ -176,6 +176,7 @@
                   <th class="pb-4">Product Name</th>
                   <th class="pb-4">Price</th>
                   <th class="pb-4">Description</th>
+                  <th class="pb-4">Views</th>
                   <th class="pb-4">Actions</th>
               </tr>
             </thead>
@@ -190,13 +191,19 @@
                         <td class="font-semibold text-brand-dark">{{ product.product_name }}</td>
                         <td class="font-medium text-brand-dark">Rs. {{ product.product_price }}</td>
                         <td class="text-brand-muted max-w-md">{{ product.product_description }}</td>
+                        <td class="font-semibold text-[#475569]">
+                            <span class="flex items-center gap-1.5 text-sm">
+                                <i data-lucide="eye" class="w-4 h-4 text-brand-muted"></i>
+                                {{ product.view_count or 0 }}
+                            </span>
+                        </td>
                         <td>
                             <div class="flex gap-2">
-                                <a href="#"
+                                <a href="{{ url_for('products.edit', product_id=product.id) }}"
                                    class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl text-sm transition">
                                     Edit
                                 </a>
-                                <form method="POST" action="#">
+                                <form method="POST" action="{{ url_for('products.delete', product_id=product.id) }}">
                                     <button type="submit" onclick="return confirm('Delete this product?')"
                                         class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl text-sm transition">
                                         Delete
@@ -225,6 +232,84 @@
           </table>
         </div>
 
+      </div>
+
+      <div class="bg-white rounded-3xl border border-brand-border shadow-sm p-6 mb-8">
+        <div class="flex flex-col lg:flex-row gap-4 justify-between items-start mb-6">
+          <div>
+            <h3 class="text-xl font-bold text-brand-dark">Vendor Coupons</h3>
+            <p class="text-sm text-brand-muted">Create, edit, or delete coupons for your buyers.</p>
+          </div>
+          <div class="text-sm text-brand-muted">
+            Valid coupons expire automatically after the chosen duration.
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          <div class="p-6 bg-brand-bgLight border border-brand-border rounded-3xl">
+            <h4 class="text-lg font-semibold text-brand-dark mb-4">
+              {% if editing_coupon %}Edit Coupon{% else %}Create Coupon{% endif %}
+            </h4>
+            <form action="{% if editing_coupon %}{{ url_for('vendor.update_coupon', coupon_id=editing_coupon.id) }}{% else %}{{ url_for('vendor.create_coupon') }}{% endif %}" method="POST" class="space-y-4">
+              <div>
+                <label class="block text-sm font-semibold text-brand-dark mb-2">Coupon Code</label>
+                <input name="coupon_code" required value="{{ editing_coupon.coupon_code if editing_coupon else '' }}" type="text" placeholder="E.g. NEPMART10" class="w-full rounded-2xl border border-brand-border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-crimson">
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-brand-dark mb-2">Discount Percentage</label>
+                <input name="discount_percentage" required value="{{ editing_coupon.discount_percentage if editing_coupon else '' }}" type="number" min="1" max="100" placeholder="Enter percent" class="w-full rounded-2xl border border-brand-border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-crimson">
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-brand-dark mb-2">Duration (days)</label>
+                <input name="duration_days" required value="{% if editing_coupon %}{{ (editing_coupon.expires_at - editing_coupon.created_at).days if editing_coupon.expires_at and editing_coupon.created_at else '' }}{% else %}30{% endif %}" type="number" min="1" placeholder="30" class="w-full rounded-2xl border border-brand-border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-crimson">
+              </div>
+              <button type="submit" class="w-full bg-brand-crimson text-white py-3 rounded-2xl font-semibold hover:bg-brand-crimsonDark transition">
+                {% if editing_coupon %}Update Coupon{% else %}Create Coupon{% endif %}
+              </button>
+              {% if editing_coupon %}
+              <a href="{{ url_for('vendor.dashboard') }}" class="block text-center text-sm text-brand-crimson hover:underline mt-2">Cancel edit</a>
+              {% endif %}
+            </form>
+          </div>
+
+          <div class="p-6 bg-brand-bgLight border border-brand-border rounded-3xl">
+            <h4 class="text-lg font-semibold text-brand-dark mb-4">My Coupons</h4>
+            {% if vendor_coupons %}
+            <div class="space-y-4">
+              {% for coupon in vendor_coupons %}
+              <div class="border border-brand-border rounded-3xl p-4 bg-white">
+                <div class="flex flex-col sm:flex-row sm:justify-between gap-3">
+                  <div>
+                    <p class="text-sm text-brand-muted">Code</p>
+                    <h5 class="font-bold text-brand-dark">{{ coupon.coupon_code }}</h5>
+                  </div>
+                  <div>
+                    <p class="text-sm text-brand-muted">Discount</p>
+                    <h5 class="font-bold text-brand-dark">{{ coupon.discount_percentage }}%</h5>
+                  </div>
+                  <div>
+                    <p class="text-sm text-brand-muted">Expires</p>
+                    <h5 class="font-bold text-brand-dark">{{ coupon.expires_at.strftime('%Y-%m-%d') if coupon.expires_at else 'N/A' }}</h5>
+                  </div>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-2">
+                  <a href="{{ url_for('vendor.edit_coupon', coupon_id=coupon.id) }}" class="inline-flex items-center justify-center rounded-2xl border border-brand-crimson px-4 py-2 text-sm font-semibold text-brand-crimson hover:bg-brand-crimson/10">
+                    Edit
+                  </a>
+                  <form action="{{ url_for('vendor.delete_coupon', coupon_id=coupon.id) }}" method="POST" class="inline-block">
+                    <button type="submit" onclick="return confirm('Delete this coupon?')" class="rounded-2xl bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600">Delete</button>
+                  </form>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-10">
+              <p class="text-sm text-brand-muted">No coupons have been created yet.</p>
+            </div>
+            {% endif %}
+          </div>
+        </div>
       </div>
 
       <div class="bg-white rounded-3xl border border-brand-border shadow-sm p-6">
