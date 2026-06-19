@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile — Nep-Mart{% endblock %}
+
+{% block content %}
+<div class="bg-brand-bgLight py-12 px-4 sm:px-6 lg:px-8 min-h-screen">
+  <div class="max-w-md mx-auto bg-white rounded-2xl border border-brand-border p-8 shadow-sm">
+    <div class="text-center mb-8">
+      <h1 class="font-serif text-2xl font-bold text-brand-dark">Edit Your Profile</h1>
+      <p class="text-sm text-brand-muted mt-2">Keep your corporate information up to date.</p>
+    </div>
+
+    <form action="{{ url_for('auth.edit_profile') }}" method="POST" class="space-y-6">
+      <div class="space-y-1">
+        <label for="username" class="block text-xs font-bold uppercase text-brand-muted tracking-wider">Username</label>
+        <input type="text" id="username" name="username" value="{{ user.username }}" required
+          class="w-full px-4 py-2.5 bg-brand-bgLight border border-brand-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand/20 transition-all text-sm">
+      </div>
+
+      <div class="space-y-1">
+        <label for="email" class="block text-xs font-bold uppercase text-brand-muted tracking-wider">Corporate Email</label>
+        <input type="email" id="email" name="email" value="{{ user.email }}" required
+          class="w-full px-4 py-2.5 bg-brand-bgLight border border-brand-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand/20 transition-all text-sm">
+      </div>
+
+      <div class="space-y-1">
+        <label for="password" class="block text-xs font-bold uppercase text-brand-muted tracking-wider">New Password</label>
+        <input type="password" id="password" name="password" placeholder="Leave blank to keep current"
+          class="w-full px-4 py-2.5 bg-brand-bgLight border border-brand-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand/20 transition-all text-sm">
+      </div>
+
+      <div class="pt-4 flex flex-col gap-3">
+        <button type="submit" 
+          class="w-full py-3 bg-brand-crimson text-white font-bold rounded-xl hover:bg-brand-crimsonDark shadow-lg shadow-brand-crimson/20 transition-all">
+          Save Changes
+        </button>
+        <a href="{{ url_for('auth.dashboard') }}" 
+          class="w-full py-3 text-center border border-brand-border text-brand-dark font-bold rounded-xl hover:bg-brand-bgLight transition-all text-sm">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

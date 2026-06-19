@@ -14,6 +14,9 @@
       </div>
       <div class="flex gap-3">
         <a href="/products" class="px-4 py-2.5 border border-brand-border text-xs font-bold rounded-lg hover:bg-white transition-all text-[#0f172a] bg-white/50">Browse Marketplace</a>
+        <a href="{{ url_for('auth.edit_profile') }}" class="px-4 py-2.5 border border-brand-border text-xs font-bold rounded-lg hover:bg-white transition-all text-[#0f172a] bg-white/50 flex items-center gap-1.5">
+          <i data-lucide="user-cog" class="w-4 h-4"></i> Edit Profile
+        </a>
         <a href="#" class="px-4 py-2.5 bg-brand-crimson text-white text-xs font-bold rounded-lg hover:bg-brand-crimsonDark hover:shadow-md transition-all flex items-center gap-1.5 shadow-sm">
           <i data-lucide="plus" class="w-4 h-4"></i> Add New B2B Spec
         </a>
