@@ -202,6 +202,238 @@
 </section>
 
 
+<!-- ========== PERSONALIZED HOME PAGE RECOMMENDATIONS ========== -->
+{% if session.get('user_id') %}
+<section class="py-20 bg-brand-bgLight px-4 sm:px-6 lg:px-8 border-t border-brand-border">
+  <div class="max-w-7xl mx-auto space-y-16">
+
+    <!-- 1. RECOMMENDED FOR YOU (Collaborative Filtering) -->
+    <div class="space-y-8">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+        <div>
+          <span class="text-xs font-bold text-brand-crimson uppercase tracking-widest bg-brand-crimson/10 border border-brand-crimson/20 px-3 py-1 rounded-full">
+            Tailored For You
+          </span>
+          <h2 class="font-serif text-3xl font-bold text-brand-dark tracking-tight mt-3">
+            Recommended For You
+          </h2>
+          <p class="text-brand-muted text-sm mt-1">
+            Hand-picked items matching your browsing behavior and similar global buyers.
+          </p>
+        </div>
+        <a href="/products" class="text-sm font-semibold text-brand-crimson hover:text-brand-crimsonDark flex items-center gap-1.5 transition-all">
+          View All Products <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {% if recommended %}
+          {% for product in recommended %}
+            <div class="bg-white rounded-2xl border border-brand-border overflow-hidden hover:shadow-xl hover:border-brand-crimson/30 transition-all duration-300 flex flex-col group">
+              <div class="aspect-[4/3] relative overflow-hidden bg-brand-bgLight">
+                <img src="{{ product.product_image }}" alt="{{ product.product_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                <div class="absolute top-3 right-3">
+                  <span class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/25 border border-emerald-500/40 text-emerald-400 text-[10px] font-bold uppercase tracking-widest backdrop-blur-md">
+                    <i data-lucide="shield-check" class="w-3 h-3"></i> Verified
+                  </span>
+                </div>
+              </div>
+              <div class="p-5 flex-grow flex flex-col justify-between space-y-4">
+                <div class="space-y-1">
+                  <span class="text-[10px] font-bold text-brand-muted uppercase tracking-wider block">{{ product.category_display }}</span>
+                  <h3 class="font-serif text-base font-bold text-brand-dark group-hover:text-brand-crimson transition-colors leading-tight line-clamp-1">
+                    <a href="/product/{{ product.id }}">{{ product.product_name }}</a>
+                  </h3>
+                  <p class="text-xs text-brand-muted line-clamp-2 leading-relaxed mt-1">
+                    {{ product.product_description }}
+                  </p>
+                </div>
+                <div class="flex items-center justify-between pt-3 border-t border-brand-border">
+                  <div>
+                    <span class="text-brand-muted block text-[9px] uppercase tracking-widest">Est. Price</span>
+                    <span class="text-brand-crimson font-bold text-sm">Rs. {{ product.product_price }}</span>
+                  </div>
+                  <a href="/product/{{ product.id }}" class="px-3.5 py-1.5 bg-brand-dark hover:bg-brand-crimson text-white text-xs font-semibold rounded-lg transition-all">
+                    Details
+                  </a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="col-span-full py-10 text-center bg-white border border-brand-border rounded-2xl">
+            <i data-lucide="package-search" class="w-12 h-12 text-brand-muted/45 mx-auto mb-3"></i>
+            <h3 class="font-semibold text-brand-dark text-sm">Explore catalog to unlock personalized items</h3>
+            <a href="/products" class="mt-4 inline-block text-xs font-bold text-brand-crimson hover:underline">Start browsing now &rarr;</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- 2. TRENDING NOW (Highest view count) -->
+{% endif %}
+    <div class="space-y-8">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+        <div>
+          <span class="text-xs font-bold text-[#f59e0b] uppercase tracking-widest bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">
+            Hot & Popular
+          </span>
+          <h2 class="font-serif text-3xl font-bold text-brand-dark tracking-tight mt-3">
+            Trending Products
+          </h2>
+          <p class="text-brand-muted text-sm mt-1">
+            Top demand items frequently viewed and requested by trade partners this week.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {% if trending %}
+          {% for product in trending %}
+            <div class="bg-white rounded-2xl border border-brand-border overflow-hidden hover:shadow-xl hover:border-brand-crimson/30 transition-all duration-300 flex flex-col group">
+              <div class="aspect-[4/3] relative overflow-hidden bg-brand-bgLight">
+                <img src="{{ product.product_image }}" alt="{{ product.product_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                <div class="absolute top-3 left-3">
+                  <span class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-500 text-[10px] font-bold uppercase tracking-widest backdrop-blur-md">
+                    <i data-lucide="flame" class="w-3.5 h-3.5 fill-current"></i> Trending
+                  </span>
+                </div>
+              </div>
+              <div class="p-5 flex-grow flex flex-col justify-between space-y-4">
+                <div class="space-y-1">
+                  <span class="text-[10px] font-bold text-brand-muted uppercase tracking-wider block">{{ product.category_display }}</span>
+                  <h3 class="font-serif text-base font-bold text-brand-dark group-hover:text-brand-crimson transition-colors leading-tight line-clamp-1">
+                    <a href="/product/{{ product.id }}">{{ product.product_name }}</a>
+                  </h3>
+                  <p class="text-xs text-brand-muted line-clamp-2 leading-relaxed mt-1">
+                    {{ product.product_description }}
+                  </p>
+                </div>
+                <div class="flex items-center justify-between pt-3 border-t border-brand-border">
+                  <div>
+                    <span class="text-brand-muted block text-[9px] uppercase tracking-widest">Est. Price</span>
+                    <span class="text-brand-crimson font-bold text-sm">Rs. {{ product.product_price }}</span>
+                  </div>
+                  <a href="/product/{{ product.id }}" class="px-3.5 py-1.5 bg-brand-dark hover:bg-brand-crimson text-white text-xs font-semibold rounded-lg transition-all">
+                    Details
+                  </a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="col-span-full py-10 text-center bg-white border border-brand-border rounded-2xl">
+            <p class="text-sm text-brand-muted">No trending items currently. Start viewing products to generate traffic!</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- 3. RECENTLY VIEWED (Personalized view history) -->
+    {% if session.get('user_id') and recently_viewed %}
+    <div class="space-y-8 pt-4">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+        <div>
+          <span class="text-xs font-bold text-brand uppercase tracking-widest bg-brand/10 border border-brand/20 px-3 py-1 rounded-full">
+            Your History
+          </span>
+          <h2 class="font-serif text-3xl font-bold text-brand-dark tracking-tight mt-3">
+            Recently Viewed
+          </h2>
+          <p class="text-brand-muted text-sm mt-1">
+            Pick up right where you left off.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {% for product in recently_viewed %}
+          <div class="bg-white rounded-2xl border border-brand-border overflow-hidden hover:shadow-xl hover:border-brand-crimson/30 transition-all duration-300 flex flex-col group">
+            <div class="aspect-[4/3] relative overflow-hidden bg-brand-bgLight">
+              <img src="{{ product.product_image }}" alt="{{ product.product_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            </div>
+            <div class="p-5 flex-grow flex flex-col justify-between space-y-4">
+              <div class="space-y-1">
+                <span class="text-[10px] font-bold text-brand-muted uppercase tracking-wider block">{{ product.category_display }}</span>
+                <h3 class="font-serif text-base font-bold text-brand-dark group-hover:text-brand-crimson transition-colors leading-tight line-clamp-1">
+                  <a href="/product/{{ product.id }}">{{ product.product_name }}</a>
+                </h3>
+                <p class="text-xs text-brand-muted line-clamp-2 leading-relaxed mt-1">
+                  {{ product.product_description }}
+                </p>
+              </div>
+              <div class="flex items-center justify-between pt-3 border-t border-brand-border">
+                <div>
+                  <span class="text-brand-muted block text-[9px] uppercase tracking-widest">Est. Price</span>
+                  <span class="text-brand-crimson font-bold text-sm">Rs. {{ product.product_price }}</span>
+                </div>
+                <a href="/product/{{ product.id }}" class="px-3.5 py-1.5 bg-brand-dark hover:bg-brand-crimson text-white text-xs font-semibold rounded-lg transition-all">
+                  Details
+                </a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+
+<!-- ========== FREQUENTLY BOUGHT TOGETHER ========== -->
+{% if frequently_bought %}
+<section class="py-20 bg-gradient-to-br from-brand-bgLight to-white px-4 sm:px-6 lg:px-8 border-t border-brand-border">
+  <div class="max-w-7xl mx-auto space-y-8">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+      <div>
+        <span class="text-xs font-bold text-emerald-700 uppercase tracking-widest bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
+          Frequently Bought Together
+        </span>
+        <h2 class="font-serif text-3xl font-bold text-brand-dark tracking-tight mt-3">
+          Buyers Also Purchased
+        </h2>
+        <p class="text-brand-muted text-sm mt-1">
+          Global trade partners commonly bundle these products in their B2B orders.
+        </p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {% for product in frequently_bought %}
+        <div class="bg-white rounded-2xl border border-brand-border overflow-hidden hover:shadow-xl hover:border-emerald-300 transition-all duration-300 flex flex-col group">
+          <div class="aspect-[4/3] relative overflow-hidden">
+            <img src="{{ product.product_image }}" alt="{{ product.product_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute top-3 right-3">
+              <span class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-[10px] font-bold uppercase tracking-widest backdrop-blur-md">
+                <i data-lucide="shopping-bag" class="w-3 h-3"></i> Popular Bundle
+              </span>
+            </div>
+          </div>
+          <div class="p-5 flex-grow flex flex-col justify-between space-y-3">
+            <div>
+              <span class="text-[10px] font-bold text-brand-muted uppercase tracking-wider block">{{ product.category_display }}</span>
+              <h3 class="font-serif text-base font-bold text-brand-dark group-hover:text-emerald-700 transition-colors leading-tight line-clamp-1">
+                <a href="/product/{{ product.id }}">{{ product.product_name }}</a>
+              </h3>
+              <p class="text-xs text-brand-muted line-clamp-2 leading-relaxed mt-1">{{ product.product_description }}</p>
+            </div>
+            <div class="flex items-center justify-between pt-3 border-t border-brand-border">
+              <span class="text-brand-crimson font-bold text-sm">Rs. {{ product.product_price }}</span>
+              <a href="/product/{{ product.id }}" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg transition-all">
+                View Deal
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+
 <!-- ========== KEY PLATFORM PILLARS (TRUST & ASSURANCE) ========== -->
 <section class="py-20 bg-gradient-to-b from-[#0F172A] to-brand-deep text-white px-4 sm:px-6 lg:px-8 relative overflow-hidden">
   <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand/5 rounded-full blur-[140px] pointer-events-none"></div>

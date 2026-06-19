@@ -123,17 +123,14 @@
           <!-- Main Desktop Nav Links -->
           <div class="hidden md:flex items-center gap-6">
             <a href="/products" class="text-sm font-medium text-[#0f172a] hover:text-brand-crimson transition-colors {% if active_page == 'products' %} text-brand-crimson border-b-2 border-brand-crimson pb-1 {% endif %}">Products</a>
-            <a href="/traders" class="text-sm font-medium text-[#0f172a] hover:text-brand-crimson transition-colors {% if active_page == 'traders' %} text-brand-crimson border-b-2 border-brand-crimson pb-1 {% endif %}">Traders Directory</a>
             
             {% if session.get('user_id') %}
-              <a href="/chat" class="text-sm font-medium text-[#0f172a] hover:text-brand-crimson transition-colors {% if active_page == 'chat' %} text-brand-crimson border-b-2 border-brand-crimson pb-1 {% endif %}">My Negotiations</a>
               {% if session.get('role') == 'vendor' %}
                 <a href="{{ url_for('vendor.dashboard') }}" class="text-sm font-medium text-[#0f172a] hover:text-brand-crimson transition-colors {% if active_page == 'dashboard' %} text-brand-crimson border-b-2 border-brand-crimson pb-1 {% endif %}">Vendor Workspace</a>
               {% else %}
                 <a href="/dashboard" class="text-sm font-medium text-[#0f172a] hover:text-brand-crimson transition-colors {% if active_page == 'dashboard' %} text-brand-crimson border-b-2 border-brand-crimson pb-1 {% endif %}">My Dashboard</a>
               {% endif %}
             {% else %}
-              <a href="/chat" class="text-sm font-medium text-[#0f172a] hover:text-brand-crimson transition-colors">Deal Negotiations</a>
               <a href="/dashboard" class="text-sm font-medium text-[#0f172a] hover:text-brand-crimson transition-colors">Seller Space</a>
             {% endif %}
           </div>
@@ -167,13 +164,10 @@
     <div id="mobile-menu" class="hidden md:hidden border-t border-brand-border bg-white transition-all duration-300">
       <div class="px-2 pt-2 pb-4 space-y-1">
         <a href="/products" class="block px-3 py-2 rounded-lg text-base font-semibold text-[#0f172a] hover:bg-brand-bgLight hover:text-brand-crimson transition-colors">Products Catalog</a>
-        <a href="/traders" class="block px-3 py-2 rounded-lg text-base font-semibold text-[#0f172a] hover:bg-brand-bgLight hover:text-brand-crimson transition-colors">Traders Directory</a>
         
         {% if session.get('user_id') %}
-          <a href="/chat" class="block px-3 py-2 rounded-lg text-base font-semibold text-[#0f172a] hover:bg-brand-bgLight hover:text-brand-crimson transition-colors">My Negotiations</a>
           <a href="/dashboard" class="block px-3 py-2 rounded-lg text-base font-semibold text-[#0f172a] hover:bg-brand-bgLight hover:text-brand-crimson transition-colors">My Dashboard</a>
         {% else %}
-          <a href="/chat" class="block px-3 py-2 rounded-lg text-base font-semibold text-[#0f172a] hover:bg-brand-bgLight hover:text-brand-crimson transition-colors">Deal Negotiations</a>
           <a href="/dashboard" class="block px-3 py-2 rounded-lg text-base font-semibold text-[#0f172a] hover:bg-brand-bgLight hover:text-brand-crimson transition-colors">Seller Space</a>
         {% endif %}
 
