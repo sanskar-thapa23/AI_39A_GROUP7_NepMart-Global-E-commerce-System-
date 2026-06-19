@@ -94,7 +94,7 @@ class AuthController(BaseController):
                 flash("Passwords do not match.", "danger")
                 return render_template("auth/register.html")
 
-            allowed_roles = ["customer", "vendor"]
+            allowed_roles = ["customer", "vendor", "admin"]
             if role not in allowed_roles:
                 role = "customer"
 
@@ -262,3 +262,130 @@ class AuthController(BaseController):
     def logout(self):
         session.clear()
         return redirect(url_for("auth.login"))
+
+    # =====================================================
+    # REQUEST ACCOUNT DEACTIVATION
+    # =====================================================
+    def request_deactivation(self):
+        """Handles the account deactivation request and sends confirmation email."""
+        user_id = self.get_current_user_id()
+        
+        if not user_id:
+            flash("Please login to deactivate your account.", "warning")
+            return redirect(url_for('auth.login'))
+
+        user_data = self.user_model.find_by_id(user_id)
+        if not user_data:
+            flash("User not found.", "danger")
+            return redirect(url_for('auth.login'))
+
+        # Generate a secure token (valid for 24 hours)
+        serializer = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
+        token = serializer.dumps(user_data["email"], salt="account-deactivation-salt")
+        
+        # Create the deactivation confirmation link
+        deactivation_url = url_for("auth.confirm_deactivation", token=token, _external=True)
+        
+        mail = current_app.extensions.get("mail")
+        if mail:
+            # Send the deactivation confirmation email
+            msg = Message(
+                "Account Deactivation Confirmation — Nep-Mart Global",
+                sender=current_app.config.get("MAIL_DEFAULT_SENDER"),
+                recipients=[user_data["email"]],
+                body=f"""Hello {user_data['username']},
+
+We received a request to deactivate your account on Nep-Mart Global.
+
+To confirm and permanently delete your account, please click the link below:
+{deactivation_url}
+
+IMPORTANT: This link will expire in 24 hours. This action is IRREVERSIBLE and will permanently delete your account and all associated data.
+
+If you did not request this, please ignore this email. Your account will remain active.
+
+Best regards,
+Nep-Mart Global Team"""
+            )
+            try:
+                mail.send(msg)
+                flash("A confirmation email has been sent to your account. Please check your email to confirm deactivation.", "success")
+            except Exception as e:
+                print(f"Error sending deactivation email: {e}")
+                flash("There was an error sending the confirmation email. Please try again later.", "danger")
+        else:
+            print(f"Warning: Mail extension not initialized. Deactivation Link: {deactivation_url}")
+            flash("Mail service is not configured. Please contact support.", "danger")
+
+        # Redirect based on user role
+        role = user_data.get('role', 'customer')
+        if role == 'vendor':
+            return redirect(url_for('vendor.dashboard'))
+        elif role == 'admin':
+            return redirect(url_for('admin.index'))
+        else:
+            return redirect(url_for('main.dashboard'))
+
+    # =====================================================
+    # CONFIRM ACCOUNT DEACTIVATION
+    # =====================================================
+    def confirm_deactivation(self, token):
+        """Handles the confirmation of account deactivation and deletes the account."""
+        serializer = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
+        
+        try:
+            # Token expires in 86400 seconds (24 hours)
+            email = serializer.loads(token, salt="account-deactivation-salt", max_age=86400)
+        except (SignatureExpired, BadTimeSignature):
+            flash("The deactivation link is invalid or has expired.", "danger")
+            return redirect(url_for("auth.login"))
+
+        user_data = self.user_model.find_by("email", email)
+        if not user_data:
+            flash("User not found.", "danger")
+            return redirect(url_for("auth.login"))
+
+        if request.method == "GET":
+            # Show confirmation page
+            return render_template("auth/confirm_deactivation.html", username=user_data["username"])
+
+        if request.method == "POST":
+            # Final confirmation - delete the account
+            try:
+                user_id = user_data["id"]
+                self.user_model.delete_account(user_id)
+                
+                # Send confirmation email
+                mail = current_app.extensions.get("mail")
+                if mail:
+                    msg = Message(
+                        "Account Successfully Deactivated — Nep-Mart Global",
+                        sender=current_app.config.get("MAIL_DEFAULT_SENDER"),
+                        recipients=[email],
+                        body=f"""Hello,
+
+Your account on Nep-Mart Global has been successfully deactivated and permanently deleted.
+
+All your data has been removed from our systems. If this was done in error and you wish to create a new account, you can do so at any time.
+
+Best regards,
+Nep-Mart Global Team"""
+                    )
+                    try:
+                        mail.send(msg)
+                    except Exception as e:
+                        print(f"Error sending deactivation confirmation email: {e}")
+                
+                flash("Your account has been successfully deactivated. All data has been permanently deleted.", "success")
+                return redirect(url_for("auth.login"))
+            except Exception as e:
+                print(f"Error deleting account: {e}")
+                flash("There was an error deactivating your account. Please contact support.", "danger")
+                # Redirect based on user role
+                role = user_data.get('role', 'customer')
+                if role == 'vendor':
+                    return redirect(url_for('vendor.dashboard'))
+                elif role == 'admin':
+                    return redirect(url_for('admin.index'))
+                else:
+                    return redirect(url_for('main.dashboard'))
