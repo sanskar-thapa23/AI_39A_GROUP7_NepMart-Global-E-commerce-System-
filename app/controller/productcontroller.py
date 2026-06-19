@@ -100,14 +100,17 @@ class ProductController(BaseController):
     # READ SINGLE PRODUCT
     # =====================================================
     def detail(self, product_id):
-
         db = Database()
-
         product_data = db.fetch_one(
-            "SELECT * FROM products WHERE id=%s",
+            """
+            SELECT p.*, u.username AS vendor_name, u.email AS vendor_email
+            FROM products p 
+            LEFT JOIN user_products up ON p.id = up.product_id 
+            LEFT JOIN users u ON up.user_id = u.id 
+            WHERE p.id=%s
+            """,
             (product_id,)
         )
-
         db.close()
 
         if not product_data:
@@ -118,10 +121,25 @@ class ProductController(BaseController):
             )
 
         product = Product.from_db(product_data)
+        product.vendor_email = product_data.get('vendor_email')
+
+        # 2. Track view (User Story 2.1)
+        user_id = self.get_current_user_id()
+        from app.model.product_view import ProductView
+        view = ProductView(user_id=user_id, product_id=product_id)
+        view.save()
+
+        # 3. Fetch similar products (User Story 2.2 Content-Based)
+        similar_products = Product.get_content_based(product.category, product.id, limit=4)
+
+        # 4. Fetch frequently bought together products (User Story 2.5)
+        frequently_bought = Product.get_frequently_bought_together(product.id, limit=4)
 
         return render_template(
-            "products/detail.html",
-            product=product
+            "product_detail.html",
+            product=product,
+            similar_products=similar_products,
+            frequently_bought=frequently_bought
         )
 
     # =====================================================
@@ -215,6 +233,11 @@ class ProductController(BaseController):
                     ""
                 ).strip()
 
+                product_stock = request.form.get(
+                    "stock",
+                    "0"
+                ).strip()
+
                 product_description = request.form.get(
                     "product_description",
                     ""
@@ -241,7 +264,8 @@ class ProductController(BaseController):
                     product_price=float(product_price),
                     product_description=product_description,
                     category=product_category,
-                    location=product_location
+                    location=product_location,
+                    stock=int(product_stock) if product_stock else 0
                 )
 
                 # Save to database
@@ -266,19 +290,22 @@ class ProductController(BaseController):
     # =====================================================
     def edit(self, product_id):
 
+        user_id = self.get_current_user_id()
+        if not user_id:
+            return self.flash_and_redirect("Login required.", "danger", "auth.login")
+
         db = Database()
 
+        # Security check: Ensure only the owner (vendor) can fetch and edit this product
         product_data = db.fetch_one(
-            "SELECT * FROM products WHERE id=%s",
-            (product_id,)
+            "SELECT * FROM products WHERE id=%s AND vendor_id=%s",
+            (product_id, user_id)
         )
 
         if not product_data:
-
             db.close()
-
             return self.flash_and_redirect(
-                "Product not found.",
+                "Product not found or unauthorized access.",
                 "danger",
                 "vendor.dashboard"
             )
@@ -317,6 +344,11 @@ class ProductController(BaseController):
                     "product_description",
                     ""
                 ).strip()
+
+                product.stock = int(request.form.get(
+                    "stock",
+                    0
+                ))
 
                 # Encapsulated setter
                 product.set_product_price(
@@ -357,19 +389,22 @@ class ProductController(BaseController):
     # =====================================================
     def delete(self, product_id):
 
+        user_id = self.get_current_user_id()
+        if not user_id:
+            return self.flash_and_redirect("Login required.", "danger", "auth.login")
+
         db = Database()
 
+        # Security check: Ensure only the owner (vendor) can delete this product
         product_data = db.fetch_one(
-            "SELECT * FROM products WHERE id=%s",
-            (product_id,)
+            "SELECT * FROM products WHERE id=%s AND vendor_id=%s",
+            (product_id, user_id)
         )
 
         if not product_data:
-
             db.close()
-
             return self.flash_and_redirect(
-                "Product not found.",
+                "Product not found or unauthorized access.",
                 "danger",
                 "vendor.dashboard"
             )
