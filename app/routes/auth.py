@@ -39,5 +39,13 @@ class AuthRoutes:
         def logout():
             return self.controller.logout()
 
+        @self.bp.route("/request-deactivation", methods=["POST"])
+        def request_deactivation():
+            return self.controller.request_deactivation()
+
+        @self.bp.route("/confirm-deactivation/<token>", methods=["GET", "POST"])
+        def confirm_deactivation(token):
+            return self.controller.confirm_deactivation(token)
+
     def get_blueprint(self):
         return self.bp
