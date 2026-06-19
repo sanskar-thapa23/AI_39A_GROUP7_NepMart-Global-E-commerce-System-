@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Edit User - NepMart Admin{% endblock %}
+
+{% block content %}
+<div class="bg-brand-bgLight min-h-screen">
+  <div class="flex">
+    <!-- Sidebar -->
+    <aside class="w-72 bg-brand-dark text-white min-h-screen hidden lg:flex flex-col justify-between p-6">
+      <div>
+        <div class="mb-10">
+          <h1 class="text-3xl font-bold text-brand-crimson">NepMart</h1>
+          <p class="text-brand-muted text-sm mt-1">Admin Console</p>
+        </div>
+        <nav class="space-y-3">
+          <a href="{{ url_for('admin.index') }}" class="flex items-center gap-3 bg-brand-crimson px-4 py-3 rounded-xl font-semibold">
+            <i data-lucide="users"></i> User Management
+          </a>
+        </nav>
+      </div>
+
+      <div class="bg-white/5 rounded-2xl p-4 border border-white/10">
+        <p class="text-xs text-brand-muted uppercase tracking-wider font-semibold">Logged in as:</p>
+        <h3 class="font-semibold text-white text-base truncate">{{ session.get('user_name', 'Administrator') }}</h3>
+      </div>
+    </aside>
+
+    <main class="flex-1 p-6 lg:p-10">
+        <div class="mb-8">
+            <a href="{{ url_for('admin.index') }}" class="text-brand-crimson text-sm font-bold flex items-center gap-1 mb-2">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to User List
+            </a>
+            <h2 class="text-3xl font-bold text-brand-dark">Edit User Profile</h2>
+            <p class="text-brand-muted">Modify account details and system privileges</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="bg-white rounded-3xl border border-brand-border shadow-sm overflow-hidden">
+                    <div class="p-8">
+                        <form method="POST" class="space-y-6">
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-brand-muted uppercase tracking-wider">Username</label>
+                                <div class="relative">
+                                    <i data-lucide="user" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-brand-muted"></i>
+                                    <input type="text" name="username" class="w-full pl-12 pr-4 py-3 bg-brand-bgLight border border-brand-border rounded-xl text-sm focus:ring-2 focus:ring-brand-crimson focus:outline-none" value="{{ user.username }}" required>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-brand-muted uppercase tracking-wider">Email Address</label>
+                                <div class="relative">
+                                    <i data-lucide="mail" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-brand-muted"></i>
+                                    <input type="email" name="email" class="w-full pl-12 pr-4 py-3 bg-brand-bgLight border border-brand-border rounded-xl text-sm focus:ring-2 focus:ring-brand-crimson focus:outline-none" value="{{ user.email }}" required>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-brand-muted uppercase tracking-wider">System Privilege Role</label>
+                                <select name="role" class="w-full p-4 bg-brand-bgLight border border-brand-border rounded-xl text-sm focus:ring-2 focus:ring-brand-crimson focus:outline-none appearance-none">
+                                    <option value="customer" {% if user.role == 'customer' %}selected{% endif %}>Customer</option>
+                                    <option value="vendor" {% if user.role == 'vendor' %}selected{% endif %}>Vendor</option>
+                                    <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                                </select>
+                            </div>
+                            <div class="pt-4">
+                                <button type="submit" class="w-full bg-brand-crimson text-white py-4 rounded-2xl font-bold hover:bg-brand-crimsonDark transition-all shadow-lg flex items-center justify-center gap-2">
+                                    <i data-lucide="save" class="w-5 h-5"></i> Update User
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+  </div>
+</div>
+
+<script>
+  lucide.createIcons();
+</script>
+{% endblock %}
