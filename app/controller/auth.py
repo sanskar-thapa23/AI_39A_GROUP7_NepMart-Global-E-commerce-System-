@@ -17,7 +17,13 @@ class AuthController(BaseController):
     def login(self):
 
         if self.is_logged_in():
-            return redirect(url_for("main.dashboard"))
+            role = self.get_current_role()
+            if role == "admin":
+                return redirect(url_for("admin.index"))
+            elif role == "vendor":
+                return redirect(url_for("vendor.dashboard"))
+            else:
+                return redirect(url_for("main.dashboard"))
 
         if request.method == "POST":
 
@@ -48,10 +54,10 @@ class AuthController(BaseController):
                     if role == "vendor":
                         return redirect(url_for("vendor.dashboard"))
 
-                    elif role == "customer":
-                        return redirect(url_for("main.dashboard"))
-
                     elif role == "admin":
+                        return redirect(url_for("admin.index"))
+
+                    else:
                         return redirect(url_for("main.dashboard"))
 
             flash("Invalid username or password.", "danger")
@@ -64,7 +70,13 @@ class AuthController(BaseController):
     def register(self):
 
         if self.is_logged_in():
-            return redirect(url_for("main.dashboard"))
+            role = self.get_current_role()
+            if role == "admin":
+                return redirect(url_for("admin.index"))
+            elif role == "vendor":
+                return redirect(url_for("vendor.dashboard"))
+            else:
+                return redirect(url_for("main.dashboard"))
 
         if request.method == "POST":
 
@@ -114,7 +126,13 @@ class AuthController(BaseController):
     def forgot_password(self):
         """Handles the forgot password request flow."""
         if self.is_logged_in():
-            return redirect(url_for("main.dashboard"))
+            role = self.get_current_role()
+            if role == "admin":
+                return redirect(url_for("admin.index"))
+            elif role == "vendor":
+                return redirect(url_for("vendor.dashboard"))
+            else:
+                return redirect(url_for("main.dashboard"))
 
         if request.method == "POST":
             email = request.form.get("email", "").strip()
@@ -192,6 +210,45 @@ class AuthController(BaseController):
                 return redirect(url_for("auth.login"))
 
         return render_template("auth/reset_password.html", token=token)
+
+    # =====================================================
+    # EDIT PROFILE
+    # =====================================================
+    def edit_profile(self):
+        """Handles user profile updates for the current logged-in user."""
+        user_id = self.get_current_user_id()
+        if not user_id:
+            flash("Please login to access your profile.", "warning")
+            return redirect(url_for('auth.login'))
+
+        user_data = self.user_model.find_by_id(user_id)
+        if not user_data:
+            flash("User not found.", "danger")
+            return redirect(url_for('auth.login'))
+
+        if request.method == "POST":
+            username, email = self.get_form_data("username", "email")
+            password = request.form.get("password")
+
+            if not username or not email:
+                flash("Username and email are required.", "danger")
+                return render_template("edit_profile.html", user=user_data)
+
+            user = User.from_db(user_data)
+            user.username = username
+            user.email = email
+
+            update_password = False
+            if password and password.strip():
+                user.set_password(password)
+                update_password = True
+
+            user.update_profile(user_id, update_password=update_password)
+            session["user_name"] = username
+            flash("Profile updated successfully!", "success")
+            return redirect(url_for('auth.dashboard'))
+
+        return render_template("edit_profile.html", user=user_data)
 
     # =====================================================
     # DASHBOARD (NOT USED DIRECTLY NOW)

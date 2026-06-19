@@ -27,6 +27,14 @@ class AuthRoutes:
         def reset_password(token):
             return self.controller.reset_password(token)
 
+        @self.bp.route("/edit-profile", methods=["GET", "POST"])
+        def edit_profile():
+            return self.controller.edit_profile()
+
+        @self.bp.route("/dashboard")
+        def dashboard():
+            return self.controller.dashboard()
+
         @self.bp.route("/logout")
         def logout():
             return self.controller.logout()

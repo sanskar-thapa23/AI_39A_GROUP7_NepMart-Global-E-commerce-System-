@@ -29,6 +29,7 @@ def create_app():
     from app.routes.home import MainRoutes
     from app.routes.vendor import VendorRoutes
     from app.routes.productroutes import ProductRoutes
+    from app.routes.adminroutes import AdminRoutes
     # Register blueprints
     auth_routes = AuthRoutes()
     app.register_blueprint(auth_routes.get_blueprint())
@@ -39,4 +40,7 @@ def create_app():
     app.register_blueprint(product_routes.get_blueprint())
     vendor_routes = VendorRoutes()
     app.register_blueprint(vendor_routes.get_blueprint())
+
+    admin_routes = AdminRoutes()
+    app.register_blueprint(admin_routes.get_blueprint())
     return app
