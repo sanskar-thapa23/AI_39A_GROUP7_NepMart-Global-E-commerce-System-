@@ -22,28 +22,37 @@
       <div class="lg:col-span-2 space-y-8">
         
         <!-- Premium Visual Container -->
-        <div class="bg-gradient-to-br {% if product.category == 'Agro' %} from-emerald-950 to-emerald-800 {% elif product.category == 'Crafts' %} from-amber-950 to-amber-800 {% else %} from-indigo-950 to-indigo-800 {% endif %} rounded-3xl p-8 md:p-12 text-white relative shadow-xl overflow-hidden min-h-[400px] flex flex-col justify-between">
-          <div class="absolute -right-24 -bottom-24 w-80 h-80 bg-brand-crimson/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="rounded-3xl text-white relative shadow-xl overflow-hidden min-h-[400px] flex flex-col justify-between bg-transparent">
+          <div class="absolute inset-0 bg-black/10 pointer-events-none"></div>
           
-          <div class="flex items-center justify-between z-10">
-            <span class="px-3 py-1.5 rounded-lg bg-white/10 border border-white/20 text-xs font-bold uppercase tracking-widest backdrop-blur-md">
+          <div class="flex items-center justify-between z-10 p-6">
+            <span class="px-3 py-1.5 rounded-lg bg-black/40 border border-white/10 text-xs font-bold uppercase tracking-widest backdrop-blur-md">
               {{ product.category_display }} Spec
             </span>
-            <span class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/25 border border-emerald-500/40 text-emerald-400 text-xs font-bold uppercase tracking-widest backdrop-blur-md">
+            <span class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/40 border border-white/10 text-xs font-bold uppercase tracking-widest backdrop-blur-md">
               <i data-lucide="shield-check" class="w-4 h-4"></i> Verified Origin
             </span>
           </div>
 
-          <!-- Abstract center design -->
-          <div class="w-full flex flex-col items-center justify-center py-10 opacity-30 space-y-4">
-            {% if product.category == 'Agro' %}
-              <i data-lucide="leaf" class="w-24 h-24 text-white"></i>
-            {% elif product.category == 'Crafts' %}
-              <i data-lucide="gem" class="w-24 h-24 text-white"></i>
+          <!-- Featured product image -->
+          <div class="relative w-full h-[420px] overflow-hidden">
+            {% if product.product_image %}
+              <img src="{{ product.product_image }}" alt="{{ product.name }}" class="w-full h-full object-cover object-center">
             {% else %}
-              <i data-lucide="settings" class="w-24 h-24 text-white"></i>
+              <div class="w-full h-full bg-white/10 flex items-center justify-center text-white/70">
+                {% if product.category == 'Agro' %}
+                  <i data-lucide="leaf" class="w-24 h-24"></i>
+                {% elif product.category == 'Crafts' %}
+                  <i data-lucide="gem" class="w-24 h-24"></i>
+                {% else %}
+                  <i data-lucide="settings" class="w-24 h-24"></i>
+                {% endif %}
+              </div>
             {% endif %}
-            <p class="text-xs uppercase font-bold tracking-widest text-center">Premium Quality Himalayan Export Standard</p>
+            <div class="absolute inset-x-0 bottom-0 bg-black/40 px-5 py-4 text-white backdrop-blur-sm">
+              <p class="text-xs uppercase tracking-widest">{{ product.category_display }}</p>
+              <h3 class="text-lg font-bold leading-tight">{{ product.name }}</h3>
+            </div>
           </div>
 
           <!-- Item origin info footer -->
@@ -122,64 +131,114 @@
             </div>
           </div>
 
-          <!-- Direct profile link -->
-          <a href="/trader/{{ product.trader_id }}" class="w-full text-center block px-4 py-2.5 border border-brand-border text-sm font-semibold rounded-lg hover:bg-brand-bgLight transition-all text-[#0f172a]">
-            View Supplier Storefront
-          </a>
-        </div>
-
-        <!-- Interactive Lead Form / Instant Negotiation Chatbox -->
-        <div class="bg-brand-dark rounded-2xl border border-white/10 p-6 text-white space-y-6 shadow-xl relative overflow-hidden">
-          <div class="absolute -top-16 -right-16 w-32 h-32 bg-brand-crimson/15 rounded-full blur-2xl pointer-events-none"></div>
-          
-          <div class="space-y-1">
-            <h3 class="font-serif text-lg font-bold">Live Deal Negotiator</h3>
-            <p class="text-xs text-brand-muted">Message directly, request sample margins, or customize shipping.</p>
-          </div>
-
-          <!-- Quick Templates trigger -->
-          <div class="space-y-1.5">
-            <span class="text-[9px] uppercase font-bold text-brand-muted tracking-widest">Select Inquiry Template</span>
-            <div class="flex flex-wrap gap-1.5">
-              <button onclick="applyTemplate('sample')" class="px-2.5 py-1 bg-white/5 border border-white/10 rounded-md text-[10px] font-semibold text-brand-muted hover:border-brand-crimson hover:text-white transition-all">Request Sample</button>
-              <button onclick="applyTemplate('discount')" class="px-2.5 py-1 bg-white/5 border border-white/10 rounded-md text-[10px] font-semibold text-brand-muted hover:border-brand-crimson hover:text-white transition-all">MOQ Discount</button>
-              <button onclick="applyTemplate('shipping')" class="px-2.5 py-1 bg-white/5 border border-white/10 rounded-md text-[10px] font-semibold text-brand-muted hover:border-brand-crimson hover:text-white transition-all">Shipping manifest</button>
+        <div class="bg-white rounded-2xl border border-brand-border p-6 space-y-6 shadow-sm">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-brand flex items-center justify-center font-bold text-white text-lg">
+              {{ product.company[0] }}
+            </div>
+            <div>
+              <h3 class="font-serif text-lg font-bold text-brand-dark leading-tight">{{ product.company }}</h3>
+              <p class="text-xs text-brand-muted font-medium flex items-center gap-1 mt-0.5">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-brand-crimson"></i> {{ product.location }}, Nepal
+              </p>
             </div>
           </div>
 
-          <!-- Direct Post Chat Form -->
-          <form class="space-y-4" action="/chat" method="POST">
-            <input type="hidden" name="supplier_id" value="{{ product.trader_id }}">
-            <input type="hidden" name="product_id" value="{{ product.id }}">
-            
-            <div class="space-y-1">
-              <label class="block text-[10px] font-bold text-brand-muted uppercase tracking-wider">Inquiry details</label>
-              <textarea id="negotiation-msg" name="message" required rows="4" 
-                class="w-full p-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-brand-muted/60 focus:outline-none focus:ring-2 focus:ring-brand-crimson/50 focus:border-brand-crimson text-xs resize-none"
-                placeholder="Type your specifications (e.g. quantity, logistics method, custom packaging requests)..."></textarea>
+          <!-- Trust KPIs -->
+          <div class="grid grid-cols-2 gap-4 bg-brand-bgLight p-4 rounded-xl border border-brand-border text-center">
+            <div>
+              <span class="text-brand-muted block uppercase text-[8px] tracking-widest font-bold">VERIFIED</span>
+              <span class="text-[#0f172a] font-bold text-sm">8 Years Gold</span>
             </div>
-
-            <!-- MOQ quick field selector -->
-            <div class="grid grid-cols-2 gap-3">
-              <div class="space-y-1">
-                <label class="block text-[10px] font-bold text-brand-muted uppercase tracking-wider">Order Volume</label>
-                <input type="text" name="volume" value="{{ product.moq }}" 
-                  class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-white placeholder-brand-muted focus:outline-none text-xs">
-              </div>
-              <div class="space-y-1">
-                <label class="block text-[10px] font-bold text-brand-muted uppercase tracking-wider">Target Price (USD)</label>
-                <input type="text" name="target_price" placeholder="Target Price" 
-                  class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-white placeholder-brand-muted focus:outline-none text-xs">
-              </div>
+            <div>
+              <span class="text-brand-muted block uppercase text-[8px] tracking-widest font-bold">RESPONSE RATE</span>
+              <span class="text-emerald-600 font-bold text-sm">99.8% (&lt; 1 hr)</span>
             </div>
+          </div>
 
-            <button type="submit" class="w-full py-3 bg-brand-crimson hover:bg-brand-crimsonDark text-white font-semibold rounded-xl transition-all shadow-lg shadow-brand-crimson/25 flex items-center justify-center gap-1.5 text-xs">
-              Submit & Open Chat Thread <i data-lucide="send" class="w-3.5 h-3.5"></i>
-            </button>
-          </form>
+          <!-- Vendor contact -->
+          <div class="space-y-3 text-sm text-brand-muted">
+            <div class="flex items-center gap-2">
+              <i data-lucide="mail" class="w-4 h-4 text-brand-crimson"></i>
+              <span class="font-semibold text-brand-dark">Email:</span>
+              <span>{{ product.vendor_email or 'Not available' }}</span>
+            </div>
+          </div>
         </div>
 
+    <!-- Frequently Bought Together (User Story 2.5) -->
+    {% if frequently_bought %}
+    <div class="bg-white rounded-3xl border border-brand-border p-6 md:p-8 space-y-6 shadow-sm">
+      <div class="flex items-center gap-2 pb-4 border-b border-brand-border">
+        <span class="p-1.5 rounded-lg bg-rose-500/10 text-brand-crimson">
+          <i data-lucide="package-plus" class="w-5 h-5"></i>
+        </span>
+        <div>
+          <h3 class="font-serif text-xl font-bold text-brand-dark">Frequently Bought Together</h3>
+          <p class="text-xs text-brand-muted">Trade partners often bundle these items with the current product.</p>
+        </div>
       </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {% for item in frequently_bought %}
+        <div class="border border-brand-border rounded-2xl overflow-hidden hover:border-brand-crimson/30 hover:shadow-md transition flex flex-col group bg-brand-bgLight/40">
+          <div class="aspect-[4/3] relative">
+            <img src="{{ item.product_image }}" alt="{{ item.product_name }}" class="w-full h-full object-cover">
+          </div>
+          <div class="p-4 flex-grow flex flex-col justify-between space-y-3">
+            <div>
+              <span class="text-[9px] font-bold text-brand-muted uppercase tracking-wider block">{{ item.category_display }}</span>
+              <h4 class="font-serif text-sm font-bold text-brand-dark group-hover:text-brand-crimson transition-colors leading-tight line-clamp-1">
+                <a href="/product/{{ item.id }}">{{ item.product_name }}</a>
+              </h4>
+            </div>
+            <div class="flex items-center justify-between pt-2 border-t border-brand-border text-xs">
+              <span class="text-brand-crimson font-bold">Rs. {{ item.product_price }}</span>
+              <a href="/product/{{ item.id }}" class="text-[10px] font-bold text-brand hover:underline">View Spec &rarr;</a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Similar Products (User Story 2.2 Content-Based) -->
+    {% if similar_products %}
+    <div class="bg-white rounded-3xl border border-brand-border p-6 md:p-8 space-y-6 shadow-sm">
+      <div class="flex items-center gap-2 pb-4 border-b border-brand-border">
+        <span class="p-1.5 rounded-lg bg-blue-500/10 text-blue-600">
+          <i data-lucide="layers" class="w-5 h-5"></i>
+        </span>
+        <div>
+          <h3 class="font-serif text-xl font-bold text-brand-dark">Similar Products</h3>
+          <p class="text-xs text-brand-muted">Discovered in the same industry category and origin specifications.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {% for item in similar_products %}
+        <div class="border border-brand-border rounded-2xl overflow-hidden hover:border-brand-crimson/30 hover:shadow-md transition flex flex-col group bg-brand-bgLight/40">
+          <div class="aspect-[4/3] relative">
+            <img src="{{ item.product_image }}" alt="{{ item.product_name }}" class="w-full h-full object-cover">
+          </div>
+          <div class="p-4 flex-grow flex flex-col justify-between space-y-3">
+            <div>
+              <span class="text-[9px] font-bold text-brand-muted uppercase tracking-wider block">{{ item.category_display }}</span>
+              <h4 class="font-serif text-sm font-bold text-brand-dark group-hover:text-brand-crimson transition-colors leading-tight line-clamp-1">
+                <a href="/product/{{ item.id }}">{{ item.product_name }}</a>
+              </h4>
+            </div>
+            <div class="flex items-center justify-between pt-2 border-t border-brand-border text-xs">
+              <span class="text-brand-crimson font-bold">Rs. {{ item.product_price }}</span>
+              <a href="/product/{{ item.id }}" class="text-[10px] font-bold text-brand hover:underline">View Spec &rarr;</a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
 
     </div>
 

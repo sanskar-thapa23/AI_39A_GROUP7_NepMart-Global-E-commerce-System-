@@ -36,9 +36,39 @@
             </div>
 
             <div>
+                <label for="category" class="block text-sm font-semibold text-brand-dark mb-2">Category</label>
+                <select id="category" name="category" required
+                        class="w-full px-4 py-3 rounded-xl border border-brand-border focus:outline-none focus:ring-2 focus:ring-brand-crimson/20 focus:border-brand-crimson transition">
+                    <option value="Agro" {% if product.category == 'Agro' %}selected{% endif %}>Himalayan Agro & Herbs</option>
+                    <option value="Crafts" {% if product.category == 'Crafts' %}selected{% endif %}>Handmade Artifacts</option>
+                    <option value="Industrial" {% if product.category == 'Industrial' %}selected{% endif %}>Industrial & Machinery</option>
+                    <option value="Logistics" {% if product.category == 'Logistics' %}selected{% endif %}>Trade Logistics</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="location" class="block text-sm font-semibold text-brand-dark mb-2">Origin Location</label>
+                <select id="location" name="location" required
+                        class="w-full px-4 py-3 rounded-xl border border-brand-border focus:outline-none focus:ring-2 focus:ring-brand-crimson/20 focus:border-brand-crimson transition">
+                    <option value="Kathmandu" {% if product.location == 'Kathmandu' %}selected{% endif %}>Kathmandu</option>
+                    <option value="Pokhara" {% if product.location == 'Pokhara' %}selected{% endif %}>Pokhara</option>
+                    <option value="Lalitpur" {% if product.location == 'Lalitpur' %}selected{% endif %}>Lalitpur</option>
+                    <option value="Biratnagar" {% if product.location == 'Biratnagar' %}selected{% endif %}>Biratnagar</option>
+                    <option value="Lumbini" {% if product.location == 'Lumbini' %}selected{% endif %}>Lumbini</option>
+                </select>
+            </div>
+
+            <div>
                 <label for="product_price" class="block text-sm font-semibold text-brand-dark mb-2">Main Price (Rs.)</label>
                 <input type="number" id="product_price" name="product_price" required min="0" step="any"
                        value="{{ product.get_product_price() }}"
+                       class="w-full px-4 py-3 rounded-xl border border-brand-border focus:outline-none focus:ring-2 focus:ring-brand-crimson/20 focus:border-brand-crimson transition">
+            </div>
+
+            <div>
+                <label for="stock" class="block text-sm font-semibold text-brand-dark mb-2">Inventory Stock</label>
+                <input type="number" id="stock" name="stock" required min="0"
+                       value="{{ product.stock }}"
                        class="w-full px-4 py-3 rounded-xl border border-brand-border focus:outline-none focus:ring-2 focus:ring-brand-crimson/20 focus:border-brand-crimson transition">
             </div>
 
