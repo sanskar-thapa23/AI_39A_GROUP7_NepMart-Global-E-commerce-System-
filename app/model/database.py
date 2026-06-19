@@ -31,7 +31,7 @@ class Database:
         cursor.execute(query, params)
         results = cursor.fetchall()
         cursor.close()
-        return results
+        return list(results)
 
     def execute(self, query, params=None):
         """Run a query that changes data (INSERT, UPDATE, DELETE)."""
@@ -60,11 +60,18 @@ class Database:
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 username VARCHAR(100) NOT NULL UNIQUE,
                 email VARCHAR(100) NOT NULL UNIQUE,
+                phone_number VARCHAR(20),
                 password VARCHAR(255) NOT NULL,
                 role VARCHAR(20) NOT NULL DEFAULT 'customer',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """) 
+
+        # Migrations for existing users table
+        try:
+            db.execute("ALTER TABLE users ADD COLUMN phone_number VARCHAR(20) NULL AFTER email")
+        except Exception:
+            pass
 
         # 2. PRODUCTS TABLE (Aligned with Product Model specifications)
         db.execute("""
@@ -75,6 +82,7 @@ class Database:
                 product_name VARCHAR(255) NOT NULL,
                 product_prices TEXT,
                 product_price DECIMAL(10, 2) NOT NULL,
+                stock INT DEFAULT 0,
                 category VARCHAR(100),
                 location VARCHAR(100),
                 product_description TEXT,
@@ -101,6 +109,11 @@ class Database:
             pass
 
         try:
+            db.execute("ALTER TABLE products ADD COLUMN stock INT DEFAULT 0 AFTER product_price")
+        except Exception:
+            pass
+
+        try:
             db.execute("ALTER TABLE products ADD CONSTRAINT fk_vendor FOREIGN KEY (vendor_id) REFERENCES users(id) ON DELETE SET NULL")
         except Exception:
             pass
@@ -118,25 +131,85 @@ class Database:
             )
         """)
 
-        # 4. ORDERS TABLE 
+        # 4. COUPONS TABLE
+        db.execute("""
+            CREATE TABLE IF NOT EXISTS coupons (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                coupon_code VARCHAR(100) NOT NULL UNIQUE,
+                discount_percentage INT NOT NULL,
+                vendor_id INT NOT NULL,
+                expires_at TIMESTAMP NOT NULL,
+                created_by INT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (vendor_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
+            )
+        """)
+
+        # Migrations for existing coupons table
+        try:
+            db.execute("ALTER TABLE coupons ADD COLUMN vendor_id INT NOT NULL AFTER discount_percentage")
+        except Exception:
+            pass
+
+        try:
+            db.execute("ALTER TABLE coupons ADD COLUMN created_by INT NOT NULL AFTER vendor_id")
+        except Exception:
+            pass
+
+        try:
+            db.execute("ALTER TABLE coupons ADD CONSTRAINT fk_coupon_vendor FOREIGN KEY (vendor_id) REFERENCES users(id) ON DELETE CASCADE")
+        except Exception:
+            pass
+
+        try:
+            db.execute("ALTER TABLE coupons ADD CONSTRAINT fk_coupon_created_by FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE")
+        except Exception:
+            pass
+
+        try:
+            db.execute("ALTER TABLE coupons ADD CONSTRAINT fk_coupon_vendor FOREIGN KEY (vendor_id) REFERENCES users(id) ON DELETE CASCADE")
+        except Exception:
+            pass
+
+        # 5. ORDERS TABLE 
         db.execute("""
             CREATE TABLE IF NOT EXISTS orders (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id INT NOT NULL,
                 product_id INT,
                 total_amount DECIMAL(10, 2) NOT NULL,
+                discount_amount DECIMAL(10, 2) DEFAULT 0,
+                coupon_id INT NULL,
+                coupon_code VARCHAR(100) NULL,
                 status VARCHAR(50) NOT NULL DEFAULT 'pending',
                 shipping_address TEXT,
                 phone_number VARCHAR(20),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-                FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
+                FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL,
+                FOREIGN KEY (coupon_id) REFERENCES coupons(id) ON DELETE SET NULL
             )
         """) 
 
         # Migrations for existing orders table
         try:
             db.execute("ALTER TABLE orders ADD COLUMN product_id INT AFTER user_id")
+        except Exception:
+            pass
+
+        try:
+            db.execute("ALTER TABLE orders ADD COLUMN discount_amount DECIMAL(10, 2) DEFAULT 0 AFTER total_amount")
+        except Exception:
+            pass
+
+        try:
+            db.execute("ALTER TABLE orders ADD COLUMN coupon_id INT NULL AFTER discount_amount")
+        except Exception:
+            pass
+
+        try:
+            db.execute("ALTER TABLE orders ADD COLUMN coupon_code VARCHAR(100) NULL AFTER coupon_id")
         except Exception:
             pass
 
@@ -155,8 +228,13 @@ class Database:
         except Exception:
             pass
 
+        try:
+            db.execute("ALTER TABLE orders ADD CONSTRAINT fk_order_coupon FOREIGN KEY (coupon_id) REFERENCES coupons(id) ON DELETE SET NULL")
+        except Exception:
+            pass
+
         
-        # 5. SHOPPING CART TABLE (Mapping User <-> Product with Quantity)
+        # 6. SHOPPING CART TABLE (Mapping User <-> Product with Quantity)
         db.execute("""
             CREATE TABLE IF NOT EXISTS shopping_cart (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -170,7 +248,7 @@ class Database:
             )
         """)
 
-        # 6. WISHLIST TABLE (Mapping User <-> Product)
+        # 7. WISHLIST TABLE (Mapping User <-> Product)
         db.execute("""
             CREATE TABLE IF NOT EXISTS wishlist (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -182,6 +260,19 @@ class Database:
                 UNIQUE KEY unique_user_wishlist_product (user_id, product_id)
             )
         """)
+
+        # 7. PRODUCT VIEWS TABLE (Tracking for Recommendations & Vendor Metrics)
+        db.execute("""
+            CREATE TABLE IF NOT EXISTS product_views (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NULL,
+                product_id INT NOT NULL,
+                viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+                FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+            )
+        """)
+
 
         # Create default admin if not exists
         admin = db.fetch_one(

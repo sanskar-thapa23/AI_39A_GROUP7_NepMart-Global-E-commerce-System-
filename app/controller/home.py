@@ -112,8 +112,44 @@ TRADERS = [
 class MainController(BaseController):
 
     def home(self):
-        # We can supply a list of products to showcase preview elements
-        return render_template("landing_page.html", active_page='home')
+        user_id = self.get_current_user_id()
+        
+        # Fetch trending products (User Story 2.4)
+        trending = Product.get_trending(limit=4)
+        
+        # Fetch collaborative filtering recommendations if user is logged in (User Story 2.3)
+        recommended = []
+        if user_id:
+            recommended = Product.get_collaborative(user_id, limit=4)
+
+        # Fetch recently viewed products (User Story 2.1)
+        recently_viewed = []
+        if user_id:
+            recently_viewed = Product.get_recently_viewed(user_id, limit=4)
+
+        # Fetch based on preferences (User Story 2.2 - category affinity)
+        preferences_products = []
+        preferred_category_label = None
+        if user_id:
+            result = Product.get_based_on_preferences(user_id, limit=4)
+            if isinstance(result, tuple):
+                preferences_products, preferred_category_label = result
+            else:
+                preferences_products = result
+
+        # Fetch frequently bought together on homepage (User Story 2.5)
+        frequently_bought = Product.get_homepage_frequently_bought(user_id=user_id, limit=4)
+
+        return render_template(
+            "landing_page.html", 
+            active_page='home',
+            trending=trending,
+            recommended=recommended,
+            recently_viewed=recently_viewed,
+            preferences_products=preferences_products,
+            preferred_category_label=preferred_category_label,
+            frequently_bought=frequently_bought
+        )
 
     def products(self):
         db = Database()
@@ -266,6 +302,7 @@ class MainController(BaseController):
 
         if request.method == 'POST':
             address, phone = self.get_form_data('address', 'phone')
+            coupon_code = request.form.get('coupon_code', '').strip().upper()
 
             if not address or not phone:
                 flash("Shipping address and phone number are required.", "danger")
@@ -273,6 +310,24 @@ class MainController(BaseController):
 
             db = Database()
             try:
+                coupon_id = None
+                coupon_code_applied = None
+                discount_percentage = 0
+                discount_ratio = 0
+
+                if coupon_code:
+                    from app.controller.couponcontroller import CouponController
+                    coupon_controller = CouponController()
+                    coupon = coupon_controller.get_coupon_by_code(coupon_code)
+                    coupon_controller.close()
+                    if coupon:
+                        coupon_id = coupon['id']
+                        coupon_code_applied = coupon['coupon_code']
+                        discount_percentage = coupon['discount_percentage']
+                        discount_ratio = discount_percentage / 100.0
+                    else:
+                        flash("Invalid or expired coupon code. No discount was applied.", "warning")
+
                 # 1. Fetch items currently in the user's cart
                 cart_items = db.fetch_all("""
                     SELECT sc.product_id, sc.quantity, p.product_price
@@ -284,12 +339,41 @@ class MainController(BaseController):
                 if cart_items:
                     # 2. Transfer cart items to the orders table
                     for item in cart_items:
-                        total = item['product_price'] * item['quantity']
+                        item_total = item['product_price'] * item['quantity']
+                        discount_amount = round(item_total * discount_ratio, 2)
+                        total_after_discount = round(item_total - discount_amount, 2)
+
                         db.execute("""
-                            INSERT INTO orders (user_id, product_id, total_amount, status, shipping_address, phone_number)
-                            VALUES (%s, %s, %s, %s, %s, %s)
-                        """, (user_id, item['product_id'], total, 'pending', address, phone))
-                    
+                            INSERT INTO orders (user_id, product_id, total_amount, discount_amount, coupon_id, coupon_code, status, shipping_address, phone_number)
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        """, (
+                            user_id,
+                            item['product_id'],
+                            total_after_discount,
+                            discount_amount,
+                            coupon_id,
+                            coupon_code_applied,
+                            'pending',
+                            address,
+                            phone,
+                        ))
+
+                        # Decrease stock by the actual quantity ordered
+                        db.execute("UPDATE products SET stock = stock - %s WHERE id = %s", (item['quantity'], item['product_id']))
+                        
+                        # Check updated stock level and notify vendor if below 10
+                        product_info = db.fetch_one("""
+                            SELECT p.product_name, p.stock, u.email, u.username
+                            FROM products p
+                            JOIN users u ON p.vendor_id = u.id
+                            WHERE p.id = %s
+                        """, (item['product_id'],))
+
+                        if product_info and product_info['stock'] < 10:
+                            # Local import to avoid circular dependency
+                            from app.controller.vendorcontroller import VendorController
+                            VendorController.send_low_stock_alert(product_info)
+
                     # 3. Clear the shopping cart
                     db.execute("DELETE FROM shopping_cart WHERE user_id = %s", (user_id,))
                     flash("Order placed successfully! Payment method: Cash on Delivery.", "success")
