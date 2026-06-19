@@ -122,6 +122,13 @@ class User(BaseModel):
 
         return user
 
+    # ── Delete user account ──
+    def delete_account(self, user_id):
+        """Delete a user account by ID."""
+        db = Database()
+        db.execute("DELETE FROM users WHERE id=%s", (user_id,))
+        db.close()
+
     # ── Debug ──
     def __str__(self):
         return f"User(username={self.username}, email={self.email}, role={self.role})"
