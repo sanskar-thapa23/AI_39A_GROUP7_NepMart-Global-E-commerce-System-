@@ -10,7 +10,6 @@
 
 from flask import session, flash, redirect, url_for, request
 
-
 class BaseController:
     """
     Base Controller — parent class for all controllers.
