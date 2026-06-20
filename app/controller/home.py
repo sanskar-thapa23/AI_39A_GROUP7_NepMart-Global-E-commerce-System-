@@ -4,6 +4,7 @@ from app.model.productmodel import Product
 from app.controller.basecontroller import BaseController
 
 # Mock Database Storehouse representing our verified Himalayan B2B ecosystem
+
 PRODUCTS = [
     {
         "id": 1,
