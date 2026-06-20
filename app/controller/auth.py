@@ -5,7 +5,6 @@ from app.controller.basecontroller import BaseController
 from app.model.usermodel import User
 from app.model.database import Database
 
-
 class AuthController(BaseController):
 
     def __init__(self):
