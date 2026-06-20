@@ -4,7 +4,6 @@ from app.controller.basecontroller import BaseController
 from app.model.productmodel import Product
 from app.model.database import Database
 
-
 class ProductController(BaseController):
 
     def __init__(self):
