@@ -1,7 +1,6 @@
 from flask import Blueprint
 from app.controller.vendorcontroller import VendorController
 
-
 class VendorRoutes:
 
     def __init__(self):
