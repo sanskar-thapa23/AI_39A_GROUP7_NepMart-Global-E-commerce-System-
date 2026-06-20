@@ -1,5 +1,6 @@
 from flask import Blueprint
 
+
 class LoginRoutes:
     def register(self):
         login_bp = Blueprint("login", __name__)
