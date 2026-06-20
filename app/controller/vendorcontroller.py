@@ -3,7 +3,6 @@ from app.controller.basecontroller import BaseController
 from app.model.database import Database
 from app.model.productmodel import Product
 
-
 class VendorController(BaseController):
 
     def dashboard(self):
