@@ -3,6 +3,7 @@ from flask_mail import Mail
 from app.model.database import Database
 import config
 
+
 def create_app():
     app = Flask(__name__)
     
