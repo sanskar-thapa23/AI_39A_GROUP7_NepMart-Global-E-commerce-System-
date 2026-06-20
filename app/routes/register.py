@@ -1,5 +1,6 @@
 from flask import Blueprint
 
+
 class RegisterRoutes:
     def register(self):
         register_bp = Blueprint("register", __name__)
