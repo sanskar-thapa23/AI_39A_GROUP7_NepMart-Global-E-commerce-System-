@@ -49,7 +49,7 @@
 
       <!-- FIXED ROUTE (IMPORTANT) -->
       <div class="flex gap-3 w-full lg:w-auto">
-        <a href="{{ url_for('main.trader_profile', trader_id=user.get('user_id')) }}"
+        <a href="{{ url_for('auth.edit_profile') }}"
           class="bg-white text-brand-dark px-6 py-3 rounded-2xl font-bold hover:shadow-xl transition-all flex-1 lg:flex-none text-center">
           Edit Profile
         </a>

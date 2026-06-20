@@ -228,25 +228,46 @@ class AuthController(BaseController):
 
         if request.method == "POST":
             username, email = self.get_form_data("username", "email")
-            password = request.form.get("password")
+            password = request.form.get("password", "")
 
             if not username or not email:
                 flash("Username and email are required.", "danger")
                 return render_template("edit_profile.html", user=user_data)
 
             user = User.from_db(user_data)
-            user.username = username
-            user.email = email
+
+            if username != user.username:
+                user.username = username
+                if user.username_exists(exclude_id=user_id):
+                    flash("Username already exists.", "danger")
+                    return render_template("edit_profile.html", user=user_data)
+            else:
+                user.username = username
+
+            if email != user.email:
+                user.email = email
+                if user.email_exists(exclude_id=user_id):
+                    flash("Email already exists.", "danger")
+                    return render_template("edit_profile.html", user=user_data)
+            else:
+                user.email = email
 
             update_password = False
             if password and password.strip():
-                user.set_password(password)
+                user.set_password(password.strip())
                 update_password = True
 
             user.update_profile(user_id, update_password=update_password)
             session["user_name"] = username
             flash("Profile updated successfully!", "success")
-            return redirect(url_for('auth.dashboard'))
+
+            role = self.get_current_role()
+            if role == "vendor":
+                return redirect(url_for("vendor.dashboard"))
+            elif role == "admin":
+                return redirect(url_for("admin.index"))
+            else:
+                return redirect(url_for("main.dashboard"))
 
         return render_template("edit_profile.html", user=user_data)
 
