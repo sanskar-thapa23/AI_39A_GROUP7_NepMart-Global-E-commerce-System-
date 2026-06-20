@@ -32,7 +32,7 @@
               <i data-lucide="user" class="w-5 h-5"></i>
             </div>
             <input id="username" name="username" type="text" required 
-              class="block w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-brand-muted/60 focus:outline-none focus:ring-2 focus:ring-brand-crimson/50 focus:border-brand-crimson transition-all text-sm" 
+              class="block w-full pl-11 pr-4 py-3 bg-white/5 border  border-white/10 rounded-xl text-white placeholder-brand-muted/60 focus:outline-none focus:ring-2 focus:ring-brand-crimson/50 focus:border-brand-crimson transition-all text-sm" 
               placeholder="Enter your username">
           </div>
         </div>
@@ -40,7 +40,7 @@
         <!-- Password input group -->
         <div class="space-y-1">
           <div class="flex justify-between items-center">
-            <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-brand-muted">Password</label>
+            <label for="password" class="block text-xs font-semibold  uppercase tracking-wider text-brand-muted">Password</label>
             <a href="{{ url_for('auth.forgot_password') }}" class="text-xs font-medium text-brand-crimson hover:text-white transition-colors">Forgot password?</a>
           </div>
           <div class="relative rounded-xl shadow-sm">
@@ -56,7 +56,7 @@
         <!-- Remember Me Checkbox -->
         <div class="flex items-center">
           <input id="remember-me" name="remember-me" type="checkbox" 
-            class="h-4 w-4 rounded bg-white/5 border-white/10 text-brand-crimson focus:ring-brand-crimson/30 accent-brand-crimson">
+            class="h-4 w-4 rounded bg-white/5 border-white/10 text-brand-crimson  focus:ring-brand-crimson/30 accent-brand-crimson">
           <label for="remember-me" class="ml-2.5 block text-sm text-brand-muted">
             Remember my device
           </label>
@@ -66,7 +66,7 @@
         <div>
           <button type="submit" class="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-sm font-semibold rounded-xl text-white bg-brand-crimson hover:bg-brand-crimsonDark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-crimson shadow-lg shadow-brand-crimson/25 transition-all duration-150 transform hover:-translate-y-0.5 active:translate-y-0">
             <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-              <i data-lucide="log-in" class="w-5 h-5 text-white/70 group-hover:text-white transition-colors"></i>
+              <i data-lucide="log-in" class="w-5 h-5 text-white/70   group-hover:text-white transition-colors"></i>
             </span>
             Sign in
           </button>
@@ -85,7 +85,7 @@
 
       <!-- Registration Redirect -->
       <div class="mt-6 text-center">
-        <a href="{{ url_for('auth.register') }}" class="inline-flex items-center gap-1 text-sm font-semibold text-white hover:text-brand-crimson transition-colors">
+        <a href="{{ url_for('auth.register') }}" class="inline-flex  items-center gap-1 text-sm font-semibold text-white hover:text-brand-crimson transition-colors">
           Create a free partner account <i data-lucide="arrow-right" class="w-4 h-4"></i>
         </a>
       </div>
